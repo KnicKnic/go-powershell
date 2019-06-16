@@ -5,7 +5,7 @@ import "fmt"
 /*
 
 #cgo CFLAGS: -IC:/code/go-net
-#cgo LDFLAGS: C:/code/go-net/mscoree.a
+#cgo LDFLAGS: C:/code/go-net/mscoree.dll
 #include <stdio.h>
 #include <stdlib.h>
 #include <metahost.h>
