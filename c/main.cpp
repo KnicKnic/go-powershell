@@ -34,7 +34,7 @@ typedef void (STDMETHODCALLTYPE MainMethodFp)(LPWSTR* args);
 // It is meant as an educational sample, so not all error paths are checked,
 // cross-platform functionality is not yet implemented, and some design
 // decisions have been made to emphasize readability over efficiency.
-int wmain(int argc, wchar_t* argv[])
+int oldmain(int argc, wchar_t* argv[])
 {
     printf("Sample CoreCLR Host\n\n");
 
@@ -426,4 +426,9 @@ HMODULE LoadCoreCLR(const wchar_t* directoryPath)
     }
 
     return ret;
+}
+
+int main(int , char* []){
+    wchar_t* arr[] = {L"",L"c:\\someassembly.dll"};
+    return oldmain(2,arr);
 }
