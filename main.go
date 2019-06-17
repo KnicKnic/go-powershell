@@ -8,8 +8,8 @@ import (
 
 /*
 
-#cgo CFLAGS: -IC:/code/psh_host
-#cgo LDFLAGS: c:/code/psh_host/x64/Release/psh_host.dll
+#cgo CFLAGS: -I.
+#cgo LDFLAGS: ./psh_host.dll
 #include <stddef.h>
 #include "host.h"
 #include <stdio.h>
@@ -26,10 +26,17 @@ void myprint(void* unknown) {
     wchar_t* s = (wchar_t*)unknown;
 // HRESULT hr = CLRCreateInstance(&CLSID_CLRMetaHost, &IID_ICLRMetaHost,
 //                     (LPVOID*)&pMetaHost);
-    long ret = startpowershell(s);
-	printf("\n%ws, old_main %d\n", s,ret);
+	printf("\n%ws, old_main %d\n", s);
+}
 
+wchar_t * MakeWchar(void *unknown){
+	wchar_t* s = (wchar_t*)unknown;;
+	return s;
+}
 
+long StartPowershell(RunspaceHandle runspace, void * unknown){
+	wchar_t* s = (wchar_t*)unknown;
+	return startpowershell(runspace, s);
 }
 
 
@@ -39,11 +46,15 @@ import "C"
 
 func Example() {
 	// cs := C.CString("Hello from stdio\n")
-	cs, _ := windows.UTF16PtrFromString("c:\\fuzzy2")
+	handle := C.CreateRunspace()
+	defer C.DeleteRunspace(handle)
+	cs, _ := windows.UTF16PtrFromString("c:\\fuzzy3")
 
 	ptrwchar := unsafe.Pointer(cs) // that is what you will get from Windows
 	// cs := C CString("Hello from stdio\n")
-	C.myprint(ptrwchar)
+	// C.myprint(ptrwchar)
+
+	_ = C.startpowershell(handle, C.MakeWchar(ptrwchar))
 	// C.free(unsafe.Pointer(cs))
 }
 func main() {

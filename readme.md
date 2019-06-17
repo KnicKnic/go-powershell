@@ -7,6 +7,9 @@ Windows - install dependencies - Use choco
 1. `copy "C:\Program Files (x86)\Windows Kits\NETFXSDK\4.7.2\Include\um\metahost.h" .`
 1. `copy "c:\windows\system32\mscoree.dll" .`
 
+## Correct
+copy /y ..\native-powershell\host.h .
+copy /y ..\native-powershell\x64\Release\psh_host.dll .
 
 # Docs
 https://docs.microsoft.com/en-us/dotnet/framework/unmanaged-api/hosting/clrcreateinstance-function
