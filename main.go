@@ -4,6 +4,7 @@ import (
 	"os"
 	"unsafe"
 
+	"bitbucket.org/creachadair/shell"
 	"golang.org/x/sys/windows"
 )
 
@@ -51,16 +52,56 @@ func DeletePowershell(handle C.PowershellHandle) {
 	C.DeletePowershell(handle)
 }
 
-func MakeDir(handle C.PowershellHandle, path string) {
-	cs, _ := windows.UTF16PtrFromString(path)
+func AddCommand(handle C.PowershellHandle, command string) {
+	cs, _ := windows.UTF16PtrFromString(command)
 
 	ptrwchar := unsafe.Pointer(cs)
 
-	_ = C.MakeDir(handle, C.MakeWchar(ptrwchar))
+	_ = C.AddCommand(handle, C.MakeWchar(ptrwchar))
+}
+func AddArgument(handle C.PowershellHandle, argument string) {
+	cs, _ := windows.UTF16PtrFromString(argument)
+
+	ptrwchar := unsafe.Pointer(cs)
+
+	_ = C.AddArgument(handle, C.MakeWchar(ptrwchar))
+}
+func InvokeCommand(handle C.PowershellHandle) {
+
+	_ = C.InvokeCommand(handle)
+}
+
+type RunspaceHandle struct {
+	handle C.RunspaceHandle
+}
+
+func ExecStr(runspace C.RunspaceHandle, command string) {
+	powershell := CreatePowershell(runspace)
+	defer DeletePowershell(powershell)
+
+	fields, ok := shell.Split(command)
+	if !ok {
+		panic("command was invalid {" + command + "}")
+	}
+	AddCommand(powershell, fields[0])
+	for i := 1; i < len(fields); i++ {
+		AddArgument(powershell, fields[i])
+	}
+	InvokeCommand(powershell)
+}
+func (runspace RunspaceHandle) ExecStr2(command string) {
+	ExecStr(runspace.handle, command)
+}
+
+func MakeDir(handle C.PowershellHandle, path string) {
+	AddCommand(handle, "mkdir")
+	AddArgument(handle, path)
+	InvokeCommand(handle)
 
 }
 
 func RunMakeDir(runspace C.RunspaceHandle, path string) {
+
 	powershell := CreatePowershell(runspace)
 	defer DeletePowershell(powershell)
 
@@ -73,7 +114,10 @@ func Example() {
 	defer DeleteRunspace(runspace)
 
 	for i := 1; i < len(os.Args); i++ {
-		RunMakeDir(runspace, os.Args[i])
+		// RunMakeDir(runspace, os.Args[i])
+		handle := RunspaceHandle{runspace}
+		// ExecStr(runspace, "mkdir "+os.Args[i])
+		handle.ExecStr2("mkdir " + os.Args[i])
 	}
 }
 func main() {
