@@ -39,85 +39,81 @@ wchar_t * MakeWchar(void *unknown){
 */
 import "C"
 
-func CreateRunspace() C.RunspaceHandle {
-	return C.CreateRunspace()
-}
-func DeleteRunspace(handle C.RunspaceHandle) {
-	C.DeleteRunspace(handle)
-}
-func CreatePowershell(handle C.RunspaceHandle) C.PowershellHandle {
-	return C.CreatePowershell(handle)
-}
-func DeletePowershell(handle C.PowershellHandle) {
-	C.DeletePowershell(handle)
+type Runspace struct {
+	handle C.RunspaceHandle
 }
 
-func AddCommand(handle C.PowershellHandle, command string) {
-	cs, _ := windows.UTF16PtrFromString(command)
+type PowershellCommand struct {
+	handle C.PowershellHandle
+}
+
+// CreateRunspace think of this kinda like a shell
+func CreateRunspace() Runspace {
+	return Runspace{C.CreateRunspace()}
+}
+
+// Delete and free a Runspace
+func (runspace Runspace) Delete() {
+	C.DeleteRunspace(runspace.handle)
+}
+
+// CreatePowershellCommand using a runspace, still need to create a command in the powershell command
+func (runspace Runspace) CreatePowershellCommand() PowershellCommand {
+	return PowershellCommand{C.CreatePowershell(runspace.handle)}
+}
+
+// Delete and free a PowershellCommand
+func (command PowershellCommand) Delete() {
+	C.DeletePowershell(command.handle)
+}
+
+// AddCommand to an existing powershell command
+func (command PowershellCommand) AddCommand(commandlet string) {
+	cs, _ := windows.UTF16PtrFromString(commandlet)
 
 	ptrwchar := unsafe.Pointer(cs)
 
-	_ = C.AddCommand(handle, C.MakeWchar(ptrwchar))
+	_ = C.AddCommand(command.handle, C.MakeWchar(ptrwchar))
 }
-func AddArgument(handle C.PowershellHandle, argument string) {
+
+// AddArgument to an existing powershell command
+func (command PowershellCommand) AddArgument(argument string) {
 	cs, _ := windows.UTF16PtrFromString(argument)
 
 	ptrwchar := unsafe.Pointer(cs)
 
-	_ = C.AddArgument(handle, C.MakeWchar(ptrwchar))
-}
-func InvokeCommand(handle C.PowershellHandle) {
-
-	_ = C.InvokeCommand(handle)
+	_ = C.AddArgument(command.handle, C.MakeWchar(ptrwchar))
 }
 
-type RunspaceHandle struct {
-	handle C.RunspaceHandle
+// Invoke the powershell command, do not reuse afterwards
+func (command PowershellCommand) Invoke() {
+
+	_ = C.InvokeCommand(command.handle)
 }
 
-func ExecStr(runspace C.RunspaceHandle, command string) {
-	powershell := CreatePowershell(runspace)
-	defer DeletePowershell(powershell)
+// ExecStr - executes a commandline in powershell
+func (runspace Runspace) ExecStr(commandStr string) {
+	command := runspace.CreatePowershellCommand()
+	defer command.Delete()
 
-	fields, ok := shell.Split(command)
+	fields, ok := shell.Split(commandStr)
 	if !ok {
-		panic("command was invalid {" + command + "}")
+		panic("command was invalid {" + commandStr + "}")
 	}
-	AddCommand(powershell, fields[0])
+	command.AddCommand(fields[0])
 	for i := 1; i < len(fields); i++ {
-		AddArgument(powershell, fields[i])
+		command.AddArgument(fields[i])
 	}
-	InvokeCommand(powershell)
-}
-func (runspace RunspaceHandle) ExecStr2(command string) {
-	ExecStr(runspace.handle, command)
+	command.Invoke()
 }
 
-func MakeDir(handle C.PowershellHandle, path string) {
-	AddCommand(handle, "mkdir")
-	AddArgument(handle, path)
-	InvokeCommand(handle)
-
-}
-
-func RunMakeDir(runspace C.RunspaceHandle, path string) {
-
-	powershell := CreatePowershell(runspace)
-	defer DeletePowershell(powershell)
-
-	println("mkdir ", path)
-	MakeDir(powershell, path)
-}
-
+// Example on how to use powershell wrappers
 func Example() {
 	runspace := CreateRunspace()
-	defer DeleteRunspace(runspace)
+	defer runspace.Delete()
 
 	for i := 1; i < len(os.Args); i++ {
-		// RunMakeDir(runspace, os.Args[i])
-		handle := RunspaceHandle{runspace}
-		// ExecStr(runspace, "mkdir "+os.Args[i])
-		handle.ExecStr2("mkdir " + os.Args[i])
+		runspace.ExecStr("mkdir " + os.Args[i])
 	}
 }
 func main() {
