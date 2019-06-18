@@ -1,6 +1,7 @@
 package main
 
 import (
+	"os"
 	"unsafe"
 
 	"golang.org/x/sys/windows"
@@ -34,28 +35,46 @@ wchar_t * MakeWchar(void *unknown){
 	return s;
 }
 
-long StartPowershell(RunspaceHandle runspace, void * unknown){
-	wchar_t* s = (wchar_t*)unknown;
-	return startpowershell(runspace, s);
-}
-
-
-
 */
 import "C"
 
+func CreateRunspace() C.RunspaceHandle {
+	return C.CreateRunspace()
+}
+func DeleteRunspace(handle C.RunspaceHandle) {
+	C.DeleteRunspace(handle)
+}
+func CreatePowershell(handle C.RunspaceHandle) C.PowershellHandle {
+	return C.CreatePowershell(handle)
+}
+func DeletePowershell(handle C.PowershellHandle) {
+	C.DeletePowershell(handle)
+}
+
+func MakeDir(handle C.PowershellHandle, path string) {
+	cs, _ := windows.UTF16PtrFromString(path)
+
+	ptrwchar := unsafe.Pointer(cs)
+
+	_ = C.MakeDir(handle, C.MakeWchar(ptrwchar))
+
+}
+
+func RunMakeDir(runspace C.RunspaceHandle, path string) {
+	powershell := CreatePowershell(runspace)
+	defer DeletePowershell(powershell)
+
+	println("mkdir ", path)
+	MakeDir(powershell, path)
+}
+
 func Example() {
-	// cs := C.CString("Hello from stdio\n")
-	handle := C.CreateRunspace()
-	defer C.DeleteRunspace(handle)
-	cs, _ := windows.UTF16PtrFromString("c:\\fuzzy3")
+	runspace := CreateRunspace()
+	defer DeleteRunspace(runspace)
 
-	ptrwchar := unsafe.Pointer(cs) // that is what you will get from Windows
-	// cs := C CString("Hello from stdio\n")
-	// C.myprint(ptrwchar)
-
-	_ = C.startpowershell(handle, C.MakeWchar(ptrwchar))
-	// C.free(unsafe.Pointer(cs))
+	for i := 1; i < len(os.Args); i++ {
+		RunMakeDir(runspace, os.Args[i])
+	}
 }
 func main() {
 	Example()
