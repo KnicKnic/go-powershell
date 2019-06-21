@@ -11,6 +11,12 @@ Windows - install dependencies - Use choco
 copy /y ..\native-powershell\host.h .
 copy /y ..\native-powershell\x64\Release\psh_host.dll .
 
+
+copy /y ..\psh_host\host.h .
+copy /y ..\psh_host\x64\Debug\psh_host.dll .
+
+.\go-net.exe -logtostderr a
+
 # Docs
 https://docs.microsoft.com/en-us/dotnet/framework/unmanaged-api/hosting/clrcreateinstance-function
 

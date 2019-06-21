@@ -1,8 +1,11 @@
 package main
 
 import (
+	"flag"
 	"os"
 	"unsafe"
+
+	"github.com/golang/glog"
 
 	"bitbucket.org/creachadair/shell"
 	"golang.org/x/sys/windows"
@@ -12,32 +15,34 @@ import (
 
 #cgo CFLAGS: -I.
 #cgo LDFLAGS: ./psh_host.dll
-#include <stddef.h>
-#include "host.h"
-#include <stdio.h>
-#include <stdlib.h>
-#include "sys/types.h"
-// #include <metahost.h>
-// #pragma comment(lib, "mscoree.lib")
 
-// ICLRMetaHost       *pMetaHost       = NULL;
-// ICLRMetaHostPolicy *pMetaHostPolicy = NULL;
-// ICLRDebugging      *pCLRDebugging   = NULL;
 
-void myprint(void* unknown) {
-    wchar_t* s = (wchar_t*)unknown;
-// HRESULT hr = CLRCreateInstance(&CLSID_CLRMetaHost, &IID_ICLRMetaHost,
-//                     (LPVOID*)&pMetaHost);
-	printf("\n%ws, old_main %d\n", s);
-}
-
-wchar_t * MakeWchar(void *unknown){
-	wchar_t* s = (wchar_t*)unknown;;
-	return s;
-}
+#include "powershell.h"
 
 */
 import "C"
+
+func MakeString(str *C.wchar_t) string {
+	var count C.int = 0
+	var zero C.wchar_t = C.MakeNullTerminator()
+	for ; C.GetChar(str, count) != zero; count++ {
+	}
+	count++
+	arr := make([]uint16, count)
+	arrPtr := &arr[0]
+	ptrwchar := unsafe.Pointer(arrPtr)
+
+	C.MemoryCopy(ptrwchar, str, count*2)
+
+	s := windows.UTF16ToString(arr)
+	return s
+}
+
+//export LogWchart
+func LogWchart(str *C.wchar_t) {
+	s := MakeString(str)
+	glog.Info(s)
+}
 
 type Runspace struct {
 	handle C.RunspaceHandle
@@ -49,7 +54,7 @@ type PowershellCommand struct {
 
 // CreateRunspace think of this kinda like a shell
 func CreateRunspace() Runspace {
-	return Runspace{C.CreateRunspace()}
+	return Runspace{C.CreateRunspaceHelper()}
 }
 
 // Delete and free a Runspace
@@ -109,6 +114,7 @@ func (runspace Runspace) ExecStr(commandStr string) {
 
 // Example on how to use powershell wrappers
 func Example() {
+	C.InitLibraryHelper()
 	runspace := CreateRunspace()
 	defer runspace.Delete()
 
@@ -117,5 +123,6 @@ func Example() {
 	}
 }
 func main() {
+	flag.Parse()
 	Example()
 }
