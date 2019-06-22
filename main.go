@@ -2,7 +2,7 @@ package main
 
 import (
 	"flag"
-	"os"
+	"strings"
 	"unsafe"
 
 	"github.com/golang/glog"
@@ -81,6 +81,21 @@ func (command PowershellCommand) AddCommand(commandlet string) {
 	_ = C.AddCommand(command.handle, C.MakeWchar(ptrwchar))
 }
 
+// AddCommand to an existing powershell command
+func (command PowershellCommand) AddScript(script string, useLocalScope bool) {
+	cs, _ := windows.UTF16PtrFromString(script)
+
+	ptrwchar := unsafe.Pointer(cs)
+
+	if useLocalScope {
+		_ = C.AddScriptSpecifyScope(command.handle, C.MakeWchar(ptrwchar), 1)
+
+	} else {
+		_ = C.AddScriptSpecifyScope(command.handle, C.MakeWchar(ptrwchar), 0)
+
+	}
+}
+
 // AddArgument to an existing powershell command
 func (command PowershellCommand) AddArgument(argument string) {
 	cs, _ := windows.UTF16PtrFromString(argument)
@@ -105,7 +120,11 @@ func (runspace Runspace) ExecStr(commandStr string) {
 	if !ok {
 		panic("command was invalid {" + commandStr + "}")
 	}
-	command.AddCommand(fields[0])
+	if strings.HasSuffix(fields[0], ".ps1") {
+		command.AddScript(fields[0], *useLocalScope)
+	} else {
+		command.AddCommand(fields[0])
+	}
 	for i := 1; i < len(fields); i++ {
 		command.AddArgument(fields[i])
 	}
@@ -118,11 +137,29 @@ func Example() {
 	runspace := CreateRunspace()
 	defer runspace.Delete()
 
-	for i := 1; i < len(os.Args); i++ {
-		runspace.ExecStr("mkdir " + os.Args[i])
+	for i := 0; i < len(commandFlags); i++ {
+		commandFlags[i] = strings.ReplaceAll(commandFlags[i], "\\", "\\\\")
+		runspace.ExecStr(commandFlags[i])
 	}
 }
+
+type arrayCommandFlags []string
+
+func (i *arrayCommandFlags) String() string {
+	return "my string representation"
+}
+
+func (i *arrayCommandFlags) Set(value string) error {
+	*i = append(*i, value)
+	return nil
+}
+
+var commandFlags arrayCommandFlags
+var useLocalScope = flag.Bool("useLocalScope", false, "True if should execute scripts in the local scope")
+
 func main() {
+	flag.Var(&commandFlags, "command", "Command to run in powershell")
 	flag.Parse()
+	glog.Info(*useLocalScope, commandFlags)
 	Example()
 }
