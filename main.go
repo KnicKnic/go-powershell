@@ -1,5 +1,6 @@
 package main
 
+// "bitbucket.org/creachadair/shell"
 import (
 	"flag"
 	"strings"
@@ -7,7 +8,6 @@ import (
 
 	"github.com/golang/glog"
 
-	"bitbucket.org/creachadair/shell"
 	"golang.org/x/sys/windows"
 )
 
@@ -17,6 +17,7 @@ import (
 #cgo LDFLAGS: ./psh_host.dll
 
 
+#include <stddef.h>
 #include "powershell.h"
 
 */
@@ -73,12 +74,18 @@ func (command PowershellCommand) Delete() {
 }
 
 // AddCommand to an existing powershell command
-func (command PowershellCommand) AddCommand(commandlet string) {
+func (command PowershellCommand) AddCommand(commandlet string, useLocalScope bool) {
 	cs, _ := windows.UTF16PtrFromString(commandlet)
 
 	ptrwchar := unsafe.Pointer(cs)
 
-	_ = C.AddCommand(command.handle, C.MakeWchar(ptrwchar))
+	if useLocalScope {
+		_ = C.AddCommandSpecifyScope(command.handle, C.MakeWchar(ptrwchar), 1)
+
+	} else {
+		_ = C.AddCommandSpecifyScope(command.handle, C.MakeWchar(ptrwchar), 0)
+
+	}
 }
 
 // AddCommand to an existing powershell command
@@ -116,18 +123,19 @@ func (runspace Runspace) ExecStr(commandStr string) {
 	command := runspace.CreatePowershellCommand()
 	defer command.Delete()
 
-	fields, ok := shell.Split(commandStr)
-	if !ok {
-		panic("command was invalid {" + commandStr + "}")
-	}
-	if strings.HasSuffix(fields[0], ".ps1") {
-		command.AddScript(fields[0], *useLocalScope)
+	// fields, ok := shell.Split(commandStr)
+	// if !ok {
+	// 	panic("command was invalid {" + commandStr + "}")
+	// }
+
+	if strings.HasSuffix(commandStr, ".ps1") {
+		command.AddCommand(commandStr, *useLocalScope)
 	} else {
-		command.AddCommand(fields[0])
+		command.AddScript(commandStr, *useLocalScope)
 	}
-	for i := 1; i < len(fields); i++ {
-		command.AddArgument(fields[i])
-	}
+	// for i := 1; i < len(fields); i++ {
+	// 	command.AddArgument(fields[i])
+	// }
 	command.Invoke()
 }
 
