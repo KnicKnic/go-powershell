@@ -5,5 +5,8 @@ c/**
 **.lib
 **.a
 host.h
+t1.ps1
+t2.ps1
+__debug_bin
 
 
