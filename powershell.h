@@ -15,6 +15,7 @@ wchar_t MakeNullTerminator();
 wchar_t GetChar(wchar_t *t, int offset);
 
     unsigned char* MallocWrapper(unsigned long long size);
+    void FreeWrapper(void *);
 
 void InitLibraryHelper();
 

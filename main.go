@@ -53,6 +53,39 @@ type PowershellCommand struct {
 	handle C.PowershellHandle
 }
 
+type PowershellObject struct {
+	handle uint64
+}
+
+type InvokeResults struct {
+	objects   []PowershellObject
+	count     uint32
+	exception PowershellObject
+}
+
+func MakePowerShellObjectIndexed(objects *C.PowerShellObject, index uint32) PowershellObject {
+	// I don't get why I have to use unsafe.Pointer on C memory
+	ptr := uintptr(unsafe.Pointer(objects))
+	handle := ptr + (uintptr(index) * unsafe.Sizeof(*objects))
+	var obj uint64 = *(*uint64)(unsafe.Pointer(handle))
+	return PowershellObject{obj}
+}
+
+func MakePowerShellObject(object C.PowerShellObject) PowershellObject {
+	var obj uint64 = *(*uint64)(unsafe.Pointer(&object))
+	return PowershellObject{obj}
+}
+
+func MakeInvokeResults(objects *C.PowerShellObject, count C.uint, exception C.PowerShellObject) (results InvokeResults) {
+	results.count = uint32(count)
+	results.objects = make([]PowershellObject, count)
+	for i := uint32(0); i < results.count; i++ {
+		results.objects[i] = MakePowerShellObjectIndexed(objects, i)
+	}
+	results.exception = MakePowerShellObject(exception)
+	return
+}
+
 // CreateRunspace think of this kinda like a shell
 func CreateRunspace() Runspace {
 	return Runspace{C.CreateRunspaceHelper()}
@@ -115,7 +148,10 @@ func (command PowershellCommand) AddArgument(argument string) {
 // Invoke the powershell command, do not reuse afterwards
 func (command PowershellCommand) Invoke() {
 
-	_ = C.InvokeCommand(command.handle)
+	var objects *C.PowerShellObject
+	var count C.uint
+	exception := C.InvokeCommand(command.handle, &objects, &count)
+	MakeInvokeResults(objects, count, exception)
 }
 
 // ExecStr - executes a commandline in powershell

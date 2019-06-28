@@ -43,6 +43,9 @@ wchar_t GetChar(wchar_t *t, int offset){
     unsigned char* MallocWrapper(unsigned long long size) {
         return (unsigned char*)malloc(size);
     }
+    void FreeWrapper(void *ptr){
+        return free(ptr);
+    }
 
 void InitLibraryHelper(){
     InitLibrary(MallocWrapper, free);
