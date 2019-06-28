@@ -1,4 +1,4 @@
-package main
+package powershell
 
 // "bitbucket.org/creachadair/shell"
 
@@ -13,6 +13,10 @@ package main
 
 */
 import "C"
+
+func init() {
+	C.InitLibraryHelper()
+}
 
 type Runspace struct {
 	handle C.RunspaceHandle

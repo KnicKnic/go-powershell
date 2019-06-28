@@ -5,51 +5,19 @@ import (
 	"flag"
 	"strings"
 
+	. "./powershell"
+
 	"github.com/golang/glog"
 )
 
-/*
-
-#cgo CFLAGS: -I.
-#cgo LDFLAGS: ./psh_host.dll
-
-
-#include <stddef.h>
-#include "powershell.h"
-
-*/
-import "C"
-
-// ExecStr - executes a commandline in powershell
-func (runspace Runspace) ExecStr(commandStr string) {
-	command := runspace.CreatePowershellCommand()
-	defer command.Delete()
-
-	// fields, ok := shell.Split(commandStr)
-	// if !ok {
-	// 	panic("command was invalid {" + commandStr + "}")
-	// }
-
-	if strings.HasSuffix(commandStr, ".ps1") {
-		command.AddCommand(commandStr, *useLocalScope)
-	} else {
-		command.AddScript(commandStr, *useLocalScope)
-	}
-	// for i := 1; i < len(fields); i++ {
-	// 	command.AddArgument(fields[i])
-	// }
-	command.Invoke()
-}
-
 // Example on how to use powershell wrappers
 func Example() {
-	C.InitLibraryHelper()
 	runspace := CreateRunspace()
 	defer runspace.Delete()
 
 	for i := 0; i < len(commandFlags); i++ {
 		commandFlags[i] = strings.ReplaceAll(commandFlags[i], "\\", "\\\\")
-		runspace.ExecStr(commandFlags[i])
+		runspace.ExecStr(commandFlags[i], *useLocalScope)
 	}
 }
 

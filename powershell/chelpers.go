@@ -1,4 +1,4 @@
-package main
+package powershell
 
 // "bitbucket.org/creachadair/shell"
 import (
