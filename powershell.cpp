@@ -67,7 +67,7 @@ const wchar_t* MallocCopy(const wchar_t* str)
 
     void Logger(const wchar_t* s)
     {
-        LogWchart((wchar_t *)s);
+        logWchart((wchar_t *)s);
         //printf("My Member Logger: %ws\n", s);
     }
     const wchar_t* Command(const wchar_t* s)
