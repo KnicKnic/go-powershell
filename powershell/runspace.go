@@ -13,18 +13,33 @@ package powershell
 
 */
 import "C"
+import "unsafe"
 
 func init() {
 	C.InitLibraryHelper()
 }
 
+type CallbackHolder struct{}
+
+type Context struct {
+	Log      LogHolder
+	Callback CallbackHolder
+}
+
 type Runspace struct {
-	handle C.RunspaceHandle
+	handle     C.RunspaceHandle
+	contextRef unsafe.Pointer
 }
 
 // CreateRunspace think of this kinda like a shell
 func CreateRunspace() Runspace {
-	return Runspace{C.CreateRunspaceHelper()}
+	return Runspace{C.CreateRunspaceHelper(nullptr, nullptr)}
+}
+
+// CreateRunspace think of this kinda like a shell
+func CreateRunspace2(simpleOrFull LoggerSimple) Runspace {
+	context := Context{MakeLogHolder(LoggerSimple), CallbackHolder{}}
+	return Runspace{C.CreateRunspaceHelper(), context}
 }
 
 // Delete and free a Runspace
