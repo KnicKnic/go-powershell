@@ -37,8 +37,38 @@ func makeString(str *C.wchar_t) string {
 	return s
 }
 
+func makeCString(str string) *C.wchar_t {
+	cs, _ := windows.UTF16PtrFromString(str)
+	ptrwchar := unsafe.Pointer(cs)
+	return C.MallocCopy(C.MakeWchar(ptrwchar))
+
+}
+
 //export logWchart
-func logWchart(str *C.wchar_t) {
-	s := makeString(str)
-	glog.Info(s)
+func logWchart(context uintptr, str *C.wchar_t) {
+	if context != uintptr(0) {
+		s := makeString(str)
+		// glog.Info("golang log: ", s)
+		
+		var realContext *Context = (*Context)(unsafe.Pointer(context))
+		realContext.Log.Log.Verbose(s)
+	}
+}
+
+//export commandWchart
+func commandWchart(context uintptr, str *C.wchar_t) *C.wchar_t {
+	if context != uintptr(0) {
+		var realContext *Context = (*Context)(unsafe.Pointer(context))
+		s := makeString(str)
+		ret := realContext.Callback.Callback(s)
+		return makeCString(ret)
+	}
+	return C.MallocCopy(str)
+}
+
+type callbackTest struct{}
+
+func (c callbackTest) Callback(s string) string {
+	glog.Info("In callback: ", s)
+	return "returned from callback: " + s
 }

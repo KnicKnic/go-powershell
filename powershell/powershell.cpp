@@ -42,11 +42,18 @@ wchar_t GetChar(wchar_t *t, int offset){
     return t[offset];
 }
 
-    unsigned char* MallocWrapper(unsigned long long size) {
-        return (unsigned char*)malloc(size);
+    unsigned char *MallocWrapper(unsigned long long size)
+    {
+        auto ptr = (unsigned char *)malloc(size);
+        if (ptr == nullptr)
+        {
+            throw "memory alloc returned nullptr";
+        }
+        return ptr;
     }
-    void FreeWrapper(void *ptr){
-        return free(ptr);
+void FreeWrapper(void *ptr)
+{
+    return free(ptr);
     }
 
 void InitLibraryHelper(){
@@ -62,24 +69,27 @@ const wchar_t* MallocCopy(const wchar_t* str)
     for (; str[s] != '\0'; ++s) {
     }
     ++s;
-    wchar_t* dest = (wchar_t*)malloc(s * sizeof(str[0]));
+    wchar_t* dest = (wchar_t*)MallocWrapper(s * sizeof(str[0]));
      MemoryCopy(dest, (wchar_t *)str, s*2);
     return (const wchar_t*)dest;
 }
 
-    void Logger(void *, const wchar_t* s)
+    void Logger(void *context, const wchar_t* s)
     {
-        logWchart((wchar_t *)s);
+        logWchart((unsigned long long )context, (wchar_t *)s);
         //printf("My Member Logger: %ws\n", s);
     }
-    const wchar_t* Command(void *, const wchar_t* s)
+    const wchar_t* Command(void *context, const wchar_t* s)
     {
-        printf("My Member Logger: %ws\n", s);
-        std::wstring testChangingCommand = std::wstring(L"modified by golang: ") + std::wstring(s);
+        auto ptr = commandWchart((unsigned long long) context, (wchar_t *)s);
+        // printf("My Member Logger: %ws\n", s);
+        // std::wstring testChangingCommand = std::wstring(L"modified by golang: ") + std::wstring(s);
 
-        return MallocCopy(testChangingCommand.c_str());
+        // return MallocCopy(testChangingCommand.c_str());
+        return ptr;
     }
 
-RunspaceHandle CreateRunspaceHelper(){
-    return CreateRunspace(nullptr, Command, Logger);
+RunspaceHandle CreateRunspaceHelper(void * context){
+    return CreateRunspace(context, Command, Logger);
+    // return CreateRunspace(nullptr, Command, Logger);
 }

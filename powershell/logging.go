@@ -1,5 +1,7 @@
 package powershell
 
+import "github.com/golang/glog"
+
 type LoggerFull interface {
 	Warning(args ...interface{})
 	Information(args ...interface{})
@@ -91,4 +93,11 @@ func (log SimpleToFull) Errorln(args ...interface{}) {
 }
 func (log SimpleToFull) Writeln(args ...interface{}) {
 	log.Write(AddInterfaceFront('\n', args...))
+}
+
+type GLogInfoLogger struct {
+}
+
+func (logger GLogInfoLogger) Write(args ...interface{}) {
+	glog.Info(args...)
 }
