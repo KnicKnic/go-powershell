@@ -65,17 +65,17 @@ const wchar_t* MallocCopy(const wchar_t* str)
     return (const wchar_t*)dest;
 }
 
-    void Logger(const wchar_t* s)
+    void Logger(void *, const wchar_t* s)
     {
         logWchart((wchar_t *)s);
         //printf("My Member Logger: %ws\n", s);
     }
-    const wchar_t* Command(const wchar_t* s)
+    const wchar_t* Command(void *, const wchar_t* s)
     {
         printf("My Member Logger: %ws\n", s);
         return MallocCopy(s);
     }
 
 RunspaceHandle CreateRunspaceHelper(){
-    return CreateRunspace(Command, Logger);
+    return CreateRunspace(nullptr, Command, Logger);
 }

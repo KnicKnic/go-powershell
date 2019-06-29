@@ -9,7 +9,9 @@ copy /y ..\native-powershell\x64\Release\psh_host.dll .
 
 
 copy /y ..\psh_host\host.h .
+copy /y ..\psh_host\host.h .\powershell\
 copy /y ..\psh_host\x64\Release\psh_host.dll .
+copy /y ..\psh_host\x64\Release\psh_host.dll .\powershell\
 copy /y ..\psh_host\x64\Debug\psh_host.dll .
 
 .\go-net.exe -logtostderr a
