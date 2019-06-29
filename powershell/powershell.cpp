@@ -6,6 +6,8 @@
 #include <stdlib.h>
 #include "sys/types.h"
 #include "_cgo_export.h"
+
+#include <string>
 // #include <metahost.h>
 // #pragma comment(lib, "mscoree.lib")
 
@@ -73,7 +75,9 @@ const wchar_t* MallocCopy(const wchar_t* str)
     const wchar_t* Command(void *, const wchar_t* s)
     {
         printf("My Member Logger: %ws\n", s);
-        return MallocCopy(s);
+        std::wstring testChangingCommand = std::wstring(L"modified by golang: ") + std::wstring(s);
+
+        return MallocCopy(testChangingCommand.c_str());
     }
 
 RunspaceHandle CreateRunspaceHelper(){
