@@ -13,7 +13,10 @@ package powershell
 
 */
 import "C"
-import "unsafe"
+import (
+	"sync"
+	"sync/atomic"
+)
 
 func init() {
 	C.InitLibraryHelper()
@@ -29,17 +32,26 @@ type Context struct {
 }
 
 type Runspace struct {
-	handle     C.RunspaceHandle
-	context    *Context
-	contextRef unsafe.Pointer
+	handle        C.RunspaceHandle
+	context       Context
+	contextLookup uint64
 }
+
+//
+// the goal around context cache is to get around golang's problem of not being able to
+// marshal to cgo a golang pointer to a golang pointer.
+//
+var contextCache sync.Map
+var contextLookupKey uint64 = 0
 
 // CreateRunspace think of this kinda like a shell
 func CreateRunspace() Runspace {
-	context := &Context{MakeLogHolder(GLogInfoLogger{}), callbackTest{}}
-	unsafeContext := unsafe.Pointer(context)
-	runspace := C.CreateRunspaceHelper(unsafeContext)
-	return Runspace{runspace, context, unsafeContext}
+	contextLookup := atomic.AddUint64(&contextLookupKey, 1)
+	context := Context{MakeLogHolder(GLogInfoLogger{}), callbackTest{}}
+	contextCache.Store(contextLookup, context)
+
+	runspace := C.CreateRunspaceHelper(C.ulonglong(contextLookup))
+	return Runspace{runspace, context, contextLookup}
 }
 
 // CreateRunspace think of this kinda like a shell
@@ -50,5 +62,6 @@ func CreateRunspace() Runspace {
 
 // Delete and free a Runspace
 func (runspace Runspace) Delete() {
+	contextCache.Delete(runspace.contextLookup)
 	C.DeleteRunspace(runspace.handle)
 }

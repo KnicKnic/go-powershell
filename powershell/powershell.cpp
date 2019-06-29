@@ -89,7 +89,7 @@ const wchar_t* MallocCopy(const wchar_t* str)
         return ptr;
     }
 
-RunspaceHandle CreateRunspaceHelper(void * context){
-    return CreateRunspace(context, Command, Logger);
+RunspaceHandle CreateRunspaceHelper(unsigned long long context){
+    return CreateRunspace((void*)context, Command, Logger);
     // return CreateRunspace(nullptr, Command, Logger);
 }

@@ -69,7 +69,7 @@ func (log SimpleToFull) Error(args ...interface{}) {
 	log.Write(Make2ArgInterface("Error: ", args...))
 }
 func (log SimpleToFull) Write(args ...interface{}) {
-	log.Write(args...)
+	log.simple.Write(args...)
 }
 
 func ArgsWithNewLine(level interface{}, args ...interface{}) []interface{} {

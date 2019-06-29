@@ -23,7 +23,7 @@ const wchar_t* MallocCopy(const wchar_t* str);
 
     void Logger(const wchar_t* s);
 
-RunspaceHandle CreateRunspaceHelper(void *);
+RunspaceHandle CreateRunspaceHelper(unsigned long long);
 
 #ifdef __cplusplus
 }

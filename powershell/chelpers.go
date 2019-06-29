@@ -45,23 +45,33 @@ func makeCString(str string) *C.wchar_t {
 }
 
 //export logWchart
-func logWchart(context uintptr, str *C.wchar_t) {
-	if context != uintptr(0) {
+func logWchart(context uint64, str *C.wchar_t) {
+	if context != 0 {
 		s := makeString(str)
 		// glog.Info("golang log: ", s)
-		
-		var realContext *Context = (*Context)(unsafe.Pointer(context))
-		realContext.Log.Log.Verbose(s)
+
+		contextInterface, ok := contextCache.Load(context)
+		if ok {
+			contextInterface.(Context).Log.Log.Verbose(s)
+		} else {
+			glog.Info("In Logging callback, failed to load context key: ", context)
+		}
 	}
 }
 
 //export commandWchart
-func commandWchart(context uintptr, str *C.wchar_t) *C.wchar_t {
-	if context != uintptr(0) {
-		var realContext *Context = (*Context)(unsafe.Pointer(context))
-		s := makeString(str)
-		ret := realContext.Callback.Callback(s)
-		return makeCString(ret)
+func commandWchart(context uint64, str *C.wchar_t) *C.wchar_t {
+
+	if context != 0 {
+		contextInterface, ok := contextCache.Load(context)
+		if ok {
+			s := makeString(str)
+			ret := contextInterface.(Context).Callback.Callback(s)
+			return makeCString(ret)
+		} else {
+			glog.Info("In Command callback, failed to load context key: ", context)
+			return C.MallocCopy(str)
+		}
 	}
 	return C.MallocCopy(str)
 }
