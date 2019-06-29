@@ -50,9 +50,9 @@ func logWchart(context uint64, str *C.wchar_t) {
 		s := makeString(str)
 		// glog.Info("golang log: ", s)
 
-		contextInterface, ok := contextCache.Load(context)
+		contextInterface, ok := GetRunspaceContext(context)
 		if ok {
-			contextInterface.(Context).Log.Log.Verbose(s)
+			contextInterface.Log.Log.Verbose(s)
 		} else {
 			glog.Info("In Logging callback, failed to load context key: ", context)
 		}
@@ -63,10 +63,10 @@ func logWchart(context uint64, str *C.wchar_t) {
 func commandWchart(context uint64, str *C.wchar_t) *C.wchar_t {
 
 	if context != 0 {
-		contextInterface, ok := contextCache.Load(context)
+		contextInterface, ok := GetRunspaceContext(context)
 		if ok {
 			s := makeString(str)
-			ret := contextInterface.(Context).Callback.Callback(s)
+			ret := contextInterface.Callback.Callback(s)
 			return makeCString(ret)
 		} else {
 			glog.Info("In Command callback, failed to load context key: ", context)
