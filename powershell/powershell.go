@@ -22,10 +22,6 @@ type PowershellCommand struct {
 	handle C.PowershellHandle
 }
 
-type PowershellObject struct {
-	handle uint64
-}
-
 type InvokeResults struct {
 	objects   []PowershellObject
 	count     uint32

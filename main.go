@@ -10,9 +10,19 @@ import (
 	"github.com/golang/glog"
 )
 
+type callbackTest struct{}
+
+func (c callbackTest) Callback(str string, input []PowershellObject, results CallbackResultsWriter) {
+	glog.Info("In callback: ", str)
+	results.WriteString(str)
+	for _, object := range input {
+		results.Write(object)
+	}
+}
+
 // Example on how to use powershell wrappers
 func Example() {
-	runspace := CreateRunspace()
+	runspace := CreateRunspace(GLogInfoLogger{}, callbackTest{})
 	defer runspace.Delete()
 
 	for i := 0; i < len(commandFlags); i++ {

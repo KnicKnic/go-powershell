@@ -30,8 +30,8 @@ type Runspace struct {
 }
 
 // CreateRunspace think of this kinda like a shell
-func CreateRunspace() Runspace {
-	context := Context{MakeLogHolder(GLogInfoLogger{}), callbackTest{}}
+func CreateRunspace(logger LoggerSimple, callback CallbackHolder) Runspace {
+	context := Context{MakeLogHolder(logger), callback}
 	contextLookup := StoreRunspaceContext(context)
 
 	runspace := C.CreateRunspaceHelper(C.ulonglong(contextLookup))

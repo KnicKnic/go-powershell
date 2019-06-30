@@ -82,14 +82,3 @@ func commandWchart(context uint64, cMessage *C.wchar_t, input *C.PowerShellObjec
 	var resultsWriter callbackResultsWriter
 	resultsWriter.filloutResults(ret)
 }
-
-type callbackTest struct{}
-
-func (c callbackTest) Callback(str string, input []PowershellObject, results CallbackResultsWriter) {
-	glog.Info("In callback: ", str)
-	results.WriteString(str)
-	for _, object := range input {
-		results.Write(object)
-	}
-	// 	return "returned from callback: " + s
-}
