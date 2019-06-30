@@ -60,25 +60,36 @@ func logWchart(context uint64, str *C.wchar_t) {
 }
 
 //export commandWchart
-func commandWchart(context uint64, str *C.wchar_t) *C.wchar_t {
+func commandWchart(context uint64, cMessage *C.wchar_t, input *C.PowerShellObject, inputCount uint64, ret *C.JsonReturnValues) {
 
 	if context != 0 {
 		contextInterface, ok := GetRunspaceContext(context)
 		if ok {
-			s := makeString(str)
-			ret := contextInterface.Callback.Callback(s)
-			return makeCString(ret)
+			inputArr := make([]PowershellObject, inputCount)
+			for i := uint32(0); uint64(i) < inputCount; i++ {
+				inputArr[i] = makePowerShellObjectIndexed(input, i)
+			}
+			message := makeString(cMessage)
+			var resultsWriter callbackResultsWriter
+			contextInterface.Callback.Callback(message, inputArr, &resultsWriter)
+			// resultsWriter = callbackResultsWriter{}
+			resultsWriter.filloutResults(ret)
+			return
 		} else {
 			glog.Info("In Command callback, failed to load context key: ", context)
-			return C.MallocCopy(str)
 		}
 	}
-	return C.MallocCopy(str)
+	var resultsWriter callbackResultsWriter
+	resultsWriter.filloutResults(ret)
 }
 
 type callbackTest struct{}
 
-func (c callbackTest) Callback(s string) string {
-	glog.Info("In callback: ", s)
-	return "returned from callback: " + s
+func (c callbackTest) Callback(str string, input []PowershellObject, results CallbackResultsWriter) {
+	glog.Info("In callback: ", str)
+	results.WriteString(str)
+	for _, object := range input {
+		results.Write(object)
+	}
+	// 	return "returned from callback: " + s
 }

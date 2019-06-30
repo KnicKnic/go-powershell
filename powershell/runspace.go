@@ -18,10 +18,6 @@ func init() {
 	C.InitLibraryHelper()
 }
 
-type CallbackHolder interface {
-	Callback(str string) string
-}
-
 type Context struct {
 	Log      LogHolder
 	Callback CallbackHolder

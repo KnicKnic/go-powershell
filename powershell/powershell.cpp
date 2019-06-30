@@ -59,6 +59,12 @@ void FreeWrapper(void *ptr)
 void InitLibraryHelper(){
     InitLibrary(MallocWrapper, free);
 }
+GenericPowershellObject * MallocCopyGenericPowershellObject(GenericPowershellObject* input, unsigned long long inputCount){
+    
+    GenericPowershellObject* dest = (GenericPowershellObject*)MallocWrapper(inputCount * sizeof(input[0]));
+    memcpy(dest, (GenericPowershellObject *)input, inputCount*sizeof(input[0]));
+    return dest;
+}
 
 const wchar_t* MallocCopy(const wchar_t* str)
 {
@@ -70,7 +76,7 @@ const wchar_t* MallocCopy(const wchar_t* str)
     }
     ++s;
     wchar_t* dest = (wchar_t*)MallocWrapper(s * sizeof(str[0]));
-     MemoryCopy(dest, (wchar_t *)str, s*2);
+    memcpy(dest, (wchar_t *)str, s*sizeof(str[0]));
     return (const wchar_t*)dest;
 }
 
@@ -79,17 +85,25 @@ const wchar_t* MallocCopy(const wchar_t* str)
         logWchart((unsigned long long )context, (wchar_t *)s);
         //printf("My Member Logger: %ws\n", s);
     }
-    const wchar_t* Command(void *context, const wchar_t* s)
-    {
-        auto ptr = commandWchart((unsigned long long) context, (wchar_t *)s);
-        // printf("My Member Logger: %ws\n", s);
-        // std::wstring testChangingCommand = std::wstring(L"modified by golang: ") + std::wstring(s);
-
-        // return MallocCopy(testChangingCommand.c_str());
-        return ptr;
+    void Command(void *context, const wchar_t* s, PowerShellObject* input, unsigned long long inputCount, JsonReturnValues * returnValues)
+    {        
+        commandWchart((unsigned long long) context, (wchar_t *)s, input, inputCount, returnValues);
     }
 
 RunspaceHandle CreateRunspaceHelper(unsigned long long context){
     return CreateRunspace((void*)context, Command, Logger);
     // return CreateRunspace(nullptr, Command, Logger);
+}
+
+
+void SetGenericPowershellString(GenericPowershellObject* object, wchar_t *value, char autoRelease){
+    object->type = PowershellObjectTypeString;
+    object->instance.string = value;
+    object->releaseObject = autoRelease;
+}
+
+void SetGenericPowershellHandle(GenericPowershellObject* object, unsigned long long value,char autoRelease){
+    object->type = PowershellObjectHandle;
+    object->instance.psObject = (PowerShellObject) value;
+    object->releaseObject = autoRelease;
 }
