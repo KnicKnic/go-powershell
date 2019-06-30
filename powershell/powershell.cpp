@@ -107,12 +107,3 @@ void SetGenericPowershellHandle(GenericPowershellObject* object, unsigned long l
     object->instance.psObject = (PowerShellObject) value;
     object->releaseObject = autoRelease;
 }
-
-
-void CClosePowerShellObject(unsigned long long handle){
-    ClosePowerShellObject((PowerShellObject) handle);
-}
-
-unsigned long long ClonePowerShellObject(unsigned long long handle){
-    return (unsigned long long)AddPSObjectHandle((PowerShellObject) handle);
-}

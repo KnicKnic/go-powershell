@@ -16,7 +16,7 @@ import "C"
 
 type CallbackResultsWriter interface {
 	WriteString(string)
-	Write(object PowershellObject)
+	Write(object PowershellObject, needsClose bool)
 }
 type CallbackHolder interface {
 	Callback(str string, input []PowershellObject, results CallbackResultsWriter)
@@ -33,9 +33,13 @@ func (writer *callbackResultsWriter) WriteString(str string) {
 	writer.objects = append(writer.objects, obj)
 }
 
-func (writer *callbackResultsWriter) Write(handle PowershellObject) {
+func (writer *callbackResultsWriter) Write(handle PowershellObject, needsClose bool) {
 	var obj C.GenericPowershellObject
-	C.SetGenericPowershellHandle(&obj, C.ulonglong(handle.handle), C.char(1))
+	var autoClose C.char = C.char(1)
+	if needsClose {
+		autoClose = 1
+	}
+	C.SetGenericPowershellHandle(&obj, C.ulonglong(handle.handle), autoClose)
 	writer.objects = append(writer.objects, obj)
 }
 

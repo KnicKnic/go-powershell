@@ -15,8 +15,12 @@ type callbackTest struct{}
 func (c callbackTest) Callback(str string, input []PowershellObject, results CallbackResultsWriter) {
 	glog.Info("In callback: ", str)
 	results.WriteString(str)
-	for _, object := range input {
-		results.Write(object)
+	for i, object := range input {
+		if object.IsNull() {
+			glog.Info("In callback: index ", i, " Object Is Null: ") // ToString and Type are still valid
+		}
+		glog.Info("In callback: index ", i, " type: ", object.Type(), " with value: ", object.ToString())
+		results.Write(object, false)
 	}
 }
 

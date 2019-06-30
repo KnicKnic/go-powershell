@@ -29,8 +29,6 @@ RunspaceHandle CreateRunspaceHelper(unsigned long long);
 void SetGenericPowershellString(GenericPowershellObject* object, wchar_t *value,char autoRelease);
 void SetGenericPowershellHandle(GenericPowershellObject* object, unsigned long long handle,char autoRelease);
 
-void CClosePowerShellObject(unsigned long long handle);
-unsigned long long ClonePowerShellObject(unsigned long long handle);
 #ifdef __cplusplus
 }
 #endif
