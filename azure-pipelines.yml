@@ -44,10 +44,14 @@ steps:
       copy native-powershell\host.h .\powershell\ ;
       copy native-powershell\x64\Release\psh_host.dll . ;
       copy native-powershell\x64\Release\psh_host.dll .\powershell\ ;
+      mkdir c:\go_tmp;
+      $env:GOPATH="c:\go_tmp";
       $env:GOBIN=$env:GOPATH + "\bin";
       write-host $env:GOBIN $pwd $env:GOPATH $env:GOROOT;
+      dir . ;
       go get . ;
-      go build . ;'
+      go build -o test.exe .;
+      dir .;'
 - task: CopyFiles@2
   inputs:
     sourceFolder: '$(Build.SourcesDirectory)'
@@ -57,3 +61,8 @@ steps:
   inputs:
     pathtoPublish: '$(Build.ArtifactStagingDirectory)'
     artifactName: drop
+# run tests
+- task: PowerShell@2
+  inputs:
+    targetType: 'inline'
+    script: '.\test.exe -command .\\tests\t1.ps1 -command .\\tests\\t2.ps1 -logtostderr'
