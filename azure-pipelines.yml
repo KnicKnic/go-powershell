@@ -11,14 +11,13 @@ pool:
 
 variables:
   solution: '**/*.sln'
-  buildPlatform: 'Any CPU'
+  buildPlatform: 'x64'
   buildConfiguration: 'Release'
 
 steps:
 - checkout: self
   submodules: true
 
-steps:
 - task: NuGetToolInstaller@0
 
 - task: NuGetCommand@2
@@ -35,3 +34,26 @@ steps:
   inputs:
     platform: '$(buildPlatform)'
     configuration: '$(buildConfiguration)'
+
+- task: PowerShell@2
+  inputs:
+    targetType: 'inline'
+    script: 'choco install -y golang ;
+      choco install -y mingw ;
+      refreshenv ;
+      copy native-powershell\host.h .\powershell\ ;
+      copy native-powershell\x64\Release\psh_host.dll . ;
+      copy native-powershell\x64\Release\psh_host.dll .\powershell\ ;
+      $env:GOBIN=$env:GOPATH + "\bin";
+      write-host $env:GOBIN $pwd $env:GOPATH $env:GOROOT;
+      go get . ;
+      go build . ;'
+- task: CopyFiles@2
+  inputs:
+    sourceFolder: '$(Build.SourcesDirectory)'
+    contents: '**/$(BuildConfiguration)/**/?(*.exe|*.dll|*.pdb)'
+    TargetFolder: '$(Build.ArtifactStagingDirectory)'
+- task: PublishBuildArtifacts@1
+  inputs:
+    pathtoPublish: '$(Build.ArtifactStagingDirectory)'
+    artifactName: drop
