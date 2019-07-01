@@ -14,11 +14,12 @@ import "C"
 import "unsafe"
 
 type PowershellObject struct {
-	handle uint64
+	handle C.PowerShellObject
 }
 
 func (obj PowershellObject) toCHandle() C.PowerShellObject {
-	return *((*C.PowerShellObject)(unsafe.Pointer(&obj.handle)))
+	// return *((*C.PowerShellObject)(unsafe.Pointer(&obj.handle)))
+	return obj.handle
 }
 
 func (obj PowershellObject) Close() {

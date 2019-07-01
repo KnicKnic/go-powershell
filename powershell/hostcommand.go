@@ -39,7 +39,7 @@ func (writer *callbackResultsWriter) Write(handle PowershellObject, needsClose b
 	if needsClose {
 		autoClose = 1
 	}
-	C.SetGenericPowershellHandle(&obj, C.ulonglong(handle.handle), autoClose)
+	C.SetGenericPowershellHandle(&obj, handle.toCHandle(), autoClose)
 	writer.objects = append(writer.objects, obj)
 }
 
