@@ -1,3 +1,5 @@
+[![Build Status](https://dev.azure.com/oneeyedelf1/powershell.native/_apis/build/status/KnicKnic.go-powershell?branchName=master)](https://dev.azure.com/oneeyedelf1/powershell.native/_build/latest?definitionId=3&branchName=master)
+
 # Status
 This project is currently not really suitable for consumption. It does work(can call scripts, communicate from golang to powershell, and powershell back to golang). However it is under production. Come back in a few weeks. You can always email me if you are interested.
 
