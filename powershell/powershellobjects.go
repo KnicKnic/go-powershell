@@ -32,7 +32,7 @@ func (obj PowershellObject) AddRef() PowershellObject {
 }
 
 func (obj PowershellObject) IsNull() bool {
-	return C.IsPSObjectNullptr(obj.toCHandle()) == C.char(1)
+	return C.IsPSObjectNullptr(obj.toCHandle()) == 1
 }
 
 func (obj PowershellObject) Type() string {

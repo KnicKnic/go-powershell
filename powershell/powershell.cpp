@@ -27,11 +27,18 @@ void FreeWrapper(void *ptr)
 void InitLibraryHelper(){
     InitLibrary(MallocWrapper, free);
 }
-GenericPowershellObject * MallocCopyGenericPowershellObject(GenericPowershellObject* input, unsigned long long inputCount){
-    
-    GenericPowershellObject* dest = (GenericPowershellObject*)MallocWrapper(inputCount * sizeof(input[0]));
-    memcpy(dest, (GenericPowershellObject *)input, inputCount*sizeof(input[0]));
+
+void * MallocCopyGeneric(const void * input, unsigned long long byteCount ){
+    if(input == nullptr){
+        return nullptr;
+    }
+    void* dest = MallocWrapper(byteCount);
+    memcpy(dest, input, byteCount);
     return dest;
+}
+
+GenericPowershellObject * MallocCopyGenericPowershellObject(GenericPowershellObject* input, unsigned long long inputCount){
+    return (GenericPowershellObject *)MallocCopyGeneric(input, inputCount * sizeof(input[0]));
 }
 
 const wchar_t* MallocCopy(const wchar_t* str)
@@ -39,13 +46,8 @@ const wchar_t* MallocCopy(const wchar_t* str)
     if (str == NULL)
         return NULL;
 
-    size_t s = 0;
-    for (; str[s] != '\0'; ++s) {
-    }
-    ++s;
-    wchar_t* dest = (wchar_t*)MallocWrapper(s * sizeof(str[0]));
-    memcpy(dest, (wchar_t *)str, s*sizeof(str[0]));
-    return (const wchar_t*)dest;
+    size_t s = wcslen(str) + 1;
+    return (const wchar_t *)MallocCopyGeneric(str, s * sizeof(str[0]));
 }
 
     void Logger(void *context, const wchar_t* s)

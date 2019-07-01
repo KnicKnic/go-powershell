@@ -29,13 +29,13 @@ type callbackResultsWriter struct {
 func (writer *callbackResultsWriter) WriteString(str string) {
 	cStr := makeCString(str)
 	var obj C.GenericPowershellObject
-	C.SetGenericPowershellString(&obj, cStr, C.char(1))
+	C.SetGenericPowershellString(&obj, cStr, 1)
 	writer.objects = append(writer.objects, obj)
 }
 
 func (writer *callbackResultsWriter) Write(handle PowershellObject, needsClose bool) {
 	var obj C.GenericPowershellObject
-	var autoClose C.char = C.char(1)
+	var autoClose C.char = 0
 	if needsClose {
 		autoClose = 1
 	}
