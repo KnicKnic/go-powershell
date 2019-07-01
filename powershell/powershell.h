@@ -27,7 +27,7 @@ const wchar_t* MallocCopy(const wchar_t* str);
 RunspaceHandle CreateRunspaceHelper(unsigned long long);
 
 void SetGenericPowershellString(GenericPowershellObject* object, wchar_t *value,char autoRelease);
-void SetGenericPowershellHandle(GenericPowershellObject* object, unsigned long long handle,char autoRelease);
+void SetGenericPowershellHandle(GenericPowershellObject* object, PowerShellObject handle,char autoRelease);
 
 #ifdef __cplusplus
 }

@@ -90,13 +90,14 @@ func makePowerShellObjectIndexed(objects *C.PowerShellObject, index uint32) Powe
 	// I don't get why I have to use unsafe.Pointer on C memory
 	ptr := uintptr(unsafe.Pointer(objects))
 	handle := ptr + (uintptr(index) * unsafe.Sizeof(*objects))
-	var obj uint64 = *(*uint64)(unsafe.Pointer(handle))
-	return PowershellObject{obj}
+	var obj C.PowerShellObject = *(*C.PowerShellObject)(unsafe.Pointer(handle))
+	return makePowerShellObject(obj)
 }
 
 func makePowerShellObject(object C.PowerShellObject) PowershellObject {
-	var obj uint64 = *(*uint64)(unsafe.Pointer(&object))
-	return PowershellObject{obj}
+	// var obj uint64 = *(*uint64)(unsafe.Pointer(&object))
+	// return PowershellObject{obj}
+	return PowershellObject{object}
 }
 
 func makeInvokeResults(objects *C.PowerShellObject, count C.uint, exception C.PowerShellObject) (results InvokeResults) {
