@@ -29,6 +29,23 @@ type Runspace struct {
 	contextLookup uint64
 }
 
+type emptyLogger struct {
+}
+
+func (emptyLogger) Write(args ...interface{}) {
+}
+
+type emptyCallback struct {
+}
+
+func (emptyCallback) Callback(string, []PowershellObject, CallbackResultsWriter) {
+}
+
+// CreateRunspace think of this kinda like a shell
+func CreateRunspaceSimple() Runspace {
+	return CreateRunspace(emptyLogger{}, emptyCallback{})
+}
+
 // CreateRunspace think of this kinda like a shell
 func CreateRunspace(logger LoggerSimple, callback CallbackHolder) Runspace {
 	context := Context{MakeLogHolder(logger), callback}

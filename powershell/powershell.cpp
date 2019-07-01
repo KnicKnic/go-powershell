@@ -8,39 +8,7 @@
 #include "_cgo_export.h"
 
 #include <string>
-// #include <metahost.h>
-// #pragma comment(lib, "mscoree.lib")
 
-// ICLRMetaHost       *pMetaHost       = NULL;
-// ICLRMetaHostPolicy *pMetaHostPolicy = NULL;
-// ICLRDebugging      *pCLRDebugging   = NULL;
-
-void myprint(void* unknown) {
-    wchar_t* s = (wchar_t*)unknown;
-// HRESULT hr = CLRCreateInstance(&CLSID_CLRMetaHost, &IID_ICLRMetaHost,
-//                     (LPVOID*)&pMetaHost);
-	printf("\n%ws, old_main %d\n", s);
-}
-
-wchar_t * MakeWchar(void *unknown){
-	wchar_t* s = (wchar_t*)unknown;;
-	return s;
-}
-
-void MemoryCopy(void * dest, wchar_t * src, int size){
-    for (int i=0; i<size/2;++i) {
-        ((wchar_t*)dest)[i] = ((wchar_t*)src)[i];
-    }
-    // memcpy(dest, src,size);
-}
-
-wchar_t MakeNullTerminator(){
-    return L'\0';
-}
-
-wchar_t GetChar(wchar_t *t, int offset){
-    return t[offset];
-}
 
     unsigned char *MallocWrapper(unsigned long long size)
     {

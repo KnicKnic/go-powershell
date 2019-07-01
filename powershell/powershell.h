@@ -4,13 +4,7 @@
 #ifdef __cplusplus
 extern "C" {
 #endif
-void myprint(void* unknown) ;
 
-wchar_t * MakeWchar(void *unknown);
-
-void MemoryCopy(void * dest, wchar_t * src, int size);
-
-wchar_t MakeNullTerminator();
 
 wchar_t GetChar(wchar_t *t, int offset);
 

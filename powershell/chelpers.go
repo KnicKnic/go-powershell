@@ -16,22 +16,19 @@ import (
 
 
 #include <stddef.h>
+#include <string.h>
 #include "powershell.h"
 
 */
 import "C"
 
 func makeString(str *C.wchar_t) string {
-	var count C.int = 0
-	var zero C.wchar_t = C.MakeNullTerminator()
-	for ; C.GetChar(str, count) != zero; count++ {
-	}
-	count++
+	ptr := unsafe.Pointer(str)
+	count := C.wcslen(str) + 1
 	arr := make([]uint16, count)
-	arrPtr := &arr[0]
-	ptrwchar := unsafe.Pointer(arrPtr)
+	ptrwchar := unsafe.Pointer(&arr[0])
 
-	C.MemoryCopy(ptrwchar, str, count*2)
+	C.memcpy(ptrwchar, ptr, count*2)
 
 	s := windows.UTF16ToString(arr)
 	return s
@@ -40,7 +37,7 @@ func makeString(str *C.wchar_t) string {
 func makeCString(str string) *C.wchar_t {
 	cs, _ := windows.UTF16PtrFromString(str)
 	ptrwchar := unsafe.Pointer(cs)
-	return C.MallocCopy(C.MakeWchar(ptrwchar))
+	return C.MallocCopy((*C.wchar_t)(ptrwchar))
 
 }
 

@@ -45,10 +45,10 @@ func (command PowershellCommand) AddCommand(commandlet string, useLocalScope boo
 	ptrwchar := unsafe.Pointer(cs)
 
 	if useLocalScope {
-		_ = C.AddCommandSpecifyScope(command.handle, C.MakeWchar(ptrwchar), 1)
+		_ = C.AddCommandSpecifyScope(command.handle, (*C.wchar_t)(ptrwchar), 1)
 
 	} else {
-		_ = C.AddCommandSpecifyScope(command.handle, C.MakeWchar(ptrwchar), 0)
+		_ = C.AddCommandSpecifyScope(command.handle, (*C.wchar_t)(ptrwchar), 0)
 
 	}
 }
@@ -60,10 +60,10 @@ func (command PowershellCommand) AddScript(script string, useLocalScope bool) {
 	ptrwchar := unsafe.Pointer(cs)
 
 	if useLocalScope {
-		_ = C.AddScriptSpecifyScope(command.handle, C.MakeWchar(ptrwchar), 1)
+		_ = C.AddScriptSpecifyScope(command.handle, (*C.wchar_t)(ptrwchar), 1)
 
 	} else {
-		_ = C.AddScriptSpecifyScope(command.handle, C.MakeWchar(ptrwchar), 0)
+		_ = C.AddScriptSpecifyScope(command.handle, (*C.wchar_t)(ptrwchar), 0)
 
 	}
 }
@@ -74,7 +74,7 @@ func (command PowershellCommand) AddArgument(argument string) {
 
 	ptrwchar := unsafe.Pointer(cs)
 
-	_ = C.AddArgument(command.handle, C.MakeWchar(ptrwchar))
+	_ = C.AddArgument(command.handle, (*C.wchar_t)(ptrwchar))
 }
 
 // Invoke the powershell command, do not reuse afterwards
