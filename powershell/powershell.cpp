@@ -70,8 +70,8 @@ void SetGenericPowershellString(GenericPowershellObject* object, wchar_t *value,
     object->releaseObject = autoRelease;
 }
 
-void SetGenericPowershellHandle(GenericPowershellObject* object, unsigned long long value,char autoRelease){
+void SetGenericPowershellHandle(GenericPowershellObject* object, PowerShellObject value,char autoRelease){
     object->type = PowershellObjectHandle;
-    object->instance.psObject = (PowerShellObject) value;
+    object->instance.psObject = value;
     object->releaseObject = autoRelease;
 }
