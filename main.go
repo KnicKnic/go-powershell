@@ -13,8 +13,8 @@ import (
 type fmtPrintLogger struct {
 }
 
-func (logger fmtPrintLogger) Write(args ...interface{}) {
-	fmt.Print("\tIn Logging : ", fmt.Sprint(args...))
+func (logger fmtPrintLogger) Write(arg string) {
+	fmt.Print("\tIn Logging : ", arg)
 }
 
 type callbackTest struct{}
