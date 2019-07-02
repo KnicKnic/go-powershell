@@ -12,20 +12,20 @@ import (
 var contextCache sync.Map
 var contextLookupKey uint64 = 0
 
-func StoreRunspaceContext(context Context) uint64 {
+func storeRunspaceContext(context runspaceContext) uint64 {
 	contextLookup := atomic.AddUint64(&contextLookupKey, 1)
 	contextCache.Store(contextLookup, context)
 	return contextLookup
 }
-func GetRunspaceContext(key uint64) (Context, bool) {
+func getRunspaceContext(key uint64) (runspaceContext, bool) {
 
 	contextInterface, ok := contextCache.Load(key)
 	if ok {
-		return contextInterface.(Context), true
+		return contextInterface.(runspaceContext), true
 	} else {
-		return Context{}, false
+		return runspaceContext{}, false
 	}
 }
-func DeleteRunspaceContextLookup(key uint64) {
+func deleteRunspaceContextLookup(key uint64) {
 	contextCache.Delete(key)
 }

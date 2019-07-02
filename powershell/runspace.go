@@ -18,14 +18,15 @@ func init() {
 	C.InitLibraryHelper()
 }
 
-type Context struct {
-	Log      LogHolder
+type runspaceContext struct {
+	Log      LoggerFull
 	Callback CallbackHolder
 }
 
+// Context handle for a runspace, use .Delete() to free
 type Runspace struct {
 	handle        C.RunspaceHandle
-	context       Context
+	context       runspaceContext
 	contextLookup uint64
 }
 
@@ -42,14 +43,18 @@ func (emptyCallback) Callback(string, []PowershellObject, CallbackResultsWriter)
 }
 
 // CreateRunspace think of this kinda like a shell
+//
+// You must call Delete when done with this object
 func CreateRunspaceSimple() Runspace {
 	return CreateRunspace(emptyLogger{}, emptyCallback{})
 }
 
 // CreateRunspace think of this kinda like a shell
+//
+// You must call Delete when done with this object
 func CreateRunspace(logger LoggerSimple, callback CallbackHolder) Runspace {
-	context := Context{MakeLogHolder(logger), callback}
-	contextLookup := StoreRunspaceContext(context)
+	context := runspaceContext{makeLoggerFull(logger), callback}
+	contextLookup := storeRunspaceContext(context)
 
 	runspace := C.CreateRunspaceHelper(C.ulonglong(contextLookup))
 	return Runspace{runspace, context, contextLookup}
@@ -57,6 +62,6 @@ func CreateRunspace(logger LoggerSimple, callback CallbackHolder) Runspace {
 
 // Delete and free a Runspace
 func (runspace Runspace) Delete() {
-	DeleteRunspaceContextLookup(runspace.contextLookup)
+	deleteRunspaceContextLookup(runspace.contextLookup)
 	C.DeleteRunspace(runspace.handle)
 }

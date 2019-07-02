@@ -18,10 +18,12 @@ import (
 */
 import "C"
 
+// Object that represents a powershell command, must call Delete
 type PowershellCommand struct {
 	handle C.PowershellHandle
 }
 
+// the results
 type InvokeResults struct {
 	objects   []PowershellObject
 	count     uint32
@@ -34,6 +36,7 @@ func (runspace Runspace) CreatePowershellCommand() PowershellCommand {
 }
 
 // Delete and free a PowershellCommand
+// , call on all objects even those that are Invoked
 func (command PowershellCommand) Delete() {
 	C.DeletePowershell(command.handle)
 }
@@ -53,7 +56,7 @@ func (command PowershellCommand) AddCommand(commandlet string, useLocalScope boo
 	}
 }
 
-// AddCommand to an existing powershell command
+// AddScript to an existing powershell command
 func (command PowershellCommand) AddScript(script string, useLocalScope bool) {
 	cs, _ := windows.UTF16PtrFromString(script)
 
@@ -77,7 +80,11 @@ func (command PowershellCommand) AddArgument(argument string) {
 	_ = C.AddArgument(command.handle, (*C.wchar_t)(ptrwchar))
 }
 
-// Invoke the powershell command, do not reuse afterwards
+// Invoke the powershell command
+//
+// If wanting to call another powershell command do not reuse after Invoke, create another PowershellCommand object and use that one
+//
+// Must still call Delete on this object
 func (command PowershellCommand) Invoke() {
 
 	var objects *C.PowerShellObject

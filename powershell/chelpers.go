@@ -38,18 +38,18 @@ func makeCString(str string) *C.wchar_t {
 	cs, _ := windows.UTF16PtrFromString(str)
 	ptrwchar := unsafe.Pointer(cs)
 	return C.MallocCopy((*C.wchar_t)(ptrwchar))
-
 }
 
 //export logWchart
+// commandWchart the C function pointer that dispatches to the Golang function for SimpleLogging
 func logWchart(context uint64, str *C.wchar_t) {
 	if context != 0 {
 		s := makeString(str)
 		// glog.Info("golang log: ", s)
 
-		contextInterface, ok := GetRunspaceContext(context)
+		contextInterface, ok := getRunspaceContext(context)
 		if ok {
-			contextInterface.Log.Log.Verbose(s)
+			contextInterface.Log.Verbose(s)
 		} else {
 			glog.Info("In Logging callback, failed to load context key: ", context)
 		}
@@ -57,10 +57,11 @@ func logWchart(context uint64, str *C.wchar_t) {
 }
 
 //export commandWchart
+// commandWchart the C function pointer that dispatches to the Golang function for Send-HostCommand
 func commandWchart(context uint64, cMessage *C.wchar_t, input *C.PowerShellObject, inputCount uint64, ret *C.JsonReturnValues) {
 
 	if context != 0 {
-		contextInterface, ok := GetRunspaceContext(context)
+		contextInterface, ok := getRunspaceContext(context)
 		if ok {
 			inputArr := make([]PowershellObject, inputCount)
 			for i := uint32(0); uint64(i) < inputCount; i++ {

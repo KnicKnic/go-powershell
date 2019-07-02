@@ -2,6 +2,7 @@ package powershell
 
 import "github.com/golang/glog"
 
+// LoggerFull the full logging interface with all functions
 type LoggerFull interface {
 	Warning(args ...interface{})
 	Information(args ...interface{})
@@ -17,84 +18,90 @@ type LoggerFull interface {
 	Writeln(args ...interface{})
 }
 
+// LoggerSimple is the simplest logging interface you can have
+//
+// If this is specified, it will get wrapped into the full interface by prepending the category "Warning: ", "Information: "... and appending a \n for the *ln functions (Writeln,...)
 type LoggerSimple interface {
 	Write(args ...interface{})
 }
 
-type LogHolder struct {
+type logHolder struct {
 	Log LoggerFull
 }
 
-type SimpleToFull struct {
+type simpleToFull struct {
 	simple LoggerSimple
 }
 
-func MakeLogHolderFull(logger LoggerFull) LogHolder {
-	return LogHolder{logger}
-}
+// func makeLogHolderFull(logger LoggerFull) LoggerFull {
+// 	return logger
+// }
 
-func MakeLogHolder(logger LoggerSimple) LogHolder {
+// MakeLoggerFull returns a wrapper class that provides LoggerFull semantics,
+// utilizing a simple LoggerSimple.write() function
+func makeLoggerFull(logger LoggerSimple) LoggerFull {
 	if p, ok := logger.(LoggerFull); ok {
-		return MakeLogHolderFull(p)
+		return p
 	}
-	return MakeLogHolderFull(SimpleToFull{logger})
+	return simpleToFull{logger}
 }
 
-func Make2ArgInterface(arg1 interface{}, args ...interface{}) []interface{} {
+func make2ArgInterface(arg1 interface{}, args ...interface{}) []interface{} {
 
 	a := append([]interface{}{arg1}, args...)
 	return a
 }
 
-func AddInterfaceFront(argEnd interface{}, args ...interface{}) []interface{} {
+func addInterfaceFront(argEnd interface{}, args ...interface{}) []interface{} {
 
 	a := append(args, argEnd)
 	return a
 }
 
-func (log SimpleToFull) Warning(args ...interface{}) {
+func (log simpleToFull) Warning(args ...interface{}) {
 
-	log.Write(Make2ArgInterface("Warning", args...))
+	log.Write(make2ArgInterface("Warning", args...))
 }
-func (log SimpleToFull) Information(args ...interface{}) {
-	log.Write(Make2ArgInterface("Information: ", args...))
+func (log simpleToFull) Information(args ...interface{}) {
+	log.Write(make2ArgInterface("Information: ", args...))
 }
-func (log SimpleToFull) Verbose(args ...interface{}) {
-	log.Write(Make2ArgInterface("Verbose: ", args...))
+func (log simpleToFull) Verbose(args ...interface{}) {
+	log.Write(make2ArgInterface("Verbose: ", args...))
 }
-func (log SimpleToFull) Debug(args ...interface{}) {
-	log.Write(Make2ArgInterface("Debug: ", args...))
+func (log simpleToFull) Debug(args ...interface{}) {
+	log.Write(make2ArgInterface("Debug: ", args...))
 }
-func (log SimpleToFull) Error(args ...interface{}) {
-	log.Write(Make2ArgInterface("Error: ", args...))
+func (log simpleToFull) Error(args ...interface{}) {
+	log.Write(make2ArgInterface("Error: ", args...))
 }
-func (log SimpleToFull) Write(args ...interface{}) {
+func (log simpleToFull) Write(args ...interface{}) {
 	log.simple.Write(args...)
 }
 
-func ArgsWithNewLine(level interface{}, args ...interface{}) []interface{} {
-	line := Make2ArgInterface(level, args...)
-	return AddInterfaceFront('\n', line...)
+func argsWithNewLine(level interface{}, args ...interface{}) []interface{} {
+	line := make2ArgInterface(level, args...)
+	return addInterfaceFront('\n', line...)
 }
-func (log SimpleToFull) Warningln(args ...interface{}) {
-	log.Write(ArgsWithNewLine("Warning: ", args...))
+func (log simpleToFull) Warningln(args ...interface{}) {
+	log.Write(argsWithNewLine("Warning: ", args...))
 }
-func (log SimpleToFull) Informationln(args ...interface{}) {
-	log.Write(ArgsWithNewLine("Information: ", args...))
+func (log simpleToFull) Informationln(args ...interface{}) {
+	log.Write(argsWithNewLine("Information: ", args...))
 }
-func (log SimpleToFull) Verboseln(args ...interface{}) {
-	log.Write(ArgsWithNewLine("Verbose: ", args...))
+func (log simpleToFull) Verboseln(args ...interface{}) {
+	log.Write(argsWithNewLine("Verbose: ", args...))
 }
-func (log SimpleToFull) Debugln(args ...interface{}) {
-	log.Write(ArgsWithNewLine("Debug: ", args...))
+func (log simpleToFull) Debugln(args ...interface{}) {
+	log.Write(argsWithNewLine("Debug: ", args...))
 }
-func (log SimpleToFull) Errorln(args ...interface{}) {
-	log.Write(ArgsWithNewLine("Error: ", args...))
+func (log simpleToFull) Errorln(args ...interface{}) {
+	log.Write(argsWithNewLine("Error: ", args...))
 }
-func (log SimpleToFull) Writeln(args ...interface{}) {
-	log.Write(AddInterfaceFront('\n', args...))
+func (log simpleToFull) Writeln(args ...interface{}) {
+	log.Write(addInterfaceFront('\n', args...))
 }
 
+// GLogInfoLogger is a simple struct that provides ability to send logs to glog at Info level
 type GLogInfoLogger struct {
 }
 
