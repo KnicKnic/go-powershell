@@ -18,7 +18,7 @@ const wchar_t* MallocCopy(const wchar_t* str);
 
     void Logger(const wchar_t* s);
 
-RunspaceHandle CreateRunspaceHelper(unsigned long long);
+RunspaceHandle CreateRunspaceHelper(unsigned long long, char useLogger, char useCommand);
 
 void SetGenericPowershellString(GenericPowershellObject* object, wchar_t *value,char autoRelease);
 void SetGenericPowershellHandle(GenericPowershellObject* object, PowerShellObject handle,char autoRelease);

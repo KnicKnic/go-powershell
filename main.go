@@ -10,6 +10,14 @@ import (
 	"github.com/golang/glog"
 )
 
+// GLogInfoLogger is a simple struct that provides ability to send logs to glog at Info level
+type gLogInfoLogger struct {
+}
+
+func (logger gLogInfoLogger) Write(args ...interface{}) {
+	glog.Info(args...)
+}
+
 type callbackTest struct{}
 
 func (c callbackTest) Callback(str string, input []PowershellObject, results CallbackResultsWriter) {
@@ -26,7 +34,7 @@ func (c callbackTest) Callback(str string, input []PowershellObject, results Cal
 
 // Example on how to use powershell wrappers
 func Example() {
-	runspace := CreateRunspace(GLogInfoLogger{}, callbackTest{})
+	runspace := CreateRunspace(gLogInfoLogger{}, callbackTest{})
 	defer runspace.Delete()
 
 	for i := 0; i < len(commandFlags); i++ {
