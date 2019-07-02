@@ -5,7 +5,7 @@ import (
 )
 
 // ExecStr - executes a commandline in powershell
-func (runspace Runspace) ExecStr(commandStr string, useLocalScope bool) {
+func (runspace Runspace) ExecStr(commandStr string, useLocalScope bool) InvokeResults{
 	command := runspace.CreatePowershellCommand()
 	defer command.Delete()
 
@@ -22,5 +22,5 @@ func (runspace Runspace) ExecStr(commandStr string, useLocalScope bool) {
 	// for i := 1; i < len(fields); i++ {
 	// 	command.AddArgument(fields[i])
 	// }
-	command.Invoke()
+	return command.Invoke()
 }

@@ -47,7 +47,7 @@ func logWchart(context uint64, str *C.wchar_t) {
 
 		contextInterface, ok := getRunspaceContext(context)
 		if ok {
-			contextInterface.Log.Verbose(s)
+			contextInterface.Log.Write(s)
 		} else {
 			// glog.Info("In Logging callback, failed to load context key: ", context)
 			panic("In Logging callback, failed to load context key: ")
