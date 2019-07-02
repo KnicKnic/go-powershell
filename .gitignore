@@ -2,6 +2,7 @@ c/**
 .vscode/**
 **.dll
 **.exe
+**.exe~
 **.lib
 **.a
 host.h

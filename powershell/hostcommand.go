@@ -14,18 +14,23 @@ package powershell
 */
 import "C"
 
+// CallbackResultsWriter allows you to write values to powershell when inside Send-HostCommand
 type CallbackResultsWriter interface {
 	WriteString(string)
 	Write(object PowershellObject, needsClose bool)
 }
+
+// CallbackHolder callback function pointer for Send-HostCommand callbacks
 type CallbackHolder interface {
 	Callback(str string, input []PowershellObject, results CallbackResultsWriter)
 }
 
+// callbackResultsWriter is the internal implementation of CallbackResultsWriter
 type callbackResultsWriter struct {
 	objects []C.GenericPowershellObject
 }
 
+// WriteString accumulates a string object to return from Send-HostCommand
 func (writer *callbackResultsWriter) WriteString(str string) {
 	cStr := makeCString(str)
 	var obj C.GenericPowershellObject
@@ -33,6 +38,7 @@ func (writer *callbackResultsWriter) WriteString(str string) {
 	writer.objects = append(writer.objects, obj)
 }
 
+// Write accumulates a string object to return from Send-HostCommand
 func (writer *callbackResultsWriter) Write(handle PowershellObject, needsClose bool) {
 	var obj C.GenericPowershellObject
 	var autoClose C.char = 0
@@ -43,6 +49,7 @@ func (writer *callbackResultsWriter) Write(handle PowershellObject, needsClose b
 	writer.objects = append(writer.objects, obj)
 }
 
+// filloutResults takes accumulated objects from Write calls and prepares them to cross the C boundry
 func (writer *callbackResultsWriter) filloutResults(results *C.JsonReturnValues) {
 	results.objects = nil
 	results.count = 0
