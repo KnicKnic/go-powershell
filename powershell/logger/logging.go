@@ -1,4 +1,4 @@
-package powershell
+package logger
 
 import "fmt"
 
@@ -39,7 +39,7 @@ type simpleToFull struct {
 
 // MakeLoggerFull returns a wrapper class that provides LoggerFull semantics,
 // utilizing a simple LoggerSimple.write() function
-func makeLoggerFull(logger LoggerSimple) LoggerFull {
+func MakeLoggerFull(logger LoggerSimple) LoggerFull {
 	if logger == nil {
 		return nil
 	}
