@@ -13,13 +13,16 @@ package powershell
 
 */
 import "C"
+import (
+	logger "./logger"
+)
 
 func init() {
 	C.InitLibraryHelper()
 }
 
 type runspaceContext struct {
-	Log      LoggerFull
+	Log      logger.LoggerFull
 	Callback CallbackHolder
 }
 
@@ -40,12 +43,12 @@ func CreateRunspaceSimple() Runspace {
 // CreateRunspace think of this kinda like a shell
 //
 // You must call Delete when done with this object
-func CreateRunspace(logger LoggerSimple, callback CallbackHolder) Runspace {
-	context := runspaceContext{makeLoggerFull(logger), callback}
+func CreateRunspace(loggerCallback logger.LoggerSimple, callback CallbackHolder) Runspace {
+	context := runspaceContext{logger.MakeLoggerFull(loggerCallback), callback}
 	contextLookup := storeRunspaceContext(context)
 
 	var useLogger C.char = 1
-	if logger == nil {
+	if loggerCallback == nil {
 		useLogger = 0
 	}
 	var useCommand C.char = 1
