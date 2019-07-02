@@ -61,19 +61,19 @@ func addInterfaceFront(argEnd interface{}, args ...interface{}) []interface{} {
 
 func (log simpleToFull) Warning(args ...interface{}) {
 
-	log.Write(make2ArgInterface("Warning", args...))
+	log.Write(make2ArgInterface("Warning", args...)...)
 }
 func (log simpleToFull) Information(args ...interface{}) {
-	log.Write(make2ArgInterface("Information: ", args...))
+	log.Write(make2ArgInterface("Information: ", args...)...)
 }
 func (log simpleToFull) Verbose(args ...interface{}) {
-	log.Write(make2ArgInterface("Verbose: ", args...))
+	log.Write(make2ArgInterface("Verbose: ", args...)...)
 }
 func (log simpleToFull) Debug(args ...interface{}) {
-	log.Write(make2ArgInterface("Debug: ", args...))
+	log.Write(make2ArgInterface("Debug: ", args...)...)
 }
 func (log simpleToFull) Error(args ...interface{}) {
-	log.Write(make2ArgInterface("Error: ", args...))
+	log.Write(make2ArgInterface("Error: ", args...)...)
 }
 func (log simpleToFull) Write(args ...interface{}) {
 	log.simple.Write(args...)
@@ -84,20 +84,20 @@ func argsWithNewLine(level interface{}, args ...interface{}) []interface{} {
 	return addInterfaceFront('\n', line...)
 }
 func (log simpleToFull) Warningln(args ...interface{}) {
-	log.Write(argsWithNewLine("Warning: ", args...))
+	log.Write(argsWithNewLine("Warning: ", args...)...)
 }
 func (log simpleToFull) Informationln(args ...interface{}) {
-	log.Write(argsWithNewLine("Information: ", args...))
+	log.Write(argsWithNewLine("Information: ", args...)...)
 }
 func (log simpleToFull) Verboseln(args ...interface{}) {
-	log.Write(argsWithNewLine("Verbose: ", args...))
+	log.Write(argsWithNewLine("Verbose: ", args...)...)
 }
 func (log simpleToFull) Debugln(args ...interface{}) {
-	log.Write(argsWithNewLine("Debug: ", args...))
+	log.Write(argsWithNewLine("Debug: ", args...)...)
 }
 func (log simpleToFull) Errorln(args ...interface{}) {
-	log.Write(argsWithNewLine("Error: ", args...))
+	log.Write(argsWithNewLine("Error: ", args...)...)
 }
 func (log simpleToFull) Writeln(args ...interface{}) {
-	log.Write(addInterfaceFront('\n', args...))
+	log.Write(addInterfaceFront('\n', args...)...)
 }

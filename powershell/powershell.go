@@ -25,9 +25,8 @@ type PowershellCommand struct {
 
 // the results
 type InvokeResults struct {
-	objects   []PowershellObject
-	count     uint32
-	exception PowershellObject
+	Objects   []PowershellObject
+	Exception PowershellObject
 }
 
 // CreatePowershellCommand using a runspace, still need to create a command in the powershell command
@@ -85,12 +84,12 @@ func (command PowershellCommand) AddArgument(argument string) {
 // If wanting to call another powershell command do not reuse after Invoke, create another PowershellCommand object and use that one
 //
 // Must still call Delete on this object
-func (command PowershellCommand) Invoke() {
+func (command PowershellCommand) Invoke() InvokeResults {
 
 	var objects *C.PowerShellObject
 	var count C.uint
 	exception := C.InvokeCommand(command.handle, &objects, &count)
-	makeInvokeResults(objects, count, exception)
+	return makeInvokeResults(objects, count, exception)
 }
 
 func makePowerShellObjectIndexed(objects *C.PowerShellObject, index uint32) PowershellObject {
@@ -108,11 +107,24 @@ func makePowerShellObject(object C.PowerShellObject) PowershellObject {
 }
 
 func makeInvokeResults(objects *C.PowerShellObject, count C.uint, exception C.PowerShellObject) (results InvokeResults) {
-	results.count = uint32(count)
-	results.objects = make([]PowershellObject, count)
-	for i := uint32(0); i < results.count; i++ {
-		results.objects[i] = makePowerShellObjectIndexed(objects, i)
+	goCount := uint32(count)
+	results.Objects = make([]PowershellObject, count)
+	for i := uint32(0); i < goCount; i++ {
+		results.Objects[i] = makePowerShellObjectIndexed(objects, i)
 	}
-	results.exception = makePowerShellObject(exception)
+	results.Exception = makePowerShellObject(exception)
 	return
+}
+
+// Close is a convenience wrapper to close all result objects, so you do not have to
+func (results *InvokeResults) Close() {
+	for _, object := range results.Objects {
+		object.Close()
+	}
+	results.Exception.Close()
+}
+
+// Success returns true if the powershell command executed successfully (threw no terminating exceptions)
+func (results *InvokeResults) Success() bool {
+	return results.Exception.IsNull()
 }
