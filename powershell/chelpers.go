@@ -4,8 +4,6 @@ package powershell
 import (
 	"unsafe"
 
-	"github.com/golang/glog"
-
 	"golang.org/x/sys/windows"
 )
 
@@ -51,7 +49,8 @@ func logWchart(context uint64, str *C.wchar_t) {
 		if ok {
 			contextInterface.Log.Verbose(s)
 		} else {
-			glog.Info("In Logging callback, failed to load context key: ", context)
+			// glog.Info("In Logging callback, failed to load context key: ", context)
+			panic("In Logging callback, failed to load context key: ")
 		}
 	}
 }
@@ -74,7 +73,8 @@ func commandWchart(context uint64, cMessage *C.wchar_t, input *C.PowerShellObjec
 			resultsWriter.filloutResults(ret)
 			return
 		} else {
-			glog.Info("In Command callback, failed to load context key: ", context)
+			// glog.Info("In Command callback, failed to load context key: ", context)
+			panic("In Command callback, failed to load context key: ")
 		}
 	}
 	var resultsWriter callbackResultsWriter

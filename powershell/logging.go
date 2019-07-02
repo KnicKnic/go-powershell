@@ -1,7 +1,5 @@
 package powershell
 
-import "github.com/golang/glog"
-
 // LoggerFull the full logging interface with all functions
 type LoggerFull interface {
 	Warning(args ...interface{})
@@ -40,6 +38,9 @@ type simpleToFull struct {
 // MakeLoggerFull returns a wrapper class that provides LoggerFull semantics,
 // utilizing a simple LoggerSimple.write() function
 func makeLoggerFull(logger LoggerSimple) LoggerFull {
+	if logger == nil {
+		return nil
+	}
 	if p, ok := logger.(LoggerFull); ok {
 		return p
 	}
@@ -99,12 +100,4 @@ func (log simpleToFull) Errorln(args ...interface{}) {
 }
 func (log simpleToFull) Writeln(args ...interface{}) {
 	log.Write(addInterfaceFront('\n', args...))
-}
-
-// GLogInfoLogger is a simple struct that provides ability to send logs to glog at Info level
-type GLogInfoLogger struct {
-}
-
-func (logger GLogInfoLogger) Write(args ...interface{}) {
-	glog.Info(args...)
 }

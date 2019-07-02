@@ -60,8 +60,16 @@ const wchar_t* MallocCopy(const wchar_t* str)
         commandWchart((unsigned long long) context, (wchar_t *)s, input, inputCount, returnValues);
     }
 
-RunspaceHandle CreateRunspaceHelper(unsigned long long context){
-    return CreateRunspace((void*)context, Command, Logger);
+RunspaceHandle CreateRunspaceHelper(unsigned long long context, char useLogger, char useCommand ){
+    LogString loggerPtr = Logger;
+    ReceiveJsonCommand commandPtr = Command;
+    if(useLogger == 0){
+        loggerPtr = nullptr;
+    }
+    if(useCommand == 0){
+        commandPtr = nullptr;
+    }
+    return CreateRunspace((void*)context, commandPtr, loggerPtr);
     // return CreateRunspace(nullptr, Command, Logger);
 }
 
