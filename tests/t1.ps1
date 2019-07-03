@@ -1,10 +1,10 @@
 
 
 write-error "someerror"
-write-host  $("aa {0} aa" -f $script:blah)
+write-host  'ab', $script:blah "ba"
 $script:blah=5
-write-host $("aa {0} aa" -f $script:blah1)
-write-host $("aa {0} aa" -f $global:blah1)
+write-host  'ab', $script:blah1, "ba"
+write-host  'ab', $global:blah1, "ba"
 $script:blah1=5
 $global:blah1=5
 
