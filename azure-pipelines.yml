@@ -80,7 +80,7 @@ steps:
     script: 'go test github.com/KnicKnic/go-powershell/tests'
 - task: CmdLine@2
   inputs:
-    script: 'go build -a -o go-powershell.exe .\test_app'
+    script: 'go build -a -o go-powershell.exe .\test_app\cmd'
 - task: PowerShell@2
   inputs:
     targetType: 'inline'
