@@ -94,9 +94,9 @@ func (command PowershellCommand) Invoke() InvokeResults {
 
 func makePowerShellObjectIndexed(objects *C.PowerShellObject, index uint32) PowershellObject {
 	// I don't get why I have to use unsafe.Pointer on C memory
-	ptr := uintptr(unsafe.Pointer(objects))
-	handle := ptr + (uintptr(index) * unsafe.Sizeof(*objects))
-	var obj C.PowerShellObject = *(*C.PowerShellObject)(unsafe.Pointer(handle))
+	ptr := unsafe.Pointer(objects)
+	offset :=  (uintptr(index) * unsafe.Sizeof(*objects))
+	var obj C.PowerShellObject = *(*C.PowerShellObject)(unsafe.Pointer(uintptr(ptr) + offset))
 	return makePowerShellObject(obj)
 }
 
