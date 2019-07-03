@@ -30,6 +30,16 @@ func (obj Object) toCHandle() C.PowerShellObject {
 	return obj.handle
 }
 
+// // toCHandle gets the backing handle of Object
+// func makeCHandles(objects []Object) []C.PowerShellObject {
+// 	cHandles := make([]C.PowerShellObject, len(objects))
+// 	for i,object := range(objects){
+// 		cHandles[i] = object.handle
+// 	}
+// 	return cHandles
+// }
+
+
 // Close allows the memory for the powershell object to be reclaimed
 //
 // Should be called on all objects returned from Command.Invoke unless you have called CallbackResultsWriter.Write() with autoclose

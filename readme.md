@@ -1,4 +1,4 @@
-[![Build Status](https://dev.azure.com/oneeyedelf1/powershell.native/_apis/build/status/KnicKnic.go-powershell?branchName=master)](https://dev.azure.com/oneeyedelf1/powershell.native/_build/latest?definitionId=3&branchName=master) [![Go Report Card](https://goreportcard.com/badge/github.com/KnicKnic/go-powershell)](https://goreportcard.com/report/github.com/KnicKnic/go-powershell) [![GoDoc](https://godoc.org/github.com/KnicKnic/go-powershell?status.svg)](https://godoc.org/github.com/KnicKnic/go-powershell)
+[![Build Status](https://dev.azure.com/oneeyedelf1/powershell.native/_apis/build/status/KnicKnic.go-powershell?branchName=master)](https://dev.azure.com/oneeyedelf1/powershell.native/_build/latest?definitionId=3&branchName=master) [![Go Report Card](https://goreportcard.com/badge/github.com/KnicKnic/go-powershell)](https://goreportcard.com/report/github.com/KnicKnic/go-powershell) [![GoDoc](https://godoc.org/github.com/KnicKnic/go-powershell/pkg/powershell?status.svg)](https://godoc.org/github.com/KnicKnic/go-powershell/pkg/powershell)
 
 # Status
 It works
@@ -8,7 +8,7 @@ It works
 1. communicate from powershell to golang
 1. trap host output in powershell and call custom logging routines in golang
 1. has tests
-1. Docs - if you missed the badge above go to https://godoc.org/github.com/KnicKnic/go-powershell
+1. Docs - if you missed the badge above go to https://godoc.org/github.com/KnicKnic/go-powershell/pkg/powershell
 
 This project is not api stable, however I believe it will be simple if you do use the current api to migrate to any future changes. 
 
@@ -27,7 +27,7 @@ package main
 
 import (
 	"fmt"
-	powershell "github.com/KnicKnic/go-powershell"
+	"github.com/KnicKnic/go-powershell/pkg/powershell"
 )
 
 func main() {

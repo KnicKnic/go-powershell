@@ -2,7 +2,7 @@ package main
 
 import (
 	"fmt"
-	powershell "github.com/KnicKnic/go-powershell"
+	"github.com/KnicKnic/go-powershell/pkg/powershell"
 )
 
 func main() {

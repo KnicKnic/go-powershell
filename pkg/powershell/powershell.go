@@ -70,13 +70,20 @@ func (command Command) AddScript(script string, useLocalScope bool) {
 	}
 }
 
-// AddArgument to an existing powershell command
-func (command Command) AddArgument(argument string) {
+// AddArgumentString add a string argument to an existing powershell command
+func (command Command) AddArgumentString(argument string) {
 	cs, _ := windows.UTF16PtrFromString(argument)
 
 	ptrwchar := unsafe.Pointer(cs)
 
 	_ = C.AddArgument(command.handle, (*C.wchar_t)(ptrwchar))
+}
+
+// AddArgument add a Object argument to an existing powershell command
+func (command Command) AddArgument(objects ... Object) {
+ 	for _,object := range(objects){
+		_ = C.AddPSObjectArgument(command.handle, object.handle)
+	}
 }
 
 // Invoke the powershell command
