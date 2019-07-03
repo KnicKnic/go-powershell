@@ -1,6 +1,5 @@
 package main
 
-// "bitbucket.org/creachadair/shell"
 import (
 	"flag"
 	"fmt"
