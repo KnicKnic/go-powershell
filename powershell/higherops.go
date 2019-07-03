@@ -6,7 +6,7 @@ import (
 
 // ExecStr - executes a commandline in powershell
 func (runspace Runspace) ExecStr(commandStr string, useLocalScope bool) InvokeResults {
-	command := runspace.CreatePowershellCommand()
+	command := runspace.CreateCommand()
 	defer command.Delete()
 
 	// fields, ok := shell.Split(commandStr)

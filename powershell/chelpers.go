@@ -62,7 +62,7 @@ func commandWchart(context uint64, cMessage *C.wchar_t, input *C.PowerShellObjec
 	if context != 0 {
 		contextInterface, ok := getRunspaceContext(context)
 		if ok {
-			inputArr := make([]PowershellObject, inputCount)
+			inputArr := make([]Object, inputCount)
 			for i := uint32(0); uint64(i) < inputCount; i++ {
 				inputArr[i] = makePowerShellObjectIndexed(input, i)
 			}
@@ -72,10 +72,9 @@ func commandWchart(context uint64, cMessage *C.wchar_t, input *C.PowerShellObjec
 			// resultsWriter = callbackResultsWriter{}
 			resultsWriter.filloutResults(ret)
 			return
-		} else {
-			// glog.Info("In Command callback, failed to load context key: ", context)
-			panic("In Command callback, failed to load context key: ")
 		}
+		// glog.Info("In Command callback, failed to load context key: ", context)
+		panic("In Command callback, failed to load context key: ")
 	}
 	var resultsWriter callbackResultsWriter
 	resultsWriter.filloutResults(ret)

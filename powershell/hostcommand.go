@@ -17,12 +17,12 @@ import "C"
 // CallbackResultsWriter allows you to write values to powershell when inside Send-HostCommand
 type CallbackResultsWriter interface {
 	WriteString(string)
-	Write(object PowershellObject, needsClose bool)
+	Write(object Object, needsClose bool)
 }
 
 // CallbackHolder callback function pointer for Send-HostCommand callbacks
 type CallbackHolder interface {
-	Callback(str string, input []PowershellObject, results CallbackResultsWriter)
+	Callback(str string, input []Object, results CallbackResultsWriter)
 }
 
 // callbackResultsWriter is the internal implementation of CallbackResultsWriter
@@ -39,9 +39,9 @@ func (writer *callbackResultsWriter) WriteString(str string) {
 }
 
 // Write accumulates a string object to return from Send-HostCommand
-func (writer *callbackResultsWriter) Write(handle PowershellObject, needsClose bool) {
+func (writer *callbackResultsWriter) Write(handle Object, needsClose bool) {
 	var obj C.GenericPowershellObject
-	var autoClose C.char = 0
+	var autoClose C.char
 	if needsClose {
 		autoClose = 1
 	}
