@@ -38,8 +38,8 @@ steps:
 - task: PowerShell@2
   inputs:
     targetType: 'inline'
-    script: 'choco install -y golang ;
-      choco install -y mingw ;
+    script: 'choco install -y golang --no-progress;
+      choco install -y mingw --no-progress;
       refreshenv ;
       copy native-powershell\host.h .\powershell\ ;
       copy native-powershell\x64\Release\psh_host.dll . ;
@@ -49,8 +49,7 @@ steps:
       $env:GOBIN=$env:GOPATH + "\bin";
       write-host $env:GOBIN $pwd $env:GOPATH $env:GOROOT;
       dir . ;
-
-      go build -o test.exe ;
+      go build;
       dir .;'
 # - task: CopyFiles@2
 #   inputs:
@@ -70,4 +69,4 @@ steps:
 - task: PowerShell@2
   inputs:
     targetType: 'inline'
-    script: '.\test.exe -command .\\tests\t1.ps1 -command .\\tests\\t2.ps1'
+    script: '.\go-powershell.exe -command .\\tests\t1.ps1 -command .\\tests\\t2.ps1'
