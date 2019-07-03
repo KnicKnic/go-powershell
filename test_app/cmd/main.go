@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"strings"
 
-	powershell "github.com/KnicKnic/go-powershell"
+	"github.com/KnicKnic/go-powershell/pkg/powershell"
 )
 
 // GLogInfoLogger is a simple struct that provides ability to send logs to glog at Info level

@@ -12,7 +12,7 @@ write-host $(1..3 | send-hostcommand -message "asdfasdf")
 
 write-host $(send-hostcommand -message "two")
 write-host $($null | send-hostcommand -message "three")
-write-host $(@($null, $null) | send-hostcommand -message "four")
+write-host "ab", $(@($null, $null) | send-hostcommand -message "four"), "ba"
 
 
 function global:Hi($string){

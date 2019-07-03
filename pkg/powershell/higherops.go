@@ -5,7 +5,7 @@ import (
 )
 
 // ExecStr - executes a commandline in powershell
-func (runspace Runspace) ExecStr(commandStr string, useLocalScope bool) InvokeResults {
+func (runspace Runspace) ExecStr(commandStr string, useLocalScope bool, args... interface{}) InvokeResults {
 	command := runspace.CreateCommand()
 	defer command.Delete()
 
@@ -14,6 +14,16 @@ func (runspace Runspace) ExecStr(commandStr string, useLocalScope bool) InvokeRe
 	} else {
 		command.AddScript(commandStr, useLocalScope)
 	}
-	
+	for _,arg := range args{
+		switch v := arg.(type){
+		case string:
+			command.AddArgumentString(v)
+		case Object:
+			command.AddArgument(v)
+		default:
+			panic("unknown argument")
+		}
+	}
+
 	return command.Invoke()
 }

@@ -58,6 +58,7 @@ func logWchart(context uint64, str *C.wchar_t) {
 // commandWchart the C function pointer that dispatches to the Golang function for Send-HostCommand
 func commandWchart(context uint64, cMessage *C.wchar_t, input *C.PowerShellObject, inputCount uint64, ret *C.JsonReturnValues) {
 
+	var resultsWriter callbackResultsWriter
 	if context != 0 {
 		contextInterface, ok := getRunspaceContext(context)
 		if ok {
@@ -66,15 +67,11 @@ func commandWchart(context uint64, cMessage *C.wchar_t, input *C.PowerShellObjec
 				inputArr[i] = makePowerShellObjectIndexed(input, i)
 			}
 			message := makeString(cMessage)
-			var resultsWriter callbackResultsWriter
 			contextInterface.Callback.Callback(message, inputArr, &resultsWriter)
-			// resultsWriter = callbackResultsWriter{}
-			resultsWriter.filloutResults(ret)
-			return
+		}else{
+			// glog.Info("In Command callback, failed to load context key: ", context)
+			panic("In Command callback, failed to load context key: ")
 		}
-		// glog.Info("In Command callback, failed to load context key: ", context)
-		panic("In Command callback, failed to load context key: ")
 	}
-	var resultsWriter callbackResultsWriter
 	resultsWriter.filloutResults(ret)
 }
