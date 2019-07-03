@@ -41,7 +41,7 @@ func (obj Object) Close() {
 
 // AddRef returns a new Object that has to also be called Close on
 //
-// This is usefull in Callback processing, as those PowershellObjects are auto closed, and to keep
+// This is useful in Callback processing, as those PowershellObjects are auto closed, and to keep
 // a reference after the function returns use AddRef
 func (obj Object) AddRef() Object {
 	handle := C.AddPSObjectHandle(obj.toCHandle())
