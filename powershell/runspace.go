@@ -14,7 +14,7 @@ package powershell
 */
 import "C"
 import (
-	logger "github.com/knicknic/go-powershell/powershell/logger"
+	logger "github.com/KnicKnic/go-powershell/powershell/logger"
 )
 
 func init() {
