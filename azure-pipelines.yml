@@ -41,9 +41,8 @@ steps:
     script: 'choco install -y golang --no-progress;
       choco install -y mingw --no-progress;
       refreshenv ;
-      copy native-powershell\host.h .\powershell\ ;
+      copy native-powershell\host.h .\ ;
       copy native-powershell\x64\Release\psh_host.dll . ;
-      copy native-powershell\x64\Release\psh_host.dll .\powershell\ ;
       copy native-powershell\x64\Release\psh_host.dll .\tests\ ;
       mkdir c:\go_tmp;
       $env:GOPATH="c:\go_tmp";
@@ -79,6 +78,9 @@ steps:
 - task: CmdLine@2
   inputs:
     script: 'go test github.com/KnicKnic/go-powershell/tests'
+- task: CmdLine@2
+  inputs:
+    script: 'go build -a -o go-powershell.exe .\test_app'
 - task: PowerShell@2
   inputs:
     targetType: 'inline'
