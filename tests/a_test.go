@@ -3,7 +3,7 @@ package tests
 // "bitbucket.org/creachadair/shell"
 import (
 	"fmt"
-	"github.com/KnicKnic/go-powershell/powershell"
+	powershell "github.com/KnicKnic/go-powershell"
 )
 
 // GLogInfoLogger is a simple struct that provides ability to send logs to glog at Info level
