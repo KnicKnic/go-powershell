@@ -10,7 +10,7 @@ import (
 // marshal to cgo a golang pointer to a golang pointer.
 //
 var contextCache sync.Map
-var contextLookupKey uint64 = 0
+var contextLookupKey uint64
 
 func storeRunspaceContext(context runspaceContext) uint64 {
 	contextLookup := atomic.AddUint64(&contextLookupKey, 1)
@@ -22,9 +22,8 @@ func getRunspaceContext(key uint64) (runspaceContext, bool) {
 	contextInterface, ok := contextCache.Load(key)
 	if ok {
 		return contextInterface.(runspaceContext), true
-	} else {
-		return runspaceContext{}, false
 	}
+	return runspaceContext{}, false
 }
 func deleteRunspaceContextLookup(key uint64) {
 	contextCache.Delete(key)

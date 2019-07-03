@@ -6,7 +6,7 @@ import (
 	"fmt"
 	"strings"
 
-	. "github.com/KnicKnic/go-powershell/powershell"
+	"github.com/KnicKnic/go-powershell/powershell"
 )
 
 // GLogInfoLogger is a simple struct that provides ability to send logs to glog at Info level
@@ -19,7 +19,7 @@ func (logger fmtPrintLogger) Write(arg string) {
 
 type callbackTest struct{}
 
-func (c callbackTest) Callback(str string, input []PowershellObject, results CallbackResultsWriter) {
+func (c callbackTest) Callback(str string, input []powershell.Object, results powershell.CallbackResultsWriter) {
 	fmt.Println("\tIn callback:", str)
 	results.WriteString(str)
 	for i, object := range input {
@@ -31,7 +31,8 @@ func (c callbackTest) Callback(str string, input []PowershellObject, results Cal
 	}
 }
 
-func PrintAndExecuteCommand(runspace Runspace, command string, useLocalScope bool) {
+// PrintAndExecuteCommand executes a command in powershell and prints the results
+func PrintAndExecuteCommand(runspace powershell.Runspace, command string, useLocalScope bool) {
 	fmt.Println("Executing powershell command:", command)
 	results := runspace.ExecStr(command, useLocalScope)
 	defer results.Close()
@@ -48,7 +49,7 @@ func PrintAndExecuteCommand(runspace Runspace, command string, useLocalScope boo
 
 // Example on how to use powershell wrappers
 func Example() {
-	runspace := CreateRunspace(fmtPrintLogger{}, callbackTest{})
+	runspace := powershell.CreateRunspace(fmtPrintLogger{}, callbackTest{})
 	// runspace := CreateRunspaceSimple()
 	defer runspace.Delete()
 

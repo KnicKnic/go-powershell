@@ -22,28 +22,28 @@ func init() {
 }
 
 type runspaceContext struct {
-	Log      logger.LoggerFull
+	Log      logger.Full
 	Callback CallbackHolder
 }
 
-// Context handle for a runspace, use .Delete() to free
+// Runspace a context handle for a runspace, use .Delete() to free
 type Runspace struct {
 	handle        C.RunspaceHandle
 	context       runspaceContext
 	contextLookup uint64
 }
 
-// CreateRunspace think of this kinda like a shell
+// CreateRunspaceSimple think of this kinda like creating a shell
 //
 // You must call Delete when done with this object
 func CreateRunspaceSimple() Runspace {
 	return CreateRunspace(nil, nil)
 }
 
-// CreateRunspace think of this kinda like a shell
+// CreateRunspace think of this kinda like creating a shell
 //
 // You must call Delete when done with this object
-func CreateRunspace(loggerCallback logger.LoggerSimple, callback CallbackHolder) Runspace {
+func CreateRunspace(loggerCallback logger.Simple, callback CallbackHolder) Runspace {
 	context := runspaceContext{logger.MakeLoggerFull(loggerCallback), callback}
 	contextLookup := storeRunspaceContext(context)
 

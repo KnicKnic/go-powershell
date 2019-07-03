@@ -2,8 +2,8 @@ package logger
 
 import "fmt"
 
-// LoggerFull the full logging interface with all functions
-type LoggerFull interface {
+// Full the full logging interface with all functions
+type Full interface {
 	Warning(arg string)
 	Information(arg string)
 	Verbose(arg string)
@@ -18,32 +18,32 @@ type LoggerFull interface {
 	Writeln(arg string)
 }
 
-// LoggerSimple is the simplest logging interface you can have
+// Simple is the simplest logging interface you can have
 //
 // If this is specified, it will get wrapped into the full interface by prepending the category "Warning: ", "Information: "... and appending a \n for the *ln functions (Writeln,...)
-type LoggerSimple interface {
+type Simple interface {
 	Write(arg string)
 }
 
 type logHolder struct {
-	Log LoggerFull
+	Log Full
 }
 
 type simpleToFull struct {
-	simple LoggerSimple
+	simple Simple
 }
 
-// func makeLogHolderFull(logger LoggerFull) LoggerFull {
+// func makeLogHolderFull(logger Full) Full {
 // 	return logger
 // }
 
-// MakeLoggerFull returns a wrapper class that provides LoggerFull semantics,
-// utilizing a simple LoggerSimple.write() function
-func MakeLoggerFull(logger LoggerSimple) LoggerFull {
+// MakeLoggerFull returns a wrapper class that provides Full semantics,
+// utilizing a simple Simple.write() function
+func MakeLoggerFull(logger Simple) Full {
 	if logger == nil {
 		return nil
 	}
-	if p, ok := logger.(LoggerFull); ok {
+	if p, ok := logger.(Full); ok {
 		return p
 	}
 	return simpleToFull{logger}
