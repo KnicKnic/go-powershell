@@ -1,6 +1,5 @@
 package tests
 
-// "bitbucket.org/creachadair/shell"
 import (
 	"fmt"
 	powershell "github.com/KnicKnic/go-powershell"

@@ -1,6 +1,5 @@
 package powershell
 
-// "bitbucket.org/creachadair/shell"
 import (
 	"unsafe"
 

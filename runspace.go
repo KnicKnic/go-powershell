@@ -1,7 +1,5 @@
 package powershell
 
-// "bitbucket.org/creachadair/shell"
-
 /*
 
 #cgo CFLAGS: -I.
