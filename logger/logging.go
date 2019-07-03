@@ -85,5 +85,5 @@ func (log simpleToFull) Errorln(arg string) {
 	log.Write(fmt.Sprintln("Error: ", arg))
 }
 func (log simpleToFull) Writeln(arg string) {
-	log.Write(fmt.Sprintln('\n', arg))
+	log.Write(fmt.Sprintln(arg))
 }
