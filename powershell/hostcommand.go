@@ -49,7 +49,7 @@ func (writer *callbackResultsWriter) Write(handle Object, needsClose bool) {
 	writer.objects = append(writer.objects, obj)
 }
 
-// filloutResults takes accumulated objects from Write calls and prepares them to cross the C boundry
+// filloutResults takes accumulated objects from Write calls and prepares them to cross the C boundary
 func (writer *callbackResultsWriter) filloutResults(results *C.JsonReturnValues) {
 	results.objects = nil
 	results.count = 0
