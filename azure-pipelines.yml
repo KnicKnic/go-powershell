@@ -48,9 +48,17 @@ steps:
       $env:GOPATH="c:\go_tmp";
       $env:GOBIN=$env:GOPATH + "\bin";
       write-host $env:GOBIN $pwd $env:GOPATH $env:GOROOT;
-      dir . ;
-      go build;
-      dir .;'
+      dir . ;'
+- task: CmdLine@2
+  inputs:
+    script: 'go build -x -v'
+# - task: PowerShell@2
+#   inputs:
+#     errorActionPreference: 'continue'
+#     ignoreLASTEXITCODE: true
+#     targetType: 'inline'
+#     script: 'go build -x -v 2>&1 >a.pdb'
+
 # - task: CopyFiles@2
 #   inputs:
 #     sourceFolder: '$(Build.SourcesDirectory)'
