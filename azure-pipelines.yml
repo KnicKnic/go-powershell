@@ -49,8 +49,8 @@ steps:
       $env:GOBIN=$env:GOPATH + "\bin";
       write-host $env:GOBIN $pwd $env:GOPATH $env:GOROOT;
       dir . ;
-      go get . ;
-      go build -o test.exe .;
+
+      go build -o test.exe ;
       dir .;'
 # - task: CopyFiles@2
 #   inputs:
