@@ -27,9 +27,9 @@ func (c callbackTest) Callback(str string, input []Object, results CallbackResul
 }
 
 // PrintAndExecuteCommand executes a command in powershell and prints the results
-func PrintAndExecuteCommand(runspace Runspace, command string, useLocalScope bool, args ... interface{}) {
+func PrintAndExecuteCommand(runspace Runspace, command string, useLocalScope bool, args ...interface{}) {
 	fmt.Print("Executing powershell command:", command, "\n")
-	results := runspace.ExecStr(command, useLocalScope, args ... )
+	results := runspace.ExecStr(command, useLocalScope, args...)
 	defer results.Close()
 	fmt.Print("Completed Executing powershell command:", command, "\n")
 	if !results.Success() {
@@ -98,89 +98,87 @@ func Example_createRunspaceWithArgs() {
 	defer runspace.Delete()
 	results := runspace.ExecStr(`$args[0]; $args[1] + "changed"`, true, "string1", "string2")
 	defer results.Close()
-	if(!results.Success()){
+	if !results.Success() {
 		runspace.ExecStr(`write-host $args[0]`, true, results.Exception)
 	}
 
 	results2 := runspace.ExecStr(`write-debug $($args[0] + 1); write-debug $args[1]`, false, "myString", results.Objects[1])
 	defer results2.Close()
 	// Output:
-// In Logging : Debug: myString1
-//     In Logging : Debug: string2changed
+	// In Logging : Debug: myString1
+	//     In Logging : Debug: string2changed
 }
-
 
 func Example_createRunspaceUsingCommand() {
 	runspace := CreateRunspace(fmtPrintLogger{}, callbackTest{})
 	defer runspace.Delete()
-	results := runspace.ExecStr(`..\\..\\tests\\t1.ps1`, false )
+	results := runspace.ExecStr(`..\\..\\tests\\t1.ps1`, false)
 	defer results.Close()
 
-	results2 := runspace.ExecStr(`..\\..\\tests\\t2.ps1`, false )
+	results2 := runspace.ExecStr(`..\\..\\tests\\t2.ps1`, false)
 	defer results2.Close()
 	// Output:
-// In Logging : Debug: ab  ba
-//     In Logging : Debug: ab  ba
-//     In Logging : Debug: ab  ba
-//     In callback: asdfasdf
-//     In callback: index 0 type: System.Int32 with value: 1
-//     In callback: index 1 type: System.Int32 with value: 2
-//     In callback: index 2 type: System.Int32 with value: 3
-//     In Logging : Debug: asdfasdf 1 2 3
-//     In callback: two
-//     In Logging : Debug: two
-//     In callback: three
-//     In Logging : Debug: three
-//     In callback: four
-//     In callback: index 0 Object Is Null
-//     In callback: index 0 type: nullptr with value: nullptr
-//     In callback: index 1 Object Is Null
-//     In callback: index 1 type: nullptr with value: nullptr
-//     In Logging : Debug: ab four   ba
-//     In Logging : Error: someerror
-//     In Logging : Debug: start t2
-//     In Logging : Debug: 5
-//     In Logging : Debug: 5
-//     In Logging : Debug: asdf
+	// In Logging : Debug: ab  ba
+	//     In Logging : Debug: ab  ba
+	//     In Logging : Debug: ab  ba
+	//     In callback: asdfasdf
+	//     In callback: index 0 type: System.Int32 with value: 1
+	//     In callback: index 1 type: System.Int32 with value: 2
+	//     In callback: index 2 type: System.Int32 with value: 3
+	//     In Logging : Debug: asdfasdf 1 2 3
+	//     In callback: two
+	//     In Logging : Debug: two
+	//     In callback: three
+	//     In Logging : Debug: three
+	//     In callback: four
+	//     In callback: index 0 Object Is Null
+	//     In callback: index 0 type: nullptr with value: nullptr
+	//     In callback: index 1 Object Is Null
+	//     In callback: index 1 type: nullptr with value: nullptr
+	//     In Logging : Debug: ab four   ba
+	//     In Logging : Error: someerror
+	//     In Logging : Debug: start t2
+	//     In Logging : Debug: 5
+	//     In Logging : Debug: 5
+	//     In Logging : Debug: asdf
 }
-
 
 func Example_globalScope() {
 	runspace := CreateRunspace(fmtPrintLogger{}, callbackTest{})
 	defer runspace.Delete()
-	results := runspace.ExecStr(`..\\..\\tests\\test_scope.ps1`, false )
+	results := runspace.ExecStr(`..\\..\\tests\\test_scope.ps1`, false)
 	defer results.Close()
 
-	results2 := runspace.ExecStr(`..\\..\\tests\\test_scope.ps1`, false )
+	results2 := runspace.ExecStr(`..\\..\\tests\\test_scope.ps1`, false)
 	defer results2.Close()
 	// Output:
-// In Logging : Debug: ab  ba
-//     In Logging : Debug: ab  ba
-//     In Logging : Debug: ab  ba
-//     In Logging : Debug: ab  ba
-//     In Logging : Debug: ab 1 ba
-//     In Logging : Debug: ab 2 ba
-//     In Logging : Debug: ab 3 ba
-//     In Logging : Debug: ab 4 ba
+	// In Logging : Debug: ab  ba
+	//     In Logging : Debug: ab  ba
+	//     In Logging : Debug: ab  ba
+	//     In Logging : Debug: ab  ba
+	//     In Logging : Debug: ab 1 ba
+	//     In Logging : Debug: ab 2 ba
+	//     In Logging : Debug: ab 3 ba
+	//     In Logging : Debug: ab 4 ba
 }
 
 func Example_localScope() {
 	runspace := CreateRunspace(fmtPrintLogger{}, callbackTest{})
 	defer runspace.Delete()
-	results := runspace.ExecStr(`..\\..\\tests\\test_scope.ps1`, true )
+	results := runspace.ExecStr(`..\\..\\tests\\test_scope.ps1`, true)
 	defer results.Close()
 
-	results2 := runspace.ExecStr(`..\\..\\tests\\test_scope.ps1`, true )
+	results2 := runspace.ExecStr(`..\\..\\tests\\test_scope.ps1`, true)
 	defer results2.Close()
 	// Output:
-// In Logging : Debug: ab  ba
-//     In Logging : Debug: ab  ba
-//     In Logging : Debug: ab  ba
-//     In Logging : Debug: ab  ba
-//     In Logging : Debug: ab  ba
-//     In Logging : Debug: ab  ba
-//     In Logging : Debug: ab 3 ba
-//     In Logging : Debug: ab  ba
+	// In Logging : Debug: ab  ba
+	//     In Logging : Debug: ab  ba
+	//     In Logging : Debug: ab  ba
+	//     In Logging : Debug: ab  ba
+	//     In Logging : Debug: ab  ba
+	//     In Logging : Debug: ab  ba
+	//     In Logging : Debug: ab 3 ba
+	//     In Logging : Debug: ab  ba
 }
 
 type callbackAddRef struct{}
@@ -194,11 +192,12 @@ func (c callbackAddRef) Callback(str string, input []Object, results CallbackRes
 func Example_callbackWriteTrue() {
 	runspace := CreateRunspace(fmtPrintLogger{}, callbackAddRef{})
 	defer runspace.Delete()
-	results := runspace.ExecStr(`1 | send-hostcommand -message 'empty'`, true )
+	results := runspace.ExecStr(`1 | send-hostcommand -message 'empty'`, true)
 	defer results.Close()
 	// Output:
 }
-type callbackAddRefSave struct{
+
+type callbackAddRefSave struct {
 	objects *[]Object
 }
 
@@ -212,11 +211,11 @@ func Example_callbackSaveObject() {
 	callback.objects = &([]Object{})
 	runspace := CreateRunspace(fmtPrintLogger{}, callback)
 	defer runspace.Delete()
-	results := runspace.ExecStr(`1 | send-hostcommand -message 'empty'`, true )
+	results := runspace.ExecStr(`1 | send-hostcommand -message 'empty'`, true)
 	defer results.Close()
-	results2 := runspace.ExecStr(`write-host $args[0]`, true, (*callback.objects)[0] )
+	results2 := runspace.ExecStr(`write-host $args[0]`, true, (*callback.objects)[0])
 	defer results2.Close()
-	for _,object := range *callback.objects{
+	for _, object := range *callback.objects {
 		object.Close()
 	}
 	// Output: In Logging : Debug: 1
