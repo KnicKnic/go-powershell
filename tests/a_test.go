@@ -2,6 +2,7 @@ package tests
 
 import (
 	"fmt"
+
 	"github.com/KnicKnic/go-powershell/pkg/powershell"
 )
 
@@ -49,8 +50,8 @@ func PrintAndExecuteCommand(runspace powershell.Runspace, command string, useLoc
 // 	// runspace := CreateRunspaceSimple()
 // 	defer runspace.Delete()
 
-// 	PrintAndExecuteCommand(runspace, ".\\t1.ps1", false)	
-// 	PrintAndExecuteCommand(runspace, ".\\t2.ps1", false)	
+// 	PrintAndExecuteCommand(runspace, ".\\t1.ps1", false)
+// 	PrintAndExecuteCommand(runspace, ".\\t2.ps1", false)
 // }
 
 // func ExampleCreateRunspaceSimple(){
@@ -59,8 +60,8 @@ func PrintAndExecuteCommand(runspace powershell.Runspace, command string, useLoc
 // 	// runspace := CreateRunspaceSimple()
 // 	defer runspace.Delete()
 
-// 	PrintAndExecuteCommand(runspace, ".\\t1.ps1", false)	
-// 	PrintAndExecuteCommand(runspace, ".\\t2.ps1", false)	
+// 	PrintAndExecuteCommand(runspace, ".\\t1.ps1", false)
+// 	PrintAndExecuteCommand(runspace, ".\\t2.ps1", false)
 // 	// Output:
 // // Executing powershell command: .\t1.ps1
 // //     In Logging : Debug: ab  ba
@@ -80,7 +81,7 @@ func PrintAndExecuteCommand(runspace powershell.Runspace, command string, useLoc
 // //     In callback: index 0 type: nullptr with value: nullptr
 // //     In callback: index 1 Object Is Null
 // //     In callback: index 1 type: nullptr with value: nullptr
-// //     In Logging : Debug: four  
+// //     In Logging : Debug: four
 // //     In Logging : Error: someerror
 // // Completed Executing powershell command: .\t1.ps1
 // // Command returned 0 objects
@@ -93,35 +94,35 @@ func PrintAndExecuteCommand(runspace powershell.Runspace, command string, useLoc
 // // Command returned 0 objects
 // }
 
-func ExampleCreateRunspaceWitLoggerWithCallback(){
+func Example_createRunspaceWitLoggerWithCallback() {
 
 	runspace := powershell.CreateRunspace(fmtPrintLogger{}, callbackTest{})
 	// runspace := CreateRunspaceSimple()
 	defer runspace.Delete()
-input_str :=`
+	inputStr := `
 write-host 'simple output statement'
 "s1"
 "s2"`
-	PrintAndExecuteCommand(runspace, input_str, false)
+	PrintAndExecuteCommand(runspace, inputStr, false)
 	// Output:
-// Executing powershell command:
-// write-host 'simple output statement'
-// "s1"
-// "s2"
-//     In Logging : Debug: simple output statement
-// Completed Executing powershell command:
-// write-host 'simple output statement'
-// "s1"
-// "s2"
-// Command returned 2 objects
-//     Object 0 is of type System.String and ToString s1
-//     Object 1 is of type System.String and ToString s2
+	// Executing powershell command:
+	// write-host 'simple output statement'
+	// "s1"
+	// "s2"
+	//     In Logging : Debug: simple output statement
+	// Completed Executing powershell command:
+	// write-host 'simple output statement'
+	// "s1"
+	// "s2"
+	// Command returned 2 objects
+	//     Object 0 is of type System.String and ToString s1
+	//     Object 1 is of type System.String and ToString s2
 }
 
 // func ExampleCreateRunspaceSimple(){
 // 	// ensure directory is gone
 // 	_ = os.Remove("ExampleCreateRunspaceSimple")
-	
+
 // 	// show directory is gone
 // 	printDirectoryStatus := func (){
 // 		_ = os.stat("ExampleCreateRunspaceSimple")
@@ -138,11 +139,10 @@ write-host 'simple output statement'
 // 	// Output: hi
 // }
 
-
-func ExampleCreateRunspaceSimple(){
+func Example_createRunspaceSimple() {
 	runspace := powershell.CreateRunspaceSimple()
 	defer runspace.Delete()
-	results := runspace.ExecStr( `"emit this string"`, true)
+	results := runspace.ExecStr(`"emit this string"`, true)
 	defer results.Close()
 	// print the string result of the first object
 	fmt.Println(results.Objects[0].ToString())

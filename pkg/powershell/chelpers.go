@@ -68,7 +68,7 @@ func commandWchart(context uint64, cMessage *C.wchar_t, input *C.PowerShellObjec
 			}
 			message := makeString(cMessage)
 			contextInterface.Callback.Callback(message, inputArr, &resultsWriter)
-		}else{
+		} else {
 			// glog.Info("In Command callback, failed to load context key: ", context)
 			panic("In Command callback, failed to load context key: ")
 		}

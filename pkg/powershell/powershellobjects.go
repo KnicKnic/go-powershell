@@ -39,7 +39,6 @@ func (obj Object) toCHandle() C.PowerShellObject {
 // 	return cHandles
 // }
 
-
 // Close allows the memory for the powershell object to be reclaimed
 //
 // Should be called on all objects returned from Command.Invoke unless you have called CallbackResultsWriter.Write() with autoclose
