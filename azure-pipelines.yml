@@ -52,7 +52,7 @@ steps:
       dir . ;'
 - task: CmdLine@2
   inputs:
-    script: 'go build -x -v'
+    script: 'go build github.com/KnicKnic/go-powershell/pkg/powershell'
 # - task: PowerShell@2
 #   inputs:
 #     errorActionPreference: 'continue'
@@ -81,7 +81,10 @@ steps:
     script: 'go test github.com/KnicKnic/go-powershell/tests'
 - task: CmdLine@2
   inputs:
-    script: 'go build -a -o go-powershell.exe .\test_app\cmd'
+    script: 'go test github.com/KnicKnic/go-powershell/pkg/powershell'
+- task: CmdLine@2
+  inputs:
+    script: 'go build -a -o go-powershell.exe  github.com/KnicKnic/go-powershell/test_app/cmd'
 - task: PowerShell@2
   inputs:
     targetType: 'inline'
