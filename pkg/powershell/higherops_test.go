@@ -183,4 +183,41 @@ func Example_localScope() {
 //     In Logging : Debug: ab  ba
 }
 
+type callbackAddRef struct{}
 
+func (c callbackAddRef) Callback(str string, input []Object, results CallbackResultsWriter) {
+	for _, object := range input {
+		results.Write(object.AddRef(), true)
+	}
+}
+
+func Example_callbackWriteTrue() {
+	runspace := CreateRunspace(fmtPrintLogger{}, callbackAddRef{})
+	defer runspace.Delete()
+	results := runspace.ExecStr(`1 | send-hostcommand -message 'empty'`, true )
+	defer results.Close()
+	// Output:
+}
+type callbackAddRefSave struct{
+	objects *[]Object
+}
+
+func (c callbackAddRefSave) Callback(str string, input []Object, results CallbackResultsWriter) {
+	for _, object := range input {
+		*c.objects = append(*c.objects, object.AddRef())
+	}
+}
+func Example_callbackSaveObject() {
+	var callback callbackAddRefSave
+	callback.objects = &([]Object{})
+	runspace := CreateRunspace(fmtPrintLogger{}, callback)
+	defer runspace.Delete()
+	results := runspace.ExecStr(`1 | send-hostcommand -message 'empty'`, true )
+	defer results.Close()
+	results2 := runspace.ExecStr(`write-host $args[0]`, true, (*callback.objects)[0] )
+	defer results2.Close()
+	for _,object := range *callback.objects{
+		object.Close()
+	}
+	// Output: In Logging : Debug: 1
+}
