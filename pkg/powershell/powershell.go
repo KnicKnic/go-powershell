@@ -40,19 +40,21 @@ func (command Command) Delete() {
 	C.DeletePowershell(command.handle)
 }
 
+func boolToCChar(b bool) C.char {
+	if b{
+		return 1
+	}
+	return 0
+}
+
 // AddCommand to an existing powershell command
 func (command Command) AddCommand(commandlet string, useLocalScope bool) {
 	cs, _ := windows.UTF16PtrFromString(commandlet)
 
 	ptrwchar := unsafe.Pointer(cs)
+	localScope := boolToCChar(useLocalScope)
 
-	if useLocalScope {
-		_ = C.AddCommandSpecifyScope(command.handle, (*C.wchar_t)(ptrwchar), 1)
-
-	} else {
-		_ = C.AddCommandSpecifyScope(command.handle, (*C.wchar_t)(ptrwchar), 0)
-
-	}
+	_ = C.AddCommandSpecifyScope(command.handle, (*C.wchar_t)(ptrwchar), localScope)
 }
 
 // AddScript to an existing powershell command
@@ -60,14 +62,9 @@ func (command Command) AddScript(script string, useLocalScope bool) {
 	cs, _ := windows.UTF16PtrFromString(script)
 
 	ptrwchar := unsafe.Pointer(cs)
+	localScope := boolToCChar(useLocalScope)
 
-	if useLocalScope {
-		_ = C.AddScriptSpecifyScope(command.handle, (*C.wchar_t)(ptrwchar), 1)
-
-	} else {
-		_ = C.AddScriptSpecifyScope(command.handle, (*C.wchar_t)(ptrwchar), 0)
-
-	}
+	_ = C.AddScriptSpecifyScope(command.handle, (*C.wchar_t)(ptrwchar), localScope)
 }
 
 // AddArgumentString add a string argument to an existing powershell command
@@ -84,6 +81,16 @@ func (command Command) AddArgument(objects ...Object) {
 	for _, object := range objects {
 		_ = C.AddPSObjectArgument(command.handle, object.handle)
 	}
+}
+
+// AddArgument add a Object argument to an existing powershell command
+func (command Command) AddParameterString(paramName string, paramValue string) {
+	cName, _ := windows.UTF16PtrFromString(paramName)
+	ptrName := unsafe.Pointer(cName)
+
+	cValue, _ := windows.UTF16PtrFromString(paramValue)
+	ptrValue := unsafe.Pointer(cValue)
+	_ = C.AddParameterString(command.handle,(*C.wchar_t)(ptrName), (*C.wchar_t)(ptrValue))
 }
 
 // Invoke the powershell command
