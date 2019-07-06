@@ -81,7 +81,7 @@ func (command Command) AddArgument(object Object) {
 	_ = C.AddPSObjectArgument(command.handle, object.handle)
 }
 
-// AddArgument add a Object argument to an existing powershell command
+// AddParameterString add a string with a parameter name to an existing powershell command
 func (command Command) AddParameterString(paramName string, paramValue string) {
 	cName, _ := windows.UTF16PtrFromString(paramName)
 	ptrName := unsafe.Pointer(cName)
@@ -89,6 +89,15 @@ func (command Command) AddParameterString(paramName string, paramValue string) {
 	cValue, _ := windows.UTF16PtrFromString(paramValue)
 	ptrValue := unsafe.Pointer(cValue)
 	_ = C.AddParameterString(command.handle,(*C.wchar_t)(ptrName), (*C.wchar_t)(ptrValue))
+}
+
+// AddParameter add a Object with a parameter name to an existing powershell command
+func (command Command) AddParameter(paramName string, object Object){
+
+	cName, _ := windows.UTF16PtrFromString(paramName)
+	ptrName := unsafe.Pointer(cName)
+
+	_ = C.AddParameterObject(command.handle,(*C.wchar_t)(ptrName), object.handle)
 }
 
 // Invoke the powershell command

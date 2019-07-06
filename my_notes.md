@@ -4,10 +4,10 @@ copy /y ..\native-powershell\host.h .
 copy /y ..\native-powershell\x64\Release\psh_host.dll .
 
 
-copy /y ..\psh_host\host.h .\pkg\powershell\
-copy /y ..\psh_host\x64\Release\psh_host.dll .
-copy /y ..\psh_host\x64\Release\psh_host.dll .\pkg\powershell
-copy /y ..\psh_host\x64\Release\psh_host.dll .\tests\
+copy /y native-powershell\host.h .\pkg\powershell\
+copy /y native-powershell\x64\Release\psh_host.dll .
+copy /y native-powershell\x64\Release\psh_host.dll .\pkg\powershell
+copy /y native-powershell\x64\Release\psh_host.dll .\tests\
 copy /y ..\psh_host\x64\Debug\psh_host.dll .
 
 go-powershell.exe -logtostderr a

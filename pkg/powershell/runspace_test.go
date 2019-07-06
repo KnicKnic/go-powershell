@@ -14,7 +14,7 @@ func Example_powershellStatement() {
 				   "emitting your os is $os"`
 	// execute a statement in powershell consisting of "emitting your os is $os"
 	// $os will be Windows_NT
-	results := runspace.ExecScript(statements, true)
+	results := runspace.ExecScript(statements, true, nil)
 	// auto cleanup all results returned
 	defer results.Close()
 
@@ -32,14 +32,14 @@ func Example_savingVariablesAcrossStatements() {
 	statement1 := `$os = $env:OS;`
 	// The false says to not execute the statement in a seperate scope
 	// meaning that the variables will be availale to future invocations
-	results1 := runspace.ExecScript(statement1, false)
+	results1 := runspace.ExecScript(statement1, false, nil)
 	//not defering close as we do not need the results
 	results1.Close()
 
 	statement2 := `"emitting your os is $os"`
 	// we are choosing the create in a different scope, the parent scope variables are accessible to us
 	// we could however choose to specify false and be in the same scope
-	results2 := runspace.ExecScript(statement2, true)
+	results2 := runspace.ExecScript(statement2, true, nil)
 	// auto cleanup all results returned
 	defer results2.Close()
 
@@ -55,7 +55,7 @@ func Example_powershellCommand() {
 	defer runspace.Delete()
 
 	// this will get the registry key for HKEY_LOCAL_MACHINE
-	results := runspace.ExecCommand("get-item", true, `hklm:\`)
+	results := runspace.ExecCommand("get-item", true, nil, `hklm:\`)
 	// auto cleanup the results
 	defer results.Close()
 
@@ -93,7 +93,7 @@ func Example_powershellCommandWithNamedParameters(){
 
 /**
 	if !results.Exception.IsNull() {
-		results2 := runspace.ExecScript("args[0].ToString()", true, results.Exception)
+		results2 := runspace.ExecScript("args[0].ToString()", true, nil, results.Exception)
 		defer results2.Close()
 		fmt.Println(results2.Objects[0].ToString())
 	}*/
