@@ -12,7 +12,7 @@ func processArgs(command Command, namedArgs map[string]interface{}, args ...inte
 		}
 	}
 
-	if(namedArgs != nil){
+	if namedArgs != nil {
 		for name, arg := range namedArgs {
 			switch v := arg.(type) {
 			case string:

@@ -25,8 +25,7 @@ func (logger *recordData) Reset() {
 	logger.lines = ""
 }
 
-var recordPtrInstance recordData
-var record *recordData = &recordPtrInstance
+var record = &recordData{}
 
 type fmtPrintLogger struct{}
 

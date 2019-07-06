@@ -18,7 +18,7 @@ func storeRunspaceContext(context runspaceContext) uint64 {
 	contextCache.Store(contextLookup, context)
 	return contextLookup
 }
-func getRunspaceContext(key uint64) (runspaceContext) {
+func getRunspaceContext(key uint64) runspaceContext {
 
 	contextInterface, ok := contextCache.Load(key)
 	if !ok {

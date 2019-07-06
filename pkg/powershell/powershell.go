@@ -41,7 +41,7 @@ func (command Command) Delete() {
 }
 
 func boolToCChar(b bool) C.char {
-	if b{
+	if b {
 		return 1
 	}
 	return 0
@@ -88,16 +88,16 @@ func (command Command) AddParameterString(paramName string, paramValue string) {
 
 	cValue, _ := windows.UTF16PtrFromString(paramValue)
 	ptrValue := unsafe.Pointer(cValue)
-	_ = C.AddParameterString(command.handle,(*C.wchar_t)(ptrName), (*C.wchar_t)(ptrValue))
+	_ = C.AddParameterString(command.handle, (*C.wchar_t)(ptrName), (*C.wchar_t)(ptrValue))
 }
 
 // AddParameter add a Object with a parameter name to an existing powershell command
-func (command Command) AddParameter(paramName string, object Object){
+func (command Command) AddParameter(paramName string, object Object) {
 
 	cName, _ := windows.UTF16PtrFromString(paramName)
 	ptrName := unsafe.Pointer(cName)
 
-	_ = C.AddParameterObject(command.handle,(*C.wchar_t)(ptrName), object.handle)
+	_ = C.AddParameterObject(command.handle, (*C.wchar_t)(ptrName), object.handle)
 }
 
 // Invoke the powershell command
