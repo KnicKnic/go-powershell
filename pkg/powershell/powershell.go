@@ -77,10 +77,8 @@ func (command Command) AddArgumentString(argument string) {
 }
 
 // AddArgument add a Object argument to an existing powershell command
-func (command Command) AddArgument(objects ...Object) {
-	for _, object := range objects {
-		_ = C.AddPSObjectArgument(command.handle, object.handle)
-	}
+func (command Command) AddArgument(object Object) {
+	_ = C.AddPSObjectArgument(command.handle, object.handle)
 }
 
 // AddArgument add a Object argument to an existing powershell command
