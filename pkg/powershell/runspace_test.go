@@ -65,22 +65,16 @@ func Example_powershellCommand() {
 	// OUTPUT: HKEY_LOCAL_MACHINE
 }
 
-func Example_powershellCommandWithNamedParameters(){	
+func Example_powershellCommandWithNamedParameters() {
 	// create a runspace (where you run your powershell statements in)
 	runspace := CreateRunspace(fmtPrintLogger{}, nil)
 	// auto cleanup your runspace
 	defer runspace.Delete()
 
-	command := runspace.CreateCommand()
-	// auto cleanup your command
-	defer command.Delete()
-
-	// Get-ItemPropertyValue "HKLM:\SOFTWARE\Microsoft\Windows NT\CurrentVersion" -Name SoftwareType
-	command.AddCommand("Get-ItemPropertyValue", true)
-	command.AddParameterString("Path", "HKLM:\\SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion")
-	command.AddParameterString("Name", "SoftwareType")
-	// this will get the registry value for System
-	results := command.Invoke()
+	results := runspace.ExecCommand("Get-ItemPropertyValue", true, map[string]interface{}{
+		"Path": "HKLM:\\SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion",
+		"Name": "SoftwareType",
+	})
 	// auto cleanup the results
 	defer results.Close()
 
@@ -90,10 +84,34 @@ func Example_powershellCommandWithNamedParameters(){
 	// OUTPUT: System
 }
 
+// func Example_powershellCommandWithNamedParametersComplex() {
+// 	// create a runspace (where you run your powershell statements in)
+// 	runspace := CreateRunspace(fmtPrintLogger{}, nil)
+// 	// auto cleanup your runspace
+// 	defer runspace.Delete()
+
+// 	command := runspace.CreateCommand()
+// 	// auto cleanup your command
+// 	defer command.Delete()
+
+// 	// Get-ItemPropertyValue "HKLM:\SOFTWARE\Microsoft\Windows NT\CurrentVersion" -Name SoftwareType
+// 	command.AddCommand("Get-ItemPropertyValue", true)
+// 	command.AddParameterString("Path", "HKLM:\\SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion")
+// 	command.AddParameterString("Name", "SoftwareType")
+// 	// this will get the registry value for System
+// 	results := command.Invoke()
+// 	// auto cleanup the results
+// 	defer results.Close()
+
+// 	// print the .ToString() of a registry key, which is the key name
+// 	fmt.Println(results.Objects[0].ToString())
+
+// 	// OUTPUT: System
+// }
 
 /**
-	if !results.Exception.IsNull() {
-		results2 := runspace.ExecScript("args[0].ToString()", true, nil, results.Exception)
-		defer results2.Close()
-		fmt.Println(results2.Objects[0].ToString())
-	}*/
+if !results.Exception.IsNull() {
+	results2 := runspace.ExecScript("args[0].ToString()", true, nil, results.Exception)
+	defer results2.Close()
+	fmt.Println(results2.Objects[0].ToString())
+}*/

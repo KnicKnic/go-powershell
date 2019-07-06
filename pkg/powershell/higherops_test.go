@@ -286,3 +286,27 @@ func TestCcallbackSaveObject(t *testing.T) {
 `
 	validate(t, expected, record.lines)
 }
+
+func TestCpowershellCommandWithNamedParameters(t *testing.T) {
+	record.Reset()
+	// create a runspace (where you run your powershell statements in)
+	runspace := CreateRunspace(fmtPrintLogger{}, nil)
+	// auto cleanup your runspace
+	defer runspace.Delete()
+
+	paramResults := runspace.ExecScript(`"Software" + "Type"`, true, nil)
+	defer paramResults.Close()
+
+	results := runspace.ExecCommand("Get-ItemPropertyValue", true, map[string]interface{}{
+		"Path": "HKLM:\\SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion",
+		"Name": paramResults.Objects[0],
+	})
+	// auto cleanup the results
+	defer results.Close()
+
+	validate(t, results.Objects[0].ToString(), "System")
+	if len(results.Objects) != 1 {
+		t.Fail()
+	}
+	validate(t, "", record.lines)
+}
