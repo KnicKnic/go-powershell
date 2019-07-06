@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+
 	"github.com/KnicKnic/go-powershell/pkg/powershell"
 )
 
@@ -13,7 +14,7 @@ func main() {
 
 	// execute a statement in powershell consisting of "emit this string"
 	// this will output that object into the results
-	results := runspace.ExecStr(`"emit this string"`, true)
+	results := runspace.ExecScript(`"emit this string"`, true)
 	// auto cleanup all results returned
 	defer results.Close()
 

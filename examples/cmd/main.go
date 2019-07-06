@@ -33,8 +33,16 @@ func (c callbackTest) Callback(str string, input []powershell.Object, results po
 // PrintAndExecuteCommand executes a command in powershell and prints the results
 func PrintAndExecuteCommand(runspace powershell.Runspace, command string, useLocalScope bool) {
 	fmt.Println("Executing powershell command:", command)
-	results := runspace.ExecStr(command, useLocalScope)
+
+	// determine if executing just a .ps1 file, if so use command, otherwise script
+	var results powershell.InvokeResults
+	if strings.HasSuffix(command, ".ps1") {
+		results = runspace.ExecCommand(command, useLocalScope)
+	} else {
+		results = runspace.ExecScript(command, useLocalScope)
+	}
 	defer results.Close()
+
 	fmt.Println("Completed Executing powershell command:", command)
 	if !results.Success() {
 		fmt.Println("\tCommand threw exception of type", results.Exception.Type(), "and ToString", results.Exception.ToString())

@@ -42,15 +42,8 @@ func makeCString(str string) *C.wchar_t {
 func logWchart(context uint64, str *C.wchar_t) {
 	if context != 0 {
 		s := makeString(str)
-		// glog.Info("golang log: ", s)
-
-		contextInterface, ok := getRunspaceContext(context)
-		if ok {
-			contextInterface.Log.Write(s)
-		} else {
-			// glog.Info("In Logging callback, failed to load context key: ", context)
-			panic("In Logging callback, failed to load context key: ")
-		}
+		contextInterface := getRunspaceContext(context)
+		contextInterface.Log.Write(s)
 	}
 }
 
@@ -60,18 +53,13 @@ func commandWchart(context uint64, cMessage *C.wchar_t, input *C.PowerShellObjec
 
 	var resultsWriter callbackResultsWriter
 	if context != 0 {
-		contextInterface, ok := getRunspaceContext(context)
-		if ok {
-			inputArr := make([]Object, inputCount)
-			for i := uint32(0); uint64(i) < inputCount; i++ {
-				inputArr[i] = makePowerShellObjectIndexed(input, i)
-			}
-			message := makeString(cMessage)
-			contextInterface.Callback.Callback(message, inputArr, &resultsWriter)
-		} else {
-			// glog.Info("In Command callback, failed to load context key: ", context)
-			panic("In Command callback, failed to load context key: ")
+		contextInterface := getRunspaceContext(context)
+		inputArr := make([]Object, inputCount)
+		for i := uint32(0); uint64(i) < inputCount; i++ {
+			inputArr[i] = makePowerShellObjectIndexed(input, i)
 		}
+		message := makeString(cMessage)
+		contextInterface.Callback.Callback(message, inputArr, &resultsWriter)
 	}
 	resultsWriter.filloutResults(ret)
 }

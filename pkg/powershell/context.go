@@ -1,6 +1,7 @@
 package powershell
 
 import (
+	"fmt"
 	"sync"
 	"sync/atomic"
 )
@@ -17,13 +18,13 @@ func storeRunspaceContext(context runspaceContext) uint64 {
 	contextCache.Store(contextLookup, context)
 	return contextLookup
 }
-func getRunspaceContext(key uint64) (runspaceContext, bool) {
+func getRunspaceContext(key uint64) (runspaceContext) {
 
 	contextInterface, ok := contextCache.Load(key)
-	if ok {
-		return contextInterface.(runspaceContext), true
+	if !ok {
+		panic(fmt.Sprint("failed to load context key:", key))
 	}
-	return runspaceContext{}, false
+	return contextInterface.(runspaceContext)
 }
 func deleteRunspaceContextLookup(key uint64) {
 	contextCache.Delete(key)
