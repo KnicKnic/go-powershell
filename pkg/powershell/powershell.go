@@ -9,7 +9,7 @@ import (
 /*
 
 #cgo CFLAGS: -I.
-#cgo LDFLAGS: ${SRCDIR}/psh_host.dll
+#cgo LDFLAGS: ${SRCDIR}/../../native-powershell/native-powershell-bin/psh_host.dll
 
 
 #include <stddef.h>
