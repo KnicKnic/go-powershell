@@ -3,7 +3,7 @@ package powershell
 /*
 
 #cgo CFLAGS: -I.
-#cgo LDFLAGS: ./psh_host.dll
+#cgo LDFLAGS: ${SRCDIR}/psh_host.dll
 
 
 #include <stddef.h>

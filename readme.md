@@ -53,10 +53,9 @@ This project has a dependency on [native-powershell](https://github.com/KnicKnic
 
 ### Using native-powershell
 1. Download host.h & psh_host.dll from https://github.com/KnicKnic/native-powershell/releases
-1. copy host.h into this root folder
+1. copy host.h into this /pkg/powershell
 1. Copy the compiled psh_host.dll into
-    1. .\pkg\powershell
-    1. the location you compile your golang app from
+    1. /pkg/powershell
     1. the same folder where you distribute the golang binary
 
 ### Getting cgo (so you can compile)
