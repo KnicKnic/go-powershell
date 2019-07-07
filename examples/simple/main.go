@@ -10,7 +10,7 @@ func main() {
 	// create a runspace (where you run your powershell statements in)
 	runspace := powershell.CreateRunspaceSimple()
 	// auto cleanup your runspace
-	defer runspace.Delete()
+	defer runspace.Close()
 
 	// execute a statement in powershell consisting of "emit this string"
 	// this will output that object into the results

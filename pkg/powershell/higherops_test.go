@@ -76,7 +76,7 @@ func TestCcreateRunspaceWitLoggerWithCallback(t *testing.T) {
 	record.Reset()
 	runspace := CreateRunspace(fmtPrintLogger{}, callbackTest{})
 	// runspace := CreateRunspaceSimple()
-	defer runspace.Delete()
+	defer runspace.Close()
 	inputStr := `
 write-host "calling Write-Host"
 write-debug "callng Write-Debug"
@@ -118,7 +118,7 @@ Command returned 3 objects
 func TestCcreateRunspaceSimple(t *testing.T) {
 	record.Reset()
 	runspace := CreateRunspaceSimple()
-	defer runspace.Delete()
+	defer runspace.Close()
 	results := runspace.ExecScript(`"emit this string"`, true, nil)
 	defer results.Close()
 	// print the string result of the first object
@@ -129,7 +129,7 @@ func TestCcreateRunspaceSimple(t *testing.T) {
 func TestCcreateRunspaceWithArgs(t *testing.T) {
 	record.Reset()
 	runspace := CreateRunspace(fmtPrintLogger{}, callbackTest{})
-	defer runspace.Delete()
+	defer runspace.Close()
 	results := runspace.ExecScript(`$args[0]; $args[1] + "changed"`, true, nil, "string1", "string2")
 	defer results.Close()
 	if !results.Success() {
@@ -148,7 +148,7 @@ func TestCcreateRunspaceWithArgs(t *testing.T) {
 func TestCcreateRunspaceUsingCommand(t *testing.T) {
 	record.Reset()
 	runspace := CreateRunspace(fmtPrintLogger{}, callbackTest{})
-	defer runspace.Delete()
+	defer runspace.Close()
 	results := runspace.ExecCommand(`..\\..\\tests\\t1.ps1`, false, nil)
 	defer results.Close()
 
@@ -185,7 +185,7 @@ func TestCcreateRunspaceUsingCommand(t *testing.T) {
 func TestCglobalScope(t *testing.T) {
 	record.Reset()
 	runspace := CreateRunspace(fmtPrintLogger{}, callbackTest{})
-	defer runspace.Delete()
+	defer runspace.Close()
 	results := runspace.ExecCommand(`..\\..\\tests\\test_scope.ps1`, false, nil)
 	defer results.Close()
 
@@ -207,7 +207,7 @@ func TestCglobalScope(t *testing.T) {
 func TestClocalScope(t *testing.T) {
 	record.Reset()
 	runspace := CreateRunspace(fmtPrintLogger{}, callbackTest{})
-	defer runspace.Delete()
+	defer runspace.Close()
 	results := runspace.ExecCommand(`..\\..\\tests\\test_scope.ps1`, true, nil)
 	defer results.Close()
 
@@ -238,7 +238,7 @@ func (c callbackAddRef) Callback(str string, input []Object, results CallbackRes
 func TestCcallbackWriteTrue(t *testing.T) {
 	record.Reset()
 	runspace := CreateRunspace(fmtPrintLogger{}, callbackAddRef{})
-	defer runspace.Delete()
+	defer runspace.Close()
 	results := runspace.ExecScript(`1 | send-hostcommand -message 'empty'`, true, nil)
 	defer results.Close()
 	// Output:
@@ -272,7 +272,7 @@ func TestCcallbackSaveObject(t *testing.T) {
 	callback := callbackAddRefSave{}
 	record.Reset()
 	runspace := CreateRunspace(fmtPrintLogger{}, &callback)
-	defer runspace.Delete()
+	defer runspace.Close()
 	results := runspace.ExecScript(`1 | send-hostcommand -message 'empty'`, true, nil)
 	defer results.Close()
 	results2 := runspace.ExecScript(`$args | %{write-host $_}`, true, nil, psObjectsToInterface(callback.objects)...)
@@ -291,7 +291,7 @@ func TestCpowershellCommandWithNamedParameters(t *testing.T) {
 	// create a runspace (where you run your powershell statements in)
 	runspace := CreateRunspace(fmtPrintLogger{}, nil)
 	// auto cleanup your runspace
-	defer runspace.Delete()
+	defer runspace.Close()
 
 	paramResults := runspace.ExecScript(`"Software" + "Type"`, true, nil)
 	defer paramResults.Close()
@@ -315,7 +315,7 @@ func TestCpowershellCommandArgumentTypePanic(t *testing.T) {
 	// create a runspace (where you run your powershell statements in)
 	runspace := CreateRunspace(fmtPrintLogger{}, nil)
 	// auto cleanup your runspace
-	defer runspace.Delete()
+	defer runspace.Close()
 
 	var caughtUnknownArgumentType bool
 	func() {

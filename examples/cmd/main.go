@@ -58,7 +58,7 @@ func PrintAndExecuteCommand(runspace powershell.Runspace, command string, useLoc
 func Example() {
 	runspace := powershell.CreateRunspace(fmtPrintLogger{}, callbackTest{})
 	// runspace := CreateRunspaceSimple()
-	defer runspace.Delete()
+	defer runspace.Close()
 
 	for i := 0; i < len(commandFlags); i++ {
 		command := strings.ReplaceAll(commandFlags[i], "\\", "\\\\")

@@ -8,7 +8,7 @@ func Example_powershellStatement() {
 	// create a runspace (where you run your powershell statements in)
 	runspace := CreateRunspaceSimple()
 	// auto cleanup your runspace
-	defer runspace.Delete()
+	defer runspace.Close()
 
 	statements := `$os = $env:OS;
 				   "emitting your os is $os"`
@@ -27,7 +27,7 @@ func Example_savingVariablesAcrossStatements() {
 	// create a runspace (where you run your powershell statements in)
 	runspace := CreateRunspaceSimple()
 	// auto cleanup your runspace
-	defer runspace.Delete()
+	defer runspace.Close()
 
 	statement1 := `$os = $env:OS;`
 	// The false says to not execute the statement in a seperate scope
@@ -52,7 +52,7 @@ func Example_powershellCommand() {
 	// create a runspace (where you run your powershell statements in)
 	runspace := CreateRunspaceSimple()
 	// auto cleanup your runspace
-	defer runspace.Delete()
+	defer runspace.Close()
 
 	// this will get the registry key for HKEY_LOCAL_MACHINE
 	results := runspace.ExecCommand("get-item", true, nil, `hklm:\`)
@@ -69,7 +69,7 @@ func Example_powershellCommandWithNamedParameters() {
 	// create a runspace (where you run your powershell statements in)
 	runspace := CreateRunspace(fmtPrintLogger{}, nil)
 	// auto cleanup your runspace
-	defer runspace.Delete()
+	defer runspace.Close()
 
 	results := runspace.ExecCommand("Get-ItemPropertyValue", true, map[string]interface{}{
 		"Path": "HKLM:\\SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion",
@@ -88,11 +88,11 @@ func Example_powershellCommandWithNamedParameters() {
 // 	// create a runspace (where you run your powershell statements in)
 // 	runspace := CreateRunspace(fmtPrintLogger{}, nil)
 // 	// auto cleanup your runspace
-// 	defer runspace.Delete()
+// 	defer runspace.Close()
 
 // 	command := runspace.createCommand()
 // 	// auto cleanup your command
-// 	defer command.Delete()
+// 	defer command.Close()
 
 // 	// Get-ItemPropertyValue "HKLM:\SOFTWARE\Microsoft\Windows NT\CurrentVersion" -Name SoftwareType
 // 	command.AddCommand("Get-ItemPropertyValue", true)

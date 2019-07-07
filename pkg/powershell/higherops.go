@@ -30,7 +30,7 @@ func processArgs(command psCommand, namedArgs map[string]interface{}, args ...in
 // ExecScript - executes a series of statements (not to be confused with .ps1 files which are commands) in powershell
 func (runspace Runspace) ExecScript(commandStr string, useLocalScope bool, namedArgs map[string]interface{}, args ...interface{}) InvokeResults {
 	command := runspace.createCommand()
-	defer command.Delete()
+	defer command.Close()
 	command.AddScript(commandStr, useLocalScope)
 	return processArgs(command, namedArgs, args...)
 }
@@ -38,7 +38,7 @@ func (runspace Runspace) ExecScript(commandStr string, useLocalScope bool, named
 // ExecCommand - executes a command (cmdlets, command files (.ps1), functions, ...) in powershell
 func (runspace Runspace) ExecCommand(commandStr string, useLocalScope bool, namedArgs map[string]interface{}, args ...interface{}) InvokeResults {
 	command := runspace.createCommand()
-	defer command.Delete()
+	defer command.Close()
 	command.AddCommand(commandStr, useLocalScope)
 	return processArgs(command, namedArgs, args...)
 }

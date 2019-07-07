@@ -27,5 +27,5 @@ func getRunspaceContext(key uint64) runspaceContext {
 	return contextInterface.(runspaceContext)
 }
 func deleteRunspaceContextLookup(key uint64) {
-	contextCache.Delete(key)
+	contextCache.Close(key)
 }

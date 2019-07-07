@@ -24,7 +24,7 @@ type runspaceContext struct {
 	Callback CallbackHolder
 }
 
-// Runspace a context handle for a runspace, use .Delete() to free
+// Runspace a context handle for a runspace, use .Close() to free
 type Runspace struct {
 	handle        C.RunspaceHandle
 	context       runspaceContext
@@ -33,14 +33,14 @@ type Runspace struct {
 
 // CreateRunspaceSimple think of this kinda like creating a shell
 //
-// You must call Delete when done with this object
+// You must call Close when done with this object
 func CreateRunspaceSimple() Runspace {
 	return CreateRunspace(nil, nil)
 }
 
 // CreateRunspace think of this kinda like creating a shell
 //
-// You must call Delete when done with this object
+// You must call Close when done with this object
 func CreateRunspace(loggerCallback logger.Simple, callback CallbackHolder) Runspace {
 	context := runspaceContext{logger.MakeLoggerFull(loggerCallback), callback}
 	contextLookup := storeRunspaceContext(context)
@@ -57,8 +57,8 @@ func CreateRunspace(loggerCallback logger.Simple, callback CallbackHolder) Runsp
 	return Runspace{runspace, context, contextLookup}
 }
 
-// Delete and free a Runspace
-func (runspace Runspace) Delete() {
+// Close and free a Runspace
+func (runspace Runspace) Close() {
 	deleteRunspaceContextLookup(runspace.contextLookup)
 	C.DeleteRunspace(runspace.handle)
 }
