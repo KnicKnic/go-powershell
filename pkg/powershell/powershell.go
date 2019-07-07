@@ -18,25 +18,25 @@ import (
 */
 import "C"
 
-// Command represents a powershell command, must call Delete
-type Command struct {
+// psCommand represents a powershell command, must call Delete
+type psCommand struct {
 	handle C.PowershellHandle
 }
 
-// InvokeResults the results of an Invoke on a Command
+// InvokeResults the results of an Invoke on a psCommand
 type InvokeResults struct {
 	Objects   []Object
 	Exception Object
 }
 
-// CreateCommand using a runspace, still need to create a command in the powershell command
-func (runspace Runspace) CreateCommand() Command {
-	return Command{C.CreatePowershell(runspace.handle)}
+// createCommand using a runspace, still need to create a command in the powershell command
+func (runspace Runspace) createCommand() psCommand {
+	return psCommand{C.CreatePowershell(runspace.handle)}
 }
 
-// Delete and free a Command
+// Delete and free a psCommand
 // , call on all objects even those that are Invoked
-func (command Command) Delete() {
+func (command psCommand) Delete() {
 	C.DeletePowershell(command.handle)
 }
 
@@ -48,7 +48,7 @@ func boolToCChar(b bool) C.char {
 }
 
 // AddCommand to an existing powershell command
-func (command Command) AddCommand(commandlet string, useLocalScope bool) {
+func (command psCommand) AddCommand(commandlet string, useLocalScope bool) {
 	cs, _ := windows.UTF16PtrFromString(commandlet)
 
 	ptrwchar := unsafe.Pointer(cs)
@@ -58,7 +58,7 @@ func (command Command) AddCommand(commandlet string, useLocalScope bool) {
 }
 
 // AddScript to an existing powershell command
-func (command Command) AddScript(script string, useLocalScope bool) {
+func (command psCommand) AddScript(script string, useLocalScope bool) {
 	cs, _ := windows.UTF16PtrFromString(script)
 
 	ptrwchar := unsafe.Pointer(cs)
@@ -68,7 +68,7 @@ func (command Command) AddScript(script string, useLocalScope bool) {
 }
 
 // AddArgumentString add a string argument to an existing powershell command
-func (command Command) AddArgumentString(argument string) {
+func (command psCommand) AddArgumentString(argument string) {
 	cs, _ := windows.UTF16PtrFromString(argument)
 
 	ptrwchar := unsafe.Pointer(cs)
@@ -77,12 +77,12 @@ func (command Command) AddArgumentString(argument string) {
 }
 
 // AddArgument add a Object argument to an existing powershell command
-func (command Command) AddArgument(object Object) {
+func (command psCommand) AddArgument(object Object) {
 	_ = C.AddPSObjectArgument(command.handle, object.handle)
 }
 
 // AddParameterString add a string with a parameter name to an existing powershell command
-func (command Command) AddParameterString(paramName string, paramValue string) {
+func (command psCommand) AddParameterString(paramName string, paramValue string) {
 	cName, _ := windows.UTF16PtrFromString(paramName)
 	ptrName := unsafe.Pointer(cName)
 
@@ -92,7 +92,7 @@ func (command Command) AddParameterString(paramName string, paramValue string) {
 }
 
 // AddParameter add a Object with a parameter name to an existing powershell command
-func (command Command) AddParameter(paramName string, object Object) {
+func (command psCommand) AddParameter(paramName string, object Object) {
 
 	cName, _ := windows.UTF16PtrFromString(paramName)
 	ptrName := unsafe.Pointer(cName)
@@ -102,10 +102,10 @@ func (command Command) AddParameter(paramName string, object Object) {
 
 // Invoke the powershell command
 //
-// If wanting to call another powershell command do not reuse after Invoke, create another Command object and use that one
+// If wanting to call another powershell command do not reuse after Invoke, create another psCommand object and use that one
 //
 // Must still call Delete on this object
-func (command Command) Invoke() InvokeResults {
+func (command psCommand) Invoke() InvokeResults {
 
 	var objects *C.PowerShellObject
 	var count C.uint

@@ -15,11 +15,9 @@ import "unsafe"
 
 // Object representing an object return from a powershell invocation
 //
-// Needs to be called Close on if returned from Invoke,
-// unless given back to powershell and told powershell to call close.
-// You do not need to call Close on those objects presented during Callbacks.
+// Should be called on all objects returned from a powershell invocation (not callback parameters)
 //
-// This behavior is useful in send-hostcommand when you cannot execute after returnign to powershell to call close
+// See note on Object.Close for exceptions & more rules about Close
 type Object struct {
 	handle C.PowerShellObject
 }
@@ -41,7 +39,9 @@ func (obj Object) toCHandle() C.PowerShellObject {
 
 // Close allows the memory for the powershell object to be reclaimed
 //
-// Should be called on all objects returned from Command.Invoke unless you have called CallbackResultsWriter.Write() with autoclose
+// Should be called on all objects returned from a powershell invocation (not callback parameters)
+//
+//     Exception: inside a callback and call CallbackResultsWriter.Write() with autoclose
 //
 // Needs to be called for every object returned from AddRef
 func (obj Object) Close() {

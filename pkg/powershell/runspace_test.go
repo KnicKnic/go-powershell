@@ -90,7 +90,7 @@ func Example_powershellCommandWithNamedParameters() {
 // 	// auto cleanup your runspace
 // 	defer runspace.Delete()
 
-// 	command := runspace.CreateCommand()
+// 	command := runspace.createCommand()
 // 	// auto cleanup your command
 // 	defer command.Delete()
 
