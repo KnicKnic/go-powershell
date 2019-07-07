@@ -3,14 +3,23 @@
 [![gopherbadger](https://img.shields.io/badge/Go%20Coverage-99%25-brightgreen.svg?longCache=true&style=flat)](./scripts/code_coverage.ps1)
 [![GoDoc](https://godoc.org/github.com/KnicKnic/go-powershell/pkg/powershell?status.svg)](https://godoc.org/github.com/KnicKnic/go-powershell/pkg/powershell)
 
+# Goal
+The goal of this project is to enable you to quickly write golang code and interact with windows via powershell and not use exec. Because powershell is a powerful scripting language you will sometimes want to call back into golang. This is also enabled by this project. Also due to sometimes wanting to host .net and powershell giving you an easy way to wrap .net modules and functions and objects, this project also enables that.
+
+Features:
+1. Call from golang to powershell
+1. Call from powershell to golang (via special Send-HostCommand commandlet)
+1. Easy logging - Trap host output in powershell and call custom logging routines in golang
+
+
 # Status
 It works
 1. call scripts / cmdlets
 1. reuse variables between calls / invocation
-1. communicate from golang to powershell
-1. communicate from powershell to golang
+1. Call from golang to powershell
+1. Call from powershell back to golang (via special Send-HostCommand commandlet)
 1. trap host output in powershell and call custom logging routines in golang
-1. has tests
+1. has automted tests
 1. Docs - if you missed the badge above go to https://godoc.org/github.com/KnicKnic/go-powershell/pkg/powershell
 
 This project is not api stable, however I believe it will be simple if you do use the current api to migrate to any future changes. 
@@ -20,9 +29,6 @@ This project is not api stable, however I believe it will be simple if you do us
 2. more examples / tests
 3. example / helper classes around exception
 4. a doc overview
-
-# Goal
-The goal of this project is to enable you to quickly write golang code and interact with windows via powershell. Because powershell is a powerful scripting language you will sometimes want to call back into golang. This is also permitted. Also due to sometimes wanting to host .net and powershell giving you an easy way to wrap .net modules and functions and objects, this project also enables that.
 
 # Usage
 ```go
