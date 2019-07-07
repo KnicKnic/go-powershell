@@ -55,15 +55,18 @@ func main() {
 This project has a dependency on [native-powershell](https://github.com/KnicKnic/native-powershell). This is a c++/cli project that enables interacting with powershell through a C DLL interface.
 
 ### Using native-powershell
-1. Download host.h & psh_host.dll from https://github.com/KnicKnic/native-powershell/releases
-1. copy host.h into this /pkg/powershell
-1. Copy the compiled psh_host.dll into
-    1. /pkg/powershell
-    1. the same folder where you distribute the golang binary
+1. Simply fetch the dependencies, `go get -d .` and then make sure to build, `go build`
+1. Copy the precompiled psh_host.dll into your location so it can be found when running the app
+    1. cmd - `copy %GOPATH%\src\github.com\KnicKnic\go-powershell\native-powershell\native-powershell-bin\psh_host.dll .`
+    1. powershell - `copy "$($env:GOPATH)\src\github.com\KnicKnic\go-powershell\native-powershell\native-powershell-bin\psh_host.dll" .`
+1. I ended up checking in the psh_host.dll and host.h (to make things easy)
+    1. I could not find a better way to go about this and still have things be easy.
 
 ### Getting cgo (so you can compile)
-Windows - install dependencies - Use choco (easiest way to install gcc)
+Windows - install dependencies - you need gcc. I Use chocolatey to install (easiest way to install gcc)
 
+1. Install chocolatey
+	1. https://chocolatey.org/docs/installation#installing-chocolatey
 1. `choco install mingw -y`
 
 
