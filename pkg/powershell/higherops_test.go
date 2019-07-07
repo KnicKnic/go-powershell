@@ -309,3 +309,47 @@ func TestCpowershellCommandWithNamedParameters(t *testing.T) {
 	}
 	validate(t, "", record.lines)
 }
+
+func TestCpowershellCommandArgumentTypePanic(t *testing.T) {
+	record.Reset()
+	// create a runspace (where you run your powershell statements in)
+	runspace := CreateRunspace(fmtPrintLogger{}, nil)
+	// auto cleanup your runspace
+	defer runspace.Delete()
+
+	var caughtUnknownArgumentType bool
+	func() {
+		defer func() {
+			if r := recover(); r != nil {
+				if r == "unknown argument type" {
+					caughtUnknownArgumentType = true
+				}
+			}
+		}()
+		paramResults := runspace.ExecScript(`"Software" + "Type"`, true, nil, 1)
+		defer paramResults.Close()
+	}()
+
+	if !caughtUnknownArgumentType {
+		t.Fail()
+	}
+	caughtUnknownArgumentType = false
+
+	func() {
+		defer func() {
+			if r := recover(); r != nil {
+				if r == "unknown argument type" {
+					caughtUnknownArgumentType = true
+				}
+			}
+		}()
+		results := runspace.ExecCommand("Get-ItemPropertyValue", true, map[string]interface{}{
+			"Name": 1,
+		})
+		defer results.Close()
+	}()
+	if !caughtUnknownArgumentType {
+		t.Fail()
+	}
+	validate(t, "", record.lines)
+}
