@@ -6,7 +6,6 @@ c/**
 **.lib
 **.a
 host.h
-*.ps1
 __debug_bin
 
 
