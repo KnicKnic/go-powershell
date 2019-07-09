@@ -20,28 +20,29 @@ import "C"
 
 // psCommand represents a powershell command, must call Close
 type psCommand struct {
-	handle C.PowershellHandle
-	context * runspaceContext
+	handle  C.PowershellHandle
+	context *runspaceContext
 }
 
 // InvokeResults the results of an Invoke on a psCommand
 type InvokeResults struct {
-	Objects   []Object
-	Exception Object
+	Objects        []Object
+	Exception      Object
+	objectsNoClose map[int]bool //only using as a set
 }
 
 // createCommand using a runspace, still need to create a command in the powershell command
 func (runspace Runspace) createCommand() psCommand {
 	currentlyInvoking := runspace.context.invoking
-	if(len(currentlyInvoking)!= 0){
-		currentCommand:= currentlyInvoking[len(currentlyInvoking) -1]
+	if len(currentlyInvoking) != 0 {
+		currentCommand := currentlyInvoking[len(currentlyInvoking)-1]
 		return currentCommand.createNested()
 	}
 	return psCommand{C.CreatePowershell(runspace.handle), runspace.context}
 }
 
 // createNested a nested powershell command
-func (command psCommand) createNested() psCommand{
+func (command psCommand) createNested() psCommand {
 	return psCommand{C.CreatePowershellNested(command.handle), command.context}
 }
 
@@ -112,7 +113,7 @@ func (command psCommand) AddParameter(paramName string, object Object) {
 }
 
 func (command psCommand) completeInvoke() {
-	command.context.invoking =  command.context.invoking[:len(command.context.invoking)-1]
+	command.context.invoking = command.context.invoking[:len(command.context.invoking)-1]
 }
 
 // Invoke the powershell command
@@ -120,7 +121,7 @@ func (command psCommand) completeInvoke() {
 // If wanting to call another powershell command do not reuse after Invoke, create another psCommand object and use that one
 //
 // Must still call Close on this object
-func (command psCommand) Invoke() InvokeResults {
+func (command psCommand) Invoke() *InvokeResults {
 
 	var objects *C.PowerShellObject
 	var count C.uint
@@ -144,20 +145,33 @@ func makePowerShellObject(object C.PowerShellObject) Object {
 	return Object{object}
 }
 
-func makeInvokeResults(objects *C.PowerShellObject, count C.uint, exception C.PowerShellObject) (results InvokeResults) {
+func makeInvokeResults(objects *C.PowerShellObject, count C.uint, exception C.PowerShellObject) *InvokeResults {
+	results := InvokeResults{Objects: make([]Object, count),
+		Exception:      makePowerShellObject(exception),
+		objectsNoClose: make(map[int]bool),
+	}
 	goCount := uint32(count)
-	results.Objects = make([]Object, count)
 	for i := uint32(0); i < goCount; i++ {
 		results.Objects[i] = makePowerShellObjectIndexed(objects, i)
 	}
-	results.Exception = makePowerShellObject(exception)
-	return
+	return &results
+}
+
+// RemoveObjectFromClose remove object from objects that get closed from Close routine.
+// Does not alter InvokeResults.Objects
+//
+// Useful when calling powershell from inside a powershell callback and need to
+// to call CallbackResultsWriter.Write(object, true) to have powershell cleanup the reference
+func (results *InvokeResults) RemoveObjectFromClose(index int) {
+	results.objectsNoClose[index] = true
 }
 
 // Close is a convenience wrapper to close all result objects, so you do not have to
 func (results *InvokeResults) Close() {
-	for _, object := range results.Objects {
-		object.Close()
+	for i, object := range results.Objects {
+		if !results.objectsNoClose[i] {
+			object.Close()
+		}
 	}
 	results.Exception.Close()
 }

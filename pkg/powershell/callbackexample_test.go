@@ -15,7 +15,7 @@ func (callback callbackAdd10Nested) Callback(runspace Runspace, str string, inpu
 	case "add 10":
 		// iterate through all items passed in
 		for _, object := range input {
-			var numStr string = object.ToString()
+			numStr := object.ToString()
 			num, _ := strconv.Atoi(numStr)
 			num += 10
 
@@ -23,14 +23,20 @@ func (callback callbackAdd10Nested) Callback(runspace Runspace, str string, inpu
 			// results.WriteString(fmt.Sprint(num))
 
 			// or write them back as a powershell integer
-
+			//
 			// convert object into a powershell integer
-			execResults := runspace.ExecScript(`[int]$args[0]`, true, nil, fmt.Sprint(num))
+			//
+			// execute in anonyous function to get scoped cleanup of results
+			func() {
+				execResults := runspace.ExecScript(`[int]$args[0]`, true, nil, fmt.Sprint(num))
+				defer execResults.Close()
 
-			// we need to close our execResults.Object[0] for us after it has been processed
-			// however we do not know when that is, so tell the results to auto do it
-			// WE MUST NOT CLOSE IT OURSELVES IF SPECIFYING TRUE!
-			results.Write(execResults.Objects[0], true)
+				// we need to close our execResults.Object[0] for us after it has been processed
+				// however we do not know when that is, so tell the results to auto do it
+				// WE MUST NOT CLOSE IT OURSELVES IF SPECIFYING TRUE!
+				results.Write(execResults.Objects[0], true)
+				execResults.RemoveObjectFromClose(0)
+			}()
 		}
 	}
 }

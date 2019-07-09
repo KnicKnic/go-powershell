@@ -35,7 +35,7 @@ func PrintAndExecuteCommand(runspace powershell.Runspace, command string, useLoc
 	fmt.Println("Executing powershell command:", command)
 
 	// determine if executing just a .ps1 file, if so use command, otherwise script
-	var results powershell.InvokeResults
+	var results *powershell.InvokeResults
 	if strings.HasSuffix(command, ".ps1") {
 		results = runspace.ExecCommand(command, useLocalScope, nil)
 	} else {

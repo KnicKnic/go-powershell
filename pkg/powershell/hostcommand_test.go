@@ -15,7 +15,7 @@ func (callbackAdd10) Callback(runspace Runspace, str string, input []Object, res
 	case "add 10":
 		// iterate through all items passed in
 		for _, object := range input {
-			var numStr string = object.ToString()
+			numStr := object.ToString()
 			num, _ := strconv.Atoi(numStr)
 
 			// write the object back to powershell as a string
