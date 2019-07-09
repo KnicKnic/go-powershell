@@ -18,7 +18,7 @@ func (logger fmtPrintLogger) Write(arg string) {
 
 type callbackTest struct{}
 
-func (c callbackTest) Callback(str string, input []powershell.Object, results powershell.CallbackResultsWriter) {
+func (c callbackTest) Callback(_ powershell.Runspace, str string, input []powershell.Object, results powershell.CallbackResultsWriter) {
 	fmt.Println("\tIn callback:", str)
 	results.WriteString(str)
 	for i, object := range input {

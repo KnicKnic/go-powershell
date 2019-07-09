@@ -20,7 +20,7 @@ type CallbackResultsWriter interface {
 
 // CallbackHolder callback function pointer for Send-HostCommand callbacks
 type CallbackHolder interface {
-	Callback(str string, input []Object, results CallbackResultsWriter)
+	Callback(runspace Runspace, message string, input []Object, results CallbackResultsWriter)
 }
 
 // callbackResultsWriter is the internal implementation of CallbackResultsWriter

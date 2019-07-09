@@ -6,12 +6,10 @@ import (
 )
 
 // the callback we want to add
-type callbackAdd10MultipleRunspace struct {
-	// to be able to execute powershell statements inside our callback we need a new runspace
-	newRunspace Runspace
+type callbackAdd10Nested struct {
 }
 
-func (callback *callbackAdd10MultipleRunspace) Callback(str string, input []Object, results CallbackResultsWriter) {
+func (callback callbackAdd10Nested) Callback(runspace Runspace, str string, input []Object, results CallbackResultsWriter) {
 	switch str {
 	// check if we are processing the "add 10" message
 	case "add 10":
@@ -27,7 +25,7 @@ func (callback *callbackAdd10MultipleRunspace) Callback(str string, input []Obje
 			// or write them back as a powershell integer
 
 			// convert object into a powershell integer
-			execResults := callback.newRunspace.ExecScript(`[int]$args[0]`, true, nil, fmt.Sprint(num))
+			execResults := runspace.ExecScript(`[int]$args[0]`, true, nil, fmt.Sprint(num))
 
 			// we need to close our execResults.Object[0] for us after it has been processed
 			// however we do not know when that is, so tell the results to auto do it
@@ -36,12 +34,8 @@ func (callback *callbackAdd10MultipleRunspace) Callback(str string, input []Obje
 		}
 	}
 }
-func Example_powershellCallbackMultipleRunspace() {
-	// create a separate callback runspace
-	// you can share objects between runspaces, but you cannot execute 2 statements in the same runspace
-	// at the same time!
-	callback := &callbackAdd10MultipleRunspace{CreateRunspaceSimple()}
-	defer callback.newRunspace.Close()
+func Example_powershellCallbackNested() {
+	callback := callbackAdd10Nested{}
 
 	// create a runspace (where you run your powershell statements in)
 	runspace := CreateRunspace(nil, callback)

@@ -9,7 +9,7 @@ import (
 type callbackAdd10 struct {
 }
 
-func (callbackAdd10) Callback(str string, input []Object, results CallbackResultsWriter) {
+func (callbackAdd10) Callback(runspace Runspace, str string, input []Object, results CallbackResultsWriter) {
 	switch str {
 	// check if we are processing the "add 10" message
 	case "add 10":

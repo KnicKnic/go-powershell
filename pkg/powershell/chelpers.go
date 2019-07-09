@@ -59,7 +59,7 @@ func commandWchart(context uint64, cMessage *C.wchar_t, input *C.PowerShellObjec
 			inputArr[i] = makePowerShellObjectIndexed(input, i)
 		}
 		message := makeString(cMessage)
-		contextInterface.Callback.Callback(message, inputArr, &resultsWriter)
+		contextInterface.Callback.Callback(contextInterface.recreateRunspace(), message, inputArr, &resultsWriter)
 	}
 	resultsWriter.filloutResults(ret)
 }

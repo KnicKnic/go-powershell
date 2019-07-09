@@ -37,7 +37,7 @@ type callbackTest struct {
 	lines *string
 }
 
-func (c callbackTest) Callback(str string, input []Object, results CallbackResultsWriter) {
+func (c callbackTest) Callback(_ Runspace, str string, input []Object, results CallbackResultsWriter) {
 	record.Println("    In callback:", str)
 	results.WriteString(str)
 	for i, object := range input {
@@ -228,7 +228,7 @@ func TestClocalScope(t *testing.T) {
 
 type callbackAddRef struct{}
 
-func (c callbackAddRef) Callback(str string, input []Object, results CallbackResultsWriter) {
+func (c callbackAddRef) Callback(_ Runspace, str string, input []Object, results CallbackResultsWriter) {
 	results.WriteString(str)
 	for _, object := range input {
 		results.Write(object.AddRef(), true)
@@ -254,7 +254,7 @@ type callbackAddRefSave struct {
 	objects []Object
 }
 
-func (c *callbackAddRefSave) Callback(str string, input []Object, results CallbackResultsWriter) {
+func (c *callbackAddRefSave) Callback(runspace Runspace, str string, input []Object, results CallbackResultsWriter) {
 	for _, object := range input {
 		c.objects = append(c.objects, object.AddRef())
 	}

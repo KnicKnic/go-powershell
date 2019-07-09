@@ -21,6 +21,7 @@ import "C"
 // psCommand represents a powershell command, must call Close
 type psCommand struct {
 	handle C.PowershellHandle
+	context * runspaceContext
 }
 
 // InvokeResults the results of an Invoke on a psCommand
@@ -31,7 +32,17 @@ type InvokeResults struct {
 
 // createCommand using a runspace, still need to create a command in the powershell command
 func (runspace Runspace) createCommand() psCommand {
-	return psCommand{C.CreatePowershell(runspace.handle)}
+	currentlyInvoking := runspace.context.invoking
+	if(len(currentlyInvoking)!= 0){
+		currentCommand:= currentlyInvoking[len(currentlyInvoking) -1]
+		return currentCommand.createNested()
+	}
+	return psCommand{C.CreatePowershell(runspace.handle), runspace.context}
+}
+
+// createNested a nested powershell command
+func (command psCommand) createNested() psCommand{
+	return psCommand{C.CreatePowershellNested(command.handle), command.context}
 }
 
 // Close and free a psCommand
@@ -100,6 +111,10 @@ func (command psCommand) AddParameter(paramName string, object Object) {
 	_ = C.AddParameterObject(command.handle, (*C.wchar_t)(ptrName), object.handle)
 }
 
+func (command psCommand) completeInvoke() {
+	command.context.invoking =  command.context.invoking[:len(command.context.invoking)-1]
+}
+
 // Invoke the powershell command
 //
 // If wanting to call another powershell command do not reuse after Invoke, create another psCommand object and use that one
@@ -109,6 +124,8 @@ func (command psCommand) Invoke() InvokeResults {
 
 	var objects *C.PowerShellObject
 	var count C.uint
+	command.context.invoking = append(command.context.invoking, command)
+	defer command.completeInvoke()
 	exception := C.InvokeCommand(command.handle, &objects, &count)
 	return makeInvokeResults(objects, count, exception)
 }
