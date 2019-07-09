@@ -2,6 +2,7 @@
 [![Go Report Card](https://goreportcard.com/badge/github.com/KnicKnic/go-powershell)](https://goreportcard.com/report/github.com/KnicKnic/go-powershell)
 [![gopherbadger](https://img.shields.io/badge/Go%20Coverage-99%25-brightgreen.svg?longCache=true&style=flat)](./scripts/code_coverage.ps1)
 [![GoDoc](https://godoc.org/github.com/KnicKnic/go-powershell/pkg/powershell?status.svg)](https://godoc.org/github.com/KnicKnic/go-powershell/pkg/powershell)
+[![GitHub commits since latest release (branch)](https://img.shields.io/github/commits-since/KnicKnic/go-powershell/latest.svg)](https://github.com/KnicKnic/go-powershell/releases/latest)
 
 # Goal
 The goal of this project is to enable you to quickly write golang code and interact with windows via powershell and not use exec. Because powershell is a powerful scripting language you will sometimes want to call back into golang. This is also enabled by this project. Also due to sometimes wanting to host .net and powershell giving you an easy way to wrap .net modules and functions and objects, this project also enables that.
