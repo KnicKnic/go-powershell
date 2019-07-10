@@ -19,11 +19,6 @@ func (callback callbackAdd10Nested) Callback(runspace Runspace, str string, inpu
 			num, _ := strconv.Atoi(numStr)
 			num += 10
 
-			// // write the object back to powershell as a string
-			// results.WriteString(fmt.Sprint(num))
-
-			// or write them back as a powershell integer
-			//
 			// convert object into a powershell integer
 			//
 			// execute in anonyous function to get scoped cleanup of results
@@ -40,7 +35,7 @@ func (callback callbackAdd10Nested) Callback(runspace Runspace, str string, inpu
 		}
 	}
 }
-func Example_powershellCallbackNested() {
+func ExampleCallbackHolder_callingPowershellInsideCallback() {
 	callback := callbackAdd10Nested{}
 
 	// create a runspace (where you run your powershell statements in)

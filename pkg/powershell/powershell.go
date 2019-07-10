@@ -166,7 +166,7 @@ func (results *InvokeResults) RemoveObjectFromClose(index int) {
 	results.objectsNoClose[index] = true
 }
 
-// Close is a convenience wrapper to close all result objects, so you do not have to
+// Close is a convenience wrapper to close all result objects, and the exception so you do not have to
 func (results *InvokeResults) Close() {
 	for i, object := range results.Objects {
 		if !results.objectsNoClose[i] {

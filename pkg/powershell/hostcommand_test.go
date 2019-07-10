@@ -23,7 +23,7 @@ func (callbackAdd10) Callback(runspace Runspace, str string, input []Object, res
 		}
 	}
 }
-func Example_powershellCallback() {
+func ExampleCallbackHolder() {
 	// create a runspace (where you run your powershell statements in)
 	runspace := CreateRunspace(nil, callbackAdd10{})
 	// auto cleanup your runspace

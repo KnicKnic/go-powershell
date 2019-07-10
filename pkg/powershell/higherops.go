@@ -48,6 +48,10 @@ func processArgs(command psCommand, jsonMarshalUnknowns bool, namedArgs map[stri
 }
 
 // ExecScript - executes a series of statements (not to be confused with .ps1 files which are commands) in powershell
+//
+// useLocalScope - true means to create a child scope, false means to use the global scope (this is probably what you want)
+//
+// although namedArgs and args both state that they take interface, the only types they currently take are string and Object (a result from a previous powershell invocation)
 func (runspace Runspace) ExecScript(commandStr string, useLocalScope bool, namedArgs map[string]interface{}, args ...interface{}) *InvokeResults {
 	command := runspace.createCommand()
 	defer command.Close()
@@ -56,6 +60,10 @@ func (runspace Runspace) ExecScript(commandStr string, useLocalScope bool, named
 }
 
 // ExecCommand - executes a command (cmdlets, command files (.ps1), functions, ...) in powershell
+//
+// useLocalScope - true means to create a child scope, false means to use the global scope (this is probably what you want)
+//
+// although namedArgs and args both state that they take interface, the only types they currently take are string and Object (a result from a previous powershell invocation)
 func (runspace Runspace) ExecCommand(commandStr string, useLocalScope bool, namedArgs map[string]interface{}, args ...interface{}) *InvokeResults {
 	command := runspace.createCommand()
 	defer command.Close()
@@ -64,7 +72,10 @@ func (runspace Runspace) ExecCommand(commandStr string, useLocalScope bool, name
 }
 
 // ExecScriptJsonMarshallUnknown - executes a series of statements (not to be confused with .ps1 files which are commands) in powershell
-// All argument types that are unknown are json.Marshal
+//
+// useLocalScope - true means to create a child scope, false means to use the global scope (this is probably what you want)
+//
+// Although namedArgs and args both state that they take interface, string and Object (a result from a previous powershell invocation) will get sent to powershell directly. Any other type will first get marshaled to json using json.Marshal and sent as a string to powershell
 func (runspace Runspace) ExecScriptJsonMarshalUnknown(commandStr string, useLocalScope bool, namedArgs map[string]interface{}, args ...interface{}) *InvokeResults {
 	command := runspace.createCommand()
 	defer command.Close()
@@ -73,7 +84,10 @@ func (runspace Runspace) ExecScriptJsonMarshalUnknown(commandStr string, useLoca
 }
 
 // ExecCommandJsonMarshalUnknown - executes a command (cmdlets, command files (.ps1), functions, ...) in powershell
-// All argument types that are unknown are json.Marshal
+//
+// useLocalScope - true means to create a child scope, false means to use the global scope (this is probably what you want)
+//
+// Although namedArgs and args both state that they take interface, string and Object (a result from a previous powershell invocation) will get sent to powershell directly. Any other type will first get marshaled to json using json.Marshal and sent as a string to powershell
 func (runspace Runspace) ExecCommandJsonMarshalUnknown(commandStr string, useLocalScope bool, namedArgs map[string]interface{}, args ...interface{}) *InvokeResults {
 	command := runspace.createCommand()
 	defer command.Close()

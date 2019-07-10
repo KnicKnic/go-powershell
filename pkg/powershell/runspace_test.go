@@ -4,7 +4,7 @@ import (
 	"fmt"
 )
 
-func Example_powershellStatement() {
+func ExampleRunspace_ExecScript() {
 	// create a runspace (where you run your powershell statements in)
 	runspace := CreateRunspaceSimple()
 	// auto cleanup your runspace
@@ -23,7 +23,7 @@ func Example_powershellStatement() {
 	// OUTPUT: emitting your os is Windows_NT
 }
 
-func Example_savingVariablesAcrossStatements() {
+func ExampleRunspace_ExecScript_savingVariablesAcrossStatements() {
 	// create a runspace (where you run your powershell statements in)
 	runspace := CreateRunspaceSimple()
 	// auto cleanup your runspace
@@ -55,7 +55,7 @@ func Example_savingVariablesAcrossStatements() {
 	// Output: emitting your OS is Windows_NT
 }
 
-func Example_powershellCommand() {
+func ExampleRunspace_ExecCommand() {
 	// create a runspace (where you run your powershell statements in)
 	runspace := CreateRunspaceSimple()
 	// auto cleanup your runspace
@@ -72,12 +72,13 @@ func Example_powershellCommand() {
 	// OUTPUT: HKEY_LOCAL_MACHINE
 }
 
-func Example_powershellCommandWithNamedParameters() {
+func ExampleRunspace_ExecCommand_withNamedParameters() {
 	// create a runspace (where you run your powershell statements in)
 	runspace := CreateRunspace(fmtPrintLogger{}, nil)
 	// auto cleanup your runspace
 	defer runspace.Close()
 
+	// pass in map with named names to values
 	results := runspace.ExecCommand("Get-ItemPropertyValue", true, map[string]interface{}{
 		"Path": "HKLM:\\SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion",
 		"Name": "SoftwareType",
@@ -97,7 +98,7 @@ func (_ printer) Write(arg string) {
 	fmt.Print(arg)
 }
 
-func Example_powershellJsonMarshal() {
+func ExampleRunspace_ExecCommandJsonMarshalUnknown() {
 
 	// create a runspace (where you run your powershell statements in)
 	runspace := CreateRunspace(printer{}, nil)
@@ -126,7 +127,7 @@ type person struct {
 	Human    bool
 }
 
-func Example_powershellJsonUnmarshal() {
+func ExampleRunspace_ExecScriptJsonMarshalUnknown() {
 
 	// create a runspace (where you run your powershell statements in)
 	runspace := CreateRunspace(printer{}, nil)

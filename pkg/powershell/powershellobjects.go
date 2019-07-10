@@ -42,7 +42,7 @@ func (obj Object) toCHandle() C.PowerShellObject {
 //
 // Should be called on all objects returned from a powershell invocation (not callback parameters)
 //
-//     Exception: inside a callback and call CallbackResultsWriter.Write() with autoclose
+//     Exception: Do not call Close on the object when inside a callback and calling CallbackResultsWriter.Write() with autoclose
 //
 // Needs to be called for every object returned from AddRef
 func (obj Object) Close() {
