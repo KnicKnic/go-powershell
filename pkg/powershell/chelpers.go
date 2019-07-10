@@ -43,7 +43,7 @@ func logWchart(context uint64, str *C.wchar_t) {
 	if context != 0 {
 		s := makeString(str)
 		contextInterface := getRunspaceContext(context)
-		contextInterface.Log.Write(s)
+		contextInterface.log.Write(s)
 	}
 }
 
@@ -59,7 +59,7 @@ func commandWchart(context uint64, cMessage *C.wchar_t, input *C.PowerShellObjec
 			inputArr[i] = makePowerShellObjectIndexed(input, i)
 		}
 		message := makeString(cMessage)
-		contextInterface.Callback.Callback(contextInterface.recreateRunspace(), message, inputArr, &resultsWriter)
+		contextInterface.callback.Callback(contextInterface.recreateRunspace(), message, inputArr, &resultsWriter)
 	}
 	resultsWriter.filloutResults(ret)
 }

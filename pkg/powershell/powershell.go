@@ -33,12 +33,12 @@ type InvokeResults struct {
 
 // createCommand using a runspace, still need to create a command in the powershell command
 func (runspace Runspace) createCommand() psCommand {
-	currentlyInvoking := runspace.context.invoking
+	currentlyInvoking := runspace.invoking
 	if len(currentlyInvoking) != 0 {
 		currentCommand := currentlyInvoking[len(currentlyInvoking)-1]
 		return currentCommand.createNested()
 	}
-	return psCommand{C.CreatePowershell(runspace.handle), runspace.context}
+	return psCommand{C.CreatePowershell(runspace.handle), runspace.runspaceContext}
 }
 
 // createNested a nested powershell command

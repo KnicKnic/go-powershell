@@ -31,6 +31,7 @@ This project is not api stable, however I believe it will be simple if you do us
 - [X] more examples / tests
 - [ ] example / helper classes around exception
 - [ ] a doc overview
+- [ ] support for default loggers, like glog or log (in seperate package)
 
 # Usage
 ```go

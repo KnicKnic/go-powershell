@@ -20,8 +20,8 @@ func init() {
 }
 
 type runspaceContext struct {
-	Log      logger.Full
-	Callback CallbackHolder
+	log      logger.Full
+	callback CallbackHolder
 	invoking []psCommand // in order list of psCommands we are currently invoking
 
 	// runspaceContext should contain all the datamembers to reconstrut runspace
@@ -31,14 +31,12 @@ type runspaceContext struct {
 
 // recreateRunspace will give you a runspace from it's context
 func (context *runspaceContext) recreateRunspace() Runspace {
-	return Runspace{context.handle, context, context.contextLookup}
+	return Runspace{context}
 }
 
 // Runspace a context handle for a runspace, use .Close() to free
 type Runspace struct {
-	handle        C.RunspaceHandle
-	context       *runspaceContext
-	contextLookup uint64
+	*runspaceContext
 }
 
 // CreateRunspaceSimple think of this kinda like creating a shell
@@ -52,11 +50,8 @@ func CreateRunspaceSimple() Runspace {
 //
 // You must call Close when done with this object
 func CreateRunspace(loggerCallback logger.Simple, callback CallbackHolder) Runspace {
-	context := &runspaceContext{Log: logger.MakeLoggerFull(loggerCallback),
-		Callback:      callback,
-		invoking:      nil,
-		handle:        C.ulonglong(0),
-		contextLookup: 0,
+	context := &runspaceContext{log: logger.MakeLoggerFull(loggerCallback),
+		callback:      callback,
 	}
 	context.contextLookup = storeRunspaceContext(context)
 
