@@ -91,6 +91,62 @@ func Example_powershellCommandWithNamedParameters() {
 	// OUTPUT: System
 }
 
+type printer struct{}
+
+func (_ printer) Write(arg string) {
+	fmt.Print(arg)
+}
+
+func Example_powershellJsonMarshal() {
+
+	// create a runspace (where you run your powershell statements in)
+	runspace := CreateRunspace(printer{}, nil)
+	// auto cleanup your runspace
+	defer runspace.Close()
+
+	// write to host the parameters that are passed in
+	command := `write-host "$args"; foreach($x in $args) {write-host $x};`
+	results := runspace.ExecScriptJsonMarshalUnknown(command, true, nil, 1, 2, false, "test string", []int{1, 2, 3}, map[string]string{"fruit": "apple", "vegetable": "celery"})
+	// auto cleanup the results
+	defer results.Close()
+
+	// OUTPUT:
+	// Debug: 1 2 false test string [1,2,3] {"fruit":"apple","vegetable":"celery"}
+	// Debug: 1
+	// Debug: 2
+	// Debug: false
+	// Debug: test string
+	// Debug: [1,2,3]
+	// Debug: {"fruit":"apple","vegetable":"celery"}
+}
+
+type person struct {
+	Category int
+	Name     string
+	Human    bool
+}
+
+func Example_powershellJsonUnmarshal() {
+
+	// create a runspace (where you run your powershell statements in)
+	runspace := CreateRunspace(printer{}, nil)
+	// auto cleanup your runspace
+	defer runspace.Close()
+
+	// emit a json object with the following fields
+	command := `@{"Name"= "Knic";"Category"=4;"Human"=$true} |ConvertTo-Json -Depth 3`
+	results := runspace.ExecScript(command, true, nil)
+	// auto cleanup the results
+	defer results.Close()
+
+	// Unmarshal into custom object person
+	var me person
+	results.Objects[0].JsonUnmarshal(&me)
+
+	fmt.Print("Name: ", me.Name, ", Category: ", me.Category, ", Human: ", me.Human)
+	// OUTPUT: Name: Knic, Category: 4, Human: true
+}
+
 // func Example_powershellCommandWithNamedParametersComplex() {
 // 	// create a runspace (where you run your powershell statements in)
 // 	runspace := CreateRunspace(fmtPrintLogger{}, nil)

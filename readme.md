@@ -26,10 +26,11 @@ It works
 This project is not api stable, however I believe it will be simple if you do use the current api to migrate to any future changes. 
 
 **TODO:** 
-1. add some code for easy back and forth json serialization of complex objects
-2. more examples / tests
-3. example / helper classes around exception
-4. a doc overview
+
+- [x] add some code for easy back and forth json serialization of complex objects
+- [X] more examples / tests
+- [ ] example / helper classes around exception
+- [ ] a doc overview
 
 # Usage
 ```go

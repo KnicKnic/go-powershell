@@ -12,6 +12,7 @@ package powershell
 */
 import "C"
 import "unsafe"
+import "encoding/json"
 
 // Object representing an object return from a powershell invocation
 //
@@ -86,4 +87,10 @@ func (obj Object) ToString() string {
 	var str *C.wchar_t = C.GetPSObjectToString(obj.toCHandle())
 	defer C.FreeWrapper(unsafe.Pointer(str))
 	return makeString(str)
+}
+
+// JsonUnmarshal calls the ToString function and unmarshals it into the supplied object
+func (obj Object) JsonUnmarshal(userObject interface{}) error {
+	bytes := []byte(obj.ToString())
+	return json.Unmarshal(bytes, userObject)
 }

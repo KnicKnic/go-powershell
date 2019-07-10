@@ -1,6 +1,8 @@
 package powershell
 
 import (
+	"encoding/json"
+	"errors"
 	"fmt"
 	"testing"
 )
@@ -310,6 +312,14 @@ func TestCpowershellCommandWithNamedParameters(t *testing.T) {
 	validate(t, "", record.lines)
 }
 
+type jsonMarshalFailure struct {
+	err string
+}
+
+func (obj jsonMarshalFailure) MarshalJSON() ([]byte, error) {
+	return nil, errors.New(obj.err)
+}
+
 func TestCpowershellCommandArgumentTypePanic(t *testing.T) {
 	record.Reset()
 	// create a runspace (where you run your powershell statements in)
@@ -351,5 +361,55 @@ func TestCpowershellCommandArgumentTypePanic(t *testing.T) {
 	if !caughtUnknownArgumentType {
 		t.Fail()
 	}
+
+	caughtUnknownArgumentType = false
+	func() {
+		defer func() {
+			if r := recover(); r != nil {
+				err := r.(*json.MarshalerError)
+				if err.Err.Error() == "2" {
+					caughtUnknownArgumentType = true
+				}
+			}
+		}()
+		results := runspace.ExecCommandJsonMarshalUnknown("Get-ItemPropertyValue", true, map[string]interface{}{
+			"Name": jsonMarshalFailure{"2"},
+		})
+		defer results.Close()
+	}()
+	if !caughtUnknownArgumentType {
+		t.Fail()
+	}
+	caughtUnknownArgumentType = false
+	func() {
+		defer func() {
+			if r := recover(); r != nil {
+				err := r.(*json.MarshalerError)
+				if err.Err.Error() == "3" {
+					caughtUnknownArgumentType = true
+				}
+			}
+		}()
+		results := runspace.ExecScriptJsonMarshalUnknown("Get-ItemPropertyValue", true, nil, jsonMarshalFailure{"3"})
+		defer results.Close()
+	}()
+	if !caughtUnknownArgumentType {
+		t.Fail()
+	}
+
 	validate(t, "", record.lines)
+}
+
+func TestCpowershellJsonMarshal(t *testing.T) {
+	record.Reset()
+	// create a runspace (where you run your powershell statements in)
+	runspace := CreateRunspace(fmtPrintLogger{}, nil)
+	// auto cleanup your runspace
+	defer runspace.Close()
+
+	paramResults := runspace.ExecCommandJsonMarshalUnknown(`Write-Host`, true, map[string]interface{}{"Object": 17})
+	defer paramResults.Close()
+	expected := `    In Logging : Debug: 17
+`
+	validate(t, expected, record.lines)
 }
