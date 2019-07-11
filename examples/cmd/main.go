@@ -5,16 +5,9 @@ import (
 	"fmt"
 	"strings"
 
+	"github.com/KnicKnic/go-powershell/pkg/logger"
 	"github.com/KnicKnic/go-powershell/pkg/powershell"
 )
-
-// GLogInfoLogger is a simple struct that provides ability to send logs to glog at Info level
-type fmtPrintLogger struct {
-}
-
-func (logger fmtPrintLogger) Write(arg string) {
-	fmt.Print("\tIn Logging : ", arg)
-}
 
 type callbackTest struct{}
 
@@ -56,8 +49,7 @@ func PrintAndExecuteCommand(runspace powershell.Runspace, command string, useLoc
 
 // Example on how to use powershell wrappers
 func Example() {
-	runspace := powershell.CreateRunspace(fmtPrintLogger{}, callbackTest{})
-	// runspace := CreateRunspaceSimple()
+	runspace := powershell.CreateRunspace(logger.SimpleFmtPrint{}, callbackTest{})
 	defer runspace.Close()
 
 	for i := 0; i < len(commandFlags); i++ {

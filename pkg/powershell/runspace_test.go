@@ -2,6 +2,7 @@ package powershell
 
 import (
 	"fmt"
+	"github.com/KnicKnic/go-powershell/pkg/logger"
 )
 
 func ExampleRunspace_ExecScript() {
@@ -74,7 +75,7 @@ func ExampleRunspace_ExecCommand() {
 
 func ExampleRunspace_ExecCommand_withNamedParameters() {
 	// create a runspace (where you run your powershell statements in)
-	runspace := CreateRunspace(fmtPrintLogger{}, nil)
+	runspace := CreateRunspaceSimple()
 	// auto cleanup your runspace
 	defer runspace.Close()
 
@@ -92,16 +93,10 @@ func ExampleRunspace_ExecCommand_withNamedParameters() {
 	// OUTPUT: System
 }
 
-type printer struct{}
-
-func (printer) Write(arg string) {
-	fmt.Print(arg)
-}
-
 func ExampleRunspace_ExecCommandJSONMarshalUnknown() {
 
 	// create a runspace (where you run your powershell statements in)
-	runspace := CreateRunspace(printer{}, nil)
+	runspace := CreateRunspace(logger.SimpleFmtPrint{}, nil)
 	// auto cleanup your runspace
 	defer runspace.Close()
 
@@ -130,7 +125,7 @@ type person struct {
 func ExampleRunspace_ExecScriptJSONMarshalUnknown() {
 
 	// create a runspace (where you run your powershell statements in)
-	runspace := CreateRunspace(printer{}, nil)
+	runspace := CreateRunspace(logger.SimpleFmtPrint{}, nil)
 	// auto cleanup your runspace
 	defer runspace.Close()
 
@@ -150,7 +145,7 @@ func ExampleRunspace_ExecScriptJSONMarshalUnknown() {
 
 // func Example_powershellCommandWithNamedParametersComplex() {
 // 	// create a runspace (where you run your powershell statements in)
-// 	runspace := CreateRunspace(fmtPrintLogger{}, nil)
+// 	runspace := CreateRunspaceSimple()
 // 	// auto cleanup your runspace
 // 	defer runspace.Close()
 

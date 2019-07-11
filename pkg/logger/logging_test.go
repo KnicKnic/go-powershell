@@ -119,3 +119,16 @@ func TestMakeLoggerFull(t *testing.T) {
 		t.Fail()
 	}
 }
+
+func TestSimpleFmtPrint(t *testing.T) {
+	SimpleFmtPrint{}.Write("hello\n")
+}
+
+func TestSimpleFuncPtr(t *testing.T) {
+	var lastWrite string
+	logger := SimpleFuncPtr{func(line string) { lastWrite = line }}
+	logger.Write("test")
+	if lastWrite != "test" {
+		t.Fail()
+	}
+}

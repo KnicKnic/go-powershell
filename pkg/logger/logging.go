@@ -33,6 +33,23 @@ type simpleToFull struct {
 	simple Simple
 }
 
+// SimpleFmtPrint is a Simple logger that calls fmt.Print
+type SimpleFmtPrint struct {
+}
+
+func (SimpleFmtPrint) Write(arg string) {
+	fmt.Print(arg)
+}
+
+// SimpleFuncPtr is a Simple logger that allows you to pass in a function pointer for the Write call
+type SimpleFuncPtr struct {
+	FuncPtr func(string)
+}
+
+func (holder SimpleFuncPtr) Write(arg string) {
+	holder.FuncPtr(arg)
+}
+
 // func makeLogHolderFull(logger Full) Full {
 // 	return logger
 // }
