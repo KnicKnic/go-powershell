@@ -413,3 +413,19 @@ func TestCpowershellJsonMarshal(t *testing.T) {
 `
 	validate(t, expected, record.lines)
 }
+
+func TestClogWchart_lookupFail(t *testing.T) {
+	cStr := makeCString("test String")
+	caughtFailedToLoad := false
+	defer func() {
+		if r := recover(); r != nil {
+			str := r.(string)
+			validate(t, "failed to load context key:1", str)
+			caughtFailedToLoad = true
+		}
+	}()
+	logWchart(1, cStr)
+	if !caughtFailedToLoad {
+		t.Fail()
+	}
+}

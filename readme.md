@@ -1,6 +1,6 @@
 [![Build Status](https://dev.azure.com/oneeyedelf1/powershell.native/_apis/build/status/KnicKnic.go-powershell?branchName=master)](https://dev.azure.com/oneeyedelf1/powershell.native/_build/latest?definitionId=3&branchName=master)
 [![Go Report Card](https://goreportcard.com/badge/github.com/KnicKnic/go-powershell)](https://goreportcard.com/report/github.com/KnicKnic/go-powershell)
-[![gopherbadger](https://img.shields.io/badge/Go%20Coverage-99%25-brightgreen.svg?longCache=true&style=flat)](./scripts/code_coverage.ps1)
+[![gopherbadger](https://img.shields.io/badge/Go%20Coverage-100%25-brightgreen.svg?longCache=true&style=flat)](./scripts/code_coverage.ps1)
 [![GoDoc](https://godoc.org/github.com/KnicKnic/go-powershell/pkg/powershell?status.svg)](https://godoc.org/github.com/KnicKnic/go-powershell/pkg/powershell)
 [![GitHub commits since latest release (branch)](https://img.shields.io/github/commits-since/KnicKnic/go-powershell/latest.svg)](https://github.com/KnicKnic/go-powershell/releases/latest)
 
