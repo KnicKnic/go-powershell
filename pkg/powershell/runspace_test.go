@@ -94,11 +94,11 @@ func ExampleRunspace_ExecCommand_withNamedParameters() {
 
 type printer struct{}
 
-func (_ printer) Write(arg string) {
+func (printer) Write(arg string) {
 	fmt.Print(arg)
 }
 
-func ExampleRunspace_ExecCommandJsonMarshalUnknown() {
+func ExampleRunspace_ExecCommandJSONMarshalUnknown() {
 
 	// create a runspace (where you run your powershell statements in)
 	runspace := CreateRunspace(printer{}, nil)
@@ -107,7 +107,7 @@ func ExampleRunspace_ExecCommandJsonMarshalUnknown() {
 
 	// write to host the parameters that are passed in
 	command := `write-host "$args"; foreach($x in $args) {write-host $x};`
-	results := runspace.ExecScriptJsonMarshalUnknown(command, true, nil, 1, 2, false, "test string", []int{1, 2, 3}, map[string]string{"fruit": "apple", "vegetable": "celery"})
+	results := runspace.ExecScriptJSONMarshalUnknown(command, true, nil, 1, 2, false, "test string", []int{1, 2, 3}, map[string]string{"fruit": "apple", "vegetable": "celery"})
 	// auto cleanup the results
 	defer results.Close()
 
@@ -127,7 +127,7 @@ type person struct {
 	Human    bool
 }
 
-func ExampleRunspace_ExecScriptJsonMarshalUnknown() {
+func ExampleRunspace_ExecScriptJSONMarshalUnknown() {
 
 	// create a runspace (where you run your powershell statements in)
 	runspace := CreateRunspace(printer{}, nil)
@@ -142,7 +142,7 @@ func ExampleRunspace_ExecScriptJsonMarshalUnknown() {
 
 	// Unmarshal into custom object person
 	var me person
-	results.Objects[0].JsonUnmarshal(&me)
+	results.Objects[0].JSONUnmarshal(&me)
 
 	fmt.Print("Name: ", me.Name, ", Category: ", me.Category, ", Human: ", me.Human)
 	// OUTPUT: Name: Knic, Category: 4, Human: true

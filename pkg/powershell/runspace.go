@@ -34,10 +34,10 @@ func (context *runspaceContext) recreateRunspace() Runspace {
 	return Runspace{context}
 }
 
-// Runspace  corresponds to a powershell runspace. 
+// Runspace  corresponds to a powershell runspace.
 //
 // Use this object to execute all your powershell commands/scripts, see ExecScript and ExecCommand
-// 
+//
 // use .Close() to free
 type Runspace struct {
 	*runspaceContext
@@ -62,7 +62,7 @@ func CreateRunspaceSimple() Runspace {
 // You must call Close when done with this object
 func CreateRunspace(loggerCallback logger.Simple, callback CallbackHolder) Runspace {
 	context := &runspaceContext{log: logger.MakeLoggerFull(loggerCallback),
-		callback:      callback,
+		callback: callback,
 	}
 	context.contextLookup = storeRunspaceContext(context)
 

@@ -372,7 +372,7 @@ func TestCpowershellCommandArgumentTypePanic(t *testing.T) {
 				}
 			}
 		}()
-		results := runspace.ExecCommandJsonMarshalUnknown("Get-ItemPropertyValue", true, map[string]interface{}{
+		results := runspace.ExecCommandJSONMarshalUnknown("Get-ItemPropertyValue", true, map[string]interface{}{
 			"Name": jsonMarshalFailure{"2"},
 		})
 		defer results.Close()
@@ -390,7 +390,7 @@ func TestCpowershellCommandArgumentTypePanic(t *testing.T) {
 				}
 			}
 		}()
-		results := runspace.ExecScriptJsonMarshalUnknown("Get-ItemPropertyValue", true, nil, jsonMarshalFailure{"3"})
+		results := runspace.ExecScriptJSONMarshalUnknown("Get-ItemPropertyValue", true, nil, jsonMarshalFailure{"3"})
 		defer results.Close()
 	}()
 	if !caughtUnknownArgumentType {
@@ -407,7 +407,7 @@ func TestCpowershellJsonMarshal(t *testing.T) {
 	// auto cleanup your runspace
 	defer runspace.Close()
 
-	paramResults := runspace.ExecCommandJsonMarshalUnknown(`Write-Host`, true, map[string]interface{}{"Object": 17})
+	paramResults := runspace.ExecCommandJSONMarshalUnknown(`Write-Host`, true, map[string]interface{}{"Object": 17})
 	defer paramResults.Close()
 	expected := `    In Logging : Debug: 17
 `

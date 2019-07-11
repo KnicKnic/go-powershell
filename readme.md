@@ -5,35 +5,39 @@
 [![GitHub commits since latest release (branch)](https://img.shields.io/github/commits-since/KnicKnic/go-powershell/latest.svg)](https://github.com/KnicKnic/go-powershell/releases/latest)
 
 # Goal
+
 The goal of this project is to enable you to quickly write golang code and interact with windows via powershell and not use exec. Because powershell is a powerful scripting language you will sometimes want to call back into golang. This is also enabled by this project. Also due to sometimes wanting to host .net and powershell giving you an easy way to wrap .net modules and functions and objects, this project also enables that.
 
 Features:
+
 1. Call from golang to powershell
 1. Call from powershell to golang (via special Send-HostCommand commandlet)
 1. Easy logging - Trap host output in powershell and call custom logging routines in golang
 
-
 # Status
+
 It works
+
 1. call scripts / cmdlets
 1. reuse variables between calls / invocation
 1. Call from golang to powershell
 1. Call from powershell back to golang (via special Send-HostCommand commandlet)
 1. trap host output in powershell and call custom logging routines in golang
-1. has automted tests
+1. has automated tests
 1. Docs - if you missed the badge above go to https://godoc.org/github.com/KnicKnic/go-powershell/pkg/powershell
 
-This project is not api stable, however I believe it will be simple if you do use the current api to migrate to any future changes. 
+This project is not api stable, however I believe it will be simple if you do use the current api to migrate to any future changes.
 
-**TODO:** 
+**TODO:**
 
 - [x] add some code for easy back and forth json serialization of complex objects
 - [X] more examples / tests
 - [ ] example / helper classes around exception
-- [ ] a doc overview
+- [x] a doc overview
 - [ ] support for default loggers, like glog or log (in seperate package)
 
 # Usage
+
 ```go
 package main
 
@@ -76,9 +80,11 @@ func main() {
 ```
 
 ## Dependencies
+
 This project has a dependency on [native-powershell](https://github.com/KnicKnic/native-powershell). This is a c++/cli project that enables interacting with powershell through a C DLL interface.
 
 ### Using native-powershell
+
 1. Simply fetch the dependencies, `go get -d .` and then make sure to build, `go build`
 1. Copy the precompiled psh_host.dll into your location so it can be found when running the app
     1. cmd - `copy %GOPATH%\src\github.com\KnicKnic\go-powershell\native-powershell\native-powershell-bin\psh_host.dll .`
@@ -87,12 +93,13 @@ This project has a dependency on [native-powershell](https://github.com/KnicKnic
     1. I could not find a better way to go about this and still have things be easy.
 
 ### Getting cgo (so you can compile)
+
 Windows - install dependencies - you need gcc. I Use chocolatey to install (easiest way to install gcc)
 
 1. Install chocolatey
 	1. https://chocolatey.org/docs/installation#installing-chocolatey
 1. `choco install mingw -y`
 
-
 # Docs
+
 https://grokbase.com/t/gg/golang-nuts/154m672a6t/go-nuts-linking-cgo-with-visual-studio-x64-release-libraries-on-windows

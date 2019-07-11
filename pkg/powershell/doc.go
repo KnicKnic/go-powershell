@@ -13,7 +13,7 @@ All objects that you create or are returned to you must be Closed by you. There 
 
 Multithreading
 
-A single runspace is not multithreaded, do not try this! Objects generated in one runspace can be used in another assuming there is proper .Net concurrent access to those objects. 
+A single runspace is not multithreaded, do not try this! Objects generated in one runspace can be used in another assuming there is proper .Net concurrent access to those objects.
 
 
 Reentrancy
@@ -25,7 +25,7 @@ Runspaces
 
 A runspace is where you execute your powershell commands and statements in. It is also a boundary for variables such as "$global". If you specify custom log routines or callback handlers they are also bound to the runspace. This is to enable you to bind context to the log routine or callback handler.
 
-Please see the runspace section for more information on creating a runspace and executing scripts and commands https://godoc.org/github.com/KnicKnic/go-powershell/pkg/powershell#Runspace . 
+Please see the runspace section for more information on creating a runspace and executing scripts and commands https://godoc.org/github.com/KnicKnic/go-powershell/pkg/powershell#Runspace .
 
 
 Scripts vs Commands

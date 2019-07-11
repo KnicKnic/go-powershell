@@ -71,24 +71,24 @@ func (runspace Runspace) ExecCommand(commandStr string, useLocalScope bool, name
 	return processArgs(command, false, namedArgs, args...)
 }
 
-// ExecScriptJsonMarshallUnknown - executes a series of statements (not to be confused with .ps1 files which are commands) in powershell
+// ExecScriptJSONMarshalUnknown - executes a series of statements (not to be confused with .ps1 files which are commands) in powershell
 //
 // useLocalScope - true means to create a child scope, false means to use the global scope (this is probably what you want)
 //
 // Although namedArgs and args both state that they take interface, string and Object (a result from a previous powershell invocation) will get sent to powershell directly. Any other type will first get marshaled to json using json.Marshal and sent as a string to powershell
-func (runspace Runspace) ExecScriptJsonMarshalUnknown(commandStr string, useLocalScope bool, namedArgs map[string]interface{}, args ...interface{}) *InvokeResults {
+func (runspace Runspace) ExecScriptJSONMarshalUnknown(commandStr string, useLocalScope bool, namedArgs map[string]interface{}, args ...interface{}) *InvokeResults {
 	command := runspace.createCommand()
 	defer command.Close()
 	command.AddScript(commandStr, useLocalScope)
 	return processArgs(command, true, namedArgs, args...)
 }
 
-// ExecCommandJsonMarshalUnknown - executes a command (cmdlets, command files (.ps1), functions, ...) in powershell
+// ExecCommandJSONMarshalUnknown - executes a command (cmdlets, command files (.ps1), functions, ...) in powershell
 //
 // useLocalScope - true means to create a child scope, false means to use the global scope (this is probably what you want)
 //
 // Although namedArgs and args both state that they take interface, string and Object (a result from a previous powershell invocation) will get sent to powershell directly. Any other type will first get marshaled to json using json.Marshal and sent as a string to powershell
-func (runspace Runspace) ExecCommandJsonMarshalUnknown(commandStr string, useLocalScope bool, namedArgs map[string]interface{}, args ...interface{}) *InvokeResults {
+func (runspace Runspace) ExecCommandJSONMarshalUnknown(commandStr string, useLocalScope bool, namedArgs map[string]interface{}, args ...interface{}) *InvokeResults {
 	command := runspace.createCommand()
 	defer command.Close()
 	command.AddCommand(commandStr, useLocalScope)

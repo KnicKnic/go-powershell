@@ -89,8 +89,8 @@ func (obj Object) ToString() string {
 	return makeString(str)
 }
 
-// JsonUnmarshal calls the ToString function and unmarshals it into the supplied object
-func (obj Object) JsonUnmarshal(userObject interface{}) error {
+// JSONUnmarshal calls the ToString function and unmarshals it into the supplied object
+func (obj Object) JSONUnmarshal(userObject interface{}) error {
 	bytes := []byte(obj.ToString())
 	return json.Unmarshal(bytes, userObject)
 }
