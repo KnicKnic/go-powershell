@@ -23,6 +23,16 @@ type CallbackHolder interface {
 	Callback(runspace Runspace, message string, input []Object, results CallbackResultsWriter)
 }
 
+// CallbackFuncPtr a simple implementation of CallbackHolder that lets you pass in a function pointer for the callback
+type CallbackFuncPtr struct {
+	FuncPtr func(runspace Runspace, message string, input []Object, results CallbackResultsWriter)
+}
+
+// Callback is the function that will call the function pointer in CallbackFuncPtr
+func (callback CallbackFuncPtr) Callback(runspace Runspace, message string, input []Object, results CallbackResultsWriter) {
+	callback.FuncPtr(runspace, message, input, results)
+}
+
 // callbackResultsWriter is the internal implementation of CallbackResultsWriter
 type callbackResultsWriter struct {
 	objects []C.GenericPowershellObject
