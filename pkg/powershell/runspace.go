@@ -25,7 +25,7 @@ type runspaceContext struct {
 	invoking []psCommand // in order list of psCommands we are currently invoking
 
 	// runspaceContext should contain all the datamembers to reconstrut runspace
-	handle        C.RunspaceHandle
+	handle        C.NativePowerShell_RunspaceHandle
 	contextLookup uint64
 }
 

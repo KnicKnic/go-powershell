@@ -49,7 +49,7 @@ func logWchart(context uint64, str *C.wchar_t) {
 
 //export commandWchart
 // commandWchart the C function pointer that dispatches to the Golang function for Send-HostCommand
-func commandWchart(context uint64, cMessage *C.wchar_t, input *C.PowerShellObject, inputCount uint64, ret *C.JsonReturnValues) {
+func commandWchart(context uint64, cMessage *C.wchar_t, input *C.NativePowerShell_PowerShellObject, inputCount uint64, ret *C.NativePowerShell_JsonReturnValues) {
 
 	var resultsWriter callbackResultsWriter
 	if context != 0 {

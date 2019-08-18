@@ -35,34 +35,34 @@ func (callback CallbackFuncPtr) Callback(runspace Runspace, message string, inpu
 
 // callbackResultsWriter is the internal implementation of CallbackResultsWriter
 type callbackResultsWriter struct {
-	objects []C.GenericPowershellObject
+	objects []C.NativePowerShell_GenericPowerShellObject
 }
 
 // WriteString accumulates a string object to return from Send-HostCommand
 func (writer *callbackResultsWriter) WriteString(str string) {
 	cStr := makeCString(str)
-	var obj C.GenericPowershellObject
+	var obj C.NativePowerShell_GenericPowerShellObject
 	C.SetGenericPowershellString(&obj, cStr, 1)
 	writer.objects = append(writer.objects, obj)
 }
 
 // Write accumulates a string object to return from Send-HostCommand
 func (writer *callbackResultsWriter) Write(handle Object, needsClose bool) {
-	var obj C.GenericPowershellObject
+	var obj C.NativePowerShell_GenericPowerShellObject
 	var autoClose C.char
 	if needsClose {
 		autoClose = 1
 	}
-	C.SetGenericPowershellHandle(&obj, handle.toCHandle(), autoClose)
+	C.SetGenericPowerShellHandle(&obj, handle.toCHandle(), autoClose)
 	writer.objects = append(writer.objects, obj)
 }
 
 // filloutResults takes accumulated objects from Write calls and prepares them to cross the C boundary
-func (writer *callbackResultsWriter) filloutResults(results *C.JsonReturnValues) {
+func (writer *callbackResultsWriter) filloutResults(results *C.NativePowerShell_JsonReturnValues) {
 	results.objects = nil
 	results.count = 0
 	if writer.objects != nil {
 		results.count = C.ulong(len(writer.objects))
-		results.objects = C.MallocCopyGenericPowershellObject(&writer.objects[0], C.ulonglong(len(writer.objects)))
+		results.objects = C.MallocCopyGenericPowerShellObject(&writer.objects[0], C.ulonglong(len(writer.objects)))
 	}
 }

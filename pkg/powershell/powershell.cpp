@@ -37,8 +37,8 @@ void * MallocCopyGeneric(const void * input, unsigned long long byteCount ){
     return dest;
 }
 
-GenericPowershellObject * MallocCopyGenericPowershellObject(GenericPowershellObject* input, unsigned long long inputCount){
-    return (GenericPowershellObject *)MallocCopyGeneric(input, inputCount * sizeof(input[0]));
+NativePowerShell_GenericPowerShellObject * MallocCopyGenericPowerShellObject(NativePowerShell_GenericPowerShellObject* input, unsigned long long inputCount){
+    return (NativePowerShell_GenericPowerShellObject *)MallocCopyGeneric(input, inputCount * sizeof(input[0]));
 }
 
 const wchar_t* MallocCopy(const wchar_t* str)
@@ -55,14 +55,14 @@ const wchar_t* MallocCopy(const wchar_t* str)
         logWchart((unsigned long long )context, (wchar_t *)s);
         //printf("My Member Logger: %ws\n", s);
     }
-    void Command(void *context, const wchar_t* s, PowerShellObject* input, unsigned long long inputCount, JsonReturnValues * returnValues)
+    void Command(void *context, const wchar_t* s, NativePowerShell_PowerShellObject* input, unsigned long long inputCount, NativePowerShell_JsonReturnValues * returnValues)
     {        
         commandWchart((unsigned long long) context, (wchar_t *)s, input, inputCount, returnValues);
     }
 
-RunspaceHandle CreateRunspaceHelper(unsigned long long context, char useLogger, char useCommand ){
-    LogString loggerPtr = Logger;
-    ReceiveJsonCommand commandPtr = Command;
+NativePowerShell_RunspaceHandle CreateRunspaceHelper(unsigned long long context, char useLogger, char useCommand ){
+    NativePowerShell_LogString loggerPtr = Logger;
+    NativePowerShell_ReceiveJsonCommand commandPtr = Command;
     if(useLogger == 0){
         loggerPtr = nullptr;
     }
@@ -74,14 +74,14 @@ RunspaceHandle CreateRunspaceHelper(unsigned long long context, char useLogger, 
 }
 
 
-void SetGenericPowershellString(GenericPowershellObject* object, wchar_t *value, char autoRelease){
-    object->type = PowershellObjectTypeString;
+void SetGenericPowershellString(NativePowerShell_GenericPowerShellObject* object, wchar_t *value, char autoRelease){
+    object->type = NativePowerShell_PowerShellObjectTypeString;
     object->instance.string = value;
     object->releaseObject = autoRelease;
 }
 
-void SetGenericPowershellHandle(GenericPowershellObject* object, PowerShellObject value,char autoRelease){
-    object->type = PowershellObjectHandle;
+void SetGenericPowerShellHandle(NativePowerShell_GenericPowerShellObject* object, NativePowerShell_PowerShellObject value,char autoRelease){
+    object->type = NativePowerShell_PowerShellObjectHandle;
     object->instance.psObject = value;
     object->releaseObject = autoRelease;
 }

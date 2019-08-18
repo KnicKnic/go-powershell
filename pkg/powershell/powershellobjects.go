@@ -20,18 +20,18 @@ import "encoding/json"
 //
 // See note on Object.Close for exceptions & more rules about Close
 type Object struct {
-	handle C.PowerShellObject
+	handle C.NativePowerShell_PowerShellObject
 }
 
 // toCHandle gets the backing handle of Object
-func (obj Object) toCHandle() C.PowerShellObject {
-	// return *((*C.PowerShellObject)(unsafe.Pointer(&obj.handle)))
+func (obj Object) toCHandle() C.NativePowerShell_PowerShellObject {
+	// return *((*C.NativePowerShell_PowerShellObject)(unsafe.Pointer(&obj.handle)))
 	return obj.handle
 }
 
 // // toCHandle gets the backing handle of Object
-// func makeCHandles(objects []Object) []C.PowerShellObject {
-// 	cHandles := make([]C.PowerShellObject, len(objects))
+// func makeCHandles(objects []Object) []C.NativePowerShell_PowerShellObject {
+// 	cHandles := make([]C.NativePowerShell_PowerShellObject, len(objects))
 // 	for i,object := range(objects){
 // 		cHandles[i] = object.handle
 // 	}
@@ -51,7 +51,7 @@ func (obj Object) Close() {
 
 // AddRef returns a new Object that has to also be called Close on
 //
-// This is useful in Callback processing, as those PowershellObjects are auto closed, and to keep
+// This is useful in Callback processing, as those NativePowerShell_PowerShellObjects are auto closed, and to keep
 // a reference after the function returns use AddRef
 func (obj Object) AddRef() Object {
 	handle := C.AddPSObjectHandle(obj.toCHandle())

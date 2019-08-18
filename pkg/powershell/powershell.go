@@ -20,7 +20,7 @@ import "C"
 
 // psCommand represents a powershell command, must call Close
 type psCommand struct {
-	handle  C.PowershellHandle
+	handle  C.NativePowerShell_PowerShellHandle
 	context *runspaceContext
 }
 
@@ -123,7 +123,7 @@ func (command psCommand) completeInvoke() {
 // Must still call Close on this object
 func (command psCommand) Invoke() *InvokeResults {
 
-	var objects *C.PowerShellObject
+	var objects *C.NativePowerShell_PowerShellObject
 	var count C.uint
 	command.context.invoking = append(command.context.invoking, command)
 	defer command.completeInvoke()
@@ -131,21 +131,21 @@ func (command psCommand) Invoke() *InvokeResults {
 	return makeInvokeResults(objects, count, exception)
 }
 
-func makePowerShellObjectIndexed(objects *C.PowerShellObject, index uint32) Object {
+func makePowerShellObjectIndexed(objects *C.NativePowerShell_PowerShellObject, index uint32) Object {
 	// I don't get why I have to use unsafe.Pointer on C memory
 	ptr := unsafe.Pointer(objects)
 	offset := (uintptr(index) * unsafe.Sizeof(*objects))
-	var obj C.PowerShellObject = *(*C.PowerShellObject)(unsafe.Pointer(uintptr(ptr) + offset))
+	var obj C.NativePowerShell_PowerShellObject = *(*C.NativePowerShell_PowerShellObject)(unsafe.Pointer(uintptr(ptr) + offset))
 	return makePowerShellObject(obj)
 }
 
-func makePowerShellObject(object C.PowerShellObject) Object {
+func makePowerShellObject(object C.NativePowerShell_PowerShellObject) Object {
 	// var obj uint64 = *(*uint64)(unsafe.Pointer(&object))
 	// return Object{obj}
 	return Object{object}
 }
 
-func makeInvokeResults(objects *C.PowerShellObject, count C.uint, exception C.PowerShellObject) *InvokeResults {
+func makeInvokeResults(objects *C.NativePowerShell_PowerShellObject, count C.uint, exception C.NativePowerShell_PowerShellObject) *InvokeResults {
 	results := InvokeResults{Objects: make([]Object, count),
 		Exception:      makePowerShellObject(exception),
 		objectsNoClose: make(map[int]bool),
