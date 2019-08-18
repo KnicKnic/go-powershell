@@ -81,5 +81,5 @@ func CreateRunspace(loggerCallback logger.Simple, callback CallbackHolder) Runsp
 // Close and free a Runspace
 func (runspace Runspace) Close() {
 	deleteRunspaceContextLookup(runspace.contextLookup)
-	C.DeleteRunspace(runspace.handle)
+	C.NativePowerShell_DeleteRunspace(runspace.handle)
 }

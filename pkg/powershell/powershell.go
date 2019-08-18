@@ -38,18 +38,18 @@ func (runspace Runspace) createCommand() psCommand {
 		currentCommand := currentlyInvoking[len(currentlyInvoking)-1]
 		return currentCommand.createNested()
 	}
-	return psCommand{C.CreatePowershell(runspace.handle), runspace.runspaceContext}
+	return psCommand{C.NativePowerShell_CreatePowerShell(runspace.handle), runspace.runspaceContext}
 }
 
 // createNested a nested powershell command
 func (command psCommand) createNested() psCommand {
-	return psCommand{C.CreatePowershellNested(command.handle), command.context}
+	return psCommand{C.NativePowerShell_CreatePowerShellNested(command.handle), command.context}
 }
 
 // Close and free a psCommand
 // , call on all objects even those that are Invoked
 func (command psCommand) Close() {
-	C.DeletePowershell(command.handle)
+	C.NativePowerShell_DeletePowershell(command.handle)
 }
 
 func boolToCChar(b bool) C.char {
@@ -66,7 +66,7 @@ func (command psCommand) AddCommand(commandlet string, useLocalScope bool) {
 	ptrwchar := unsafe.Pointer(cs)
 	localScope := boolToCChar(useLocalScope)
 
-	_ = C.AddCommandSpecifyScope(command.handle, (*C.wchar_t)(ptrwchar), localScope)
+	_ = C.NativePowerShell_AddCommandSpecifyScope(command.handle, (*C.wchar_t)(ptrwchar), localScope)
 }
 
 // AddScript to an existing powershell command
@@ -76,7 +76,7 @@ func (command psCommand) AddScript(script string, useLocalScope bool) {
 	ptrwchar := unsafe.Pointer(cs)
 	localScope := boolToCChar(useLocalScope)
 
-	_ = C.AddScriptSpecifyScope(command.handle, (*C.wchar_t)(ptrwchar), localScope)
+	_ = C.NativePowerShell_AddScriptSpecifyScope(command.handle, (*C.wchar_t)(ptrwchar), localScope)
 }
 
 // AddArgumentString add a string argument to an existing powershell command
@@ -85,12 +85,12 @@ func (command psCommand) AddArgumentString(argument string) {
 
 	ptrwchar := unsafe.Pointer(cs)
 
-	_ = C.AddArgument(command.handle, (*C.wchar_t)(ptrwchar))
+	_ = C.NativePowerShell_AddArgument(command.handle, (*C.wchar_t)(ptrwchar))
 }
 
 // AddArgument add a Object argument to an existing powershell command
 func (command psCommand) AddArgument(object Object) {
-	_ = C.AddPSObjectArgument(command.handle, object.handle)
+	_ = C.NativePowerShell_AddPSObjectArgument(command.handle, object.handle)
 }
 
 // AddParameterString add a string with a parameter name to an existing powershell command
@@ -100,7 +100,7 @@ func (command psCommand) AddParameterString(paramName string, paramValue string)
 
 	cValue, _ := windows.UTF16PtrFromString(paramValue)
 	ptrValue := unsafe.Pointer(cValue)
-	_ = C.AddParameterString(command.handle, (*C.wchar_t)(ptrName), (*C.wchar_t)(ptrValue))
+	_ = C.NativePowerShell_AddParameterString(command.handle, (*C.wchar_t)(ptrName), (*C.wchar_t)(ptrValue))
 }
 
 // AddParameter add a Object with a parameter name to an existing powershell command
@@ -109,7 +109,7 @@ func (command psCommand) AddParameter(paramName string, object Object) {
 	cName, _ := windows.UTF16PtrFromString(paramName)
 	ptrName := unsafe.Pointer(cName)
 
-	_ = C.AddParameterObject(command.handle, (*C.wchar_t)(ptrName), object.handle)
+	_ = C.NativePowerShell_AddParameterObject(command.handle, (*C.wchar_t)(ptrName), object.handle)
 }
 
 func (command psCommand) completeInvoke() {
@@ -127,7 +127,7 @@ func (command psCommand) Invoke() *InvokeResults {
 	var count C.uint
 	command.context.invoking = append(command.context.invoking, command)
 	defer command.completeInvoke()
-	exception := C.InvokeCommand(command.handle, &objects, &count)
+	exception := C.NativePowerShell_InvokeCommand(command.handle, &objects, &count)
 	return makeInvokeResults(objects, count, exception)
 }
 

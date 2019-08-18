@@ -46,7 +46,7 @@ func (obj Object) toCHandle() C.NativePowerShell_PowerShellObject {
 //
 // Needs to be called for every object returned from AddRef
 func (obj Object) Close() {
-	C.ClosePowerShellObject(obj.toCHandle())
+	C.NativePowerShell_ClosePowerShellObject(obj.toCHandle())
 }
 
 // AddRef returns a new Object that has to also be called Close on
@@ -54,13 +54,13 @@ func (obj Object) Close() {
 // This is useful in Callback processing, as those NativePowerShell_PowerShellObjects are auto closed, and to keep
 // a reference after the function returns use AddRef
 func (obj Object) AddRef() Object {
-	handle := C.AddPSObjectHandle(obj.toCHandle())
+	handle := C.NativePowerShell_AddPSObjectHandle(obj.toCHandle())
 	return makePowerShellObject(handle)
 }
 
 // IsNull returns true if the backing powershell object is null
 func (obj Object) IsNull() bool {
-	return C.IsPSObjectNullptr(obj.toCHandle()) == 1
+	return C.NativePowerShell_IsPSObjectNullptr(obj.toCHandle()) == 1
 }
 
 // Type returns the (System.Object).GetType().ToString() function
@@ -71,7 +71,7 @@ func (obj Object) Type() string {
 		return "nullptr"
 	}
 
-	var str *C.wchar_t = C.GetPSObjectType(obj.toCHandle())
+	var str *C.wchar_t = C.NativePowerShell_GetPSObjectType(obj.toCHandle())
 	defer C.FreeWrapper(unsafe.Pointer(str))
 	return makeString(str)
 }
@@ -84,7 +84,7 @@ func (obj Object) ToString() string {
 		return "nullptr"
 	}
 
-	var str *C.wchar_t = C.GetPSObjectToString(obj.toCHandle())
+	var str *C.wchar_t = C.NativePowerShell_GetPSObjectToString(obj.toCHandle())
 	defer C.FreeWrapper(unsafe.Pointer(str))
 	return makeString(str)
 }

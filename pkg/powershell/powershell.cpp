@@ -25,7 +25,7 @@ void FreeWrapper(void *ptr)
     }
 
 void InitLibraryHelper(){
-    InitLibrary(MallocWrapper, free);
+    NativePowerShell_InitLibrary(MallocWrapper, free);
 }
 
 void * MallocCopyGeneric(const void * input, unsigned long long byteCount ){
@@ -69,7 +69,7 @@ NativePowerShell_RunspaceHandle CreateRunspaceHelper(unsigned long long context,
     if(useCommand == 0){
         commandPtr = nullptr;
     }
-    return CreateRunspace((void*)context, commandPtr, loggerPtr);
+    return NativePowerShell_CreateRunspace((void*)context, commandPtr, loggerPtr);
     // return CreateRunspace(nullptr, Command, Logger);
 }
 
