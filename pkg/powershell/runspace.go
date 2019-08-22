@@ -12,6 +12,9 @@ package powershell
 */
 import "C"
 import (
+	"unsafe"
+
+	"golang.org/x/sys/windows"
 	"github.com/KnicKnic/go-powershell/pkg/logger"
 )
 
@@ -75,6 +78,41 @@ func CreateRunspace(loggerCallback logger.Simple, callback CallbackHolder) Runsp
 		useCommand = 0
 	}
 	context.handle = C.CreateRunspaceHelper(C.ulonglong(context.contextLookup), useLogger, useCommand)
+	return context.recreateRunspace()
+}
+
+
+// CreateRemoteRunspace creates a runspace in which to run powershell commands
+//
+// This function allows you to specify a logging callback
+//
+// For more details see logger.Simple.
+//
+// Specify "" for username to not send username and password
+//
+// You must call Close when done with this object
+func CreateRemoteRunspace(loggerCallback logger.Simple, remoteMachine string, username string, password string) Runspace {
+	context := &runspaceContext{log: logger.MakeLoggerFull(loggerCallback),
+		callback: nil,
+	}
+	context.contextLookup = storeRunspaceContext(context)
+
+	var useLogger C.char = 1
+	if loggerCallback == nil {
+		useLogger = 0
+	}
+
+
+	cRemoteMachine, _ := windows.UTF16PtrFromString(remoteMachine)
+	ptrRemoteMachine := unsafe.Pointer(cRemoteMachine)
+
+	cUsername, _ := windows.UTF16PtrFromString(username)
+	ptrUsername := unsafe.Pointer(cUsername)
+
+	cPassword, _ := windows.UTF16PtrFromString(password)
+	ptrPassword := unsafe.Pointer(cPassword)
+
+	context.handle = C.CreateRemoteRunspaceHelper(C.ulonglong(context.contextLookup), useLogger, (*C.wchar_t)(ptrRemoteMachine), (*C.wchar_t)(ptrUsername), (*C.wchar_t)(ptrPassword))
 	return context.recreateRunspace()
 }
 

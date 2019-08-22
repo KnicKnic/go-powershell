@@ -70,7 +70,14 @@ NativePowerShell_RunspaceHandle CreateRunspaceHelper(unsigned long long context,
         commandPtr = nullptr;
     }
     return NativePowerShell_CreateRunspace((void*)context, commandPtr, loggerPtr);
-    // return CreateRunspace(nullptr, Command, Logger);
+}
+
+NativePowerShell_RunspaceHandle CreateRemoteRunspaceHelper(unsigned long long context, char useLogger, const wchar_t * remoteMachine, const wchar_t * userName, const wchar_t * password  ){
+    NativePowerShell_LogString loggerPtr = Logger;
+    if(useLogger == 0){
+        loggerPtr = nullptr;
+    }
+    return NativePowerShell_CreateRemoteRunspace((void*)context,  loggerPtr, remoteMachine, userName, password);
 }
 
 

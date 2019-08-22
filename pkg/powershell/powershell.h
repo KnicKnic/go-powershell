@@ -19,6 +19,7 @@ const wchar_t* MallocCopy(const wchar_t* str);
     void Logger(const wchar_t* s);
 
 NativePowerShell_RunspaceHandle CreateRunspaceHelper(unsigned long long, char useLogger, char useCommand);
+NativePowerShell_RunspaceHandle CreateRemoteRunspaceHelper(unsigned long long context, char useLogger, const wchar_t * remoteMachine, const wchar_t * userName, const wchar_t * password  );
 
 void SetGenericPowershellString(NativePowerShell_GenericPowerShellObject* object, wchar_t *value,char autoRelease);
 void SetGenericPowerShellHandle(NativePowerShell_GenericPowerShellObject* object, NativePowerShell_PowerShellObject handle,char autoRelease);
