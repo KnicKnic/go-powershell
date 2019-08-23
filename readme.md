@@ -34,7 +34,8 @@ This project is not api stable, however I believe it will be simple if you do us
 - [X] more examples / tests
 - [ ] example / helper classes around exception
 - [x] a doc overview
-- [ ] support for default loggers, like glog or log (in seperate package)
+- [ ] plumb through callback handler for each specific logging type (verbose, debug, warning, ...)
+- [ ] support for default loggers, like glog or log (in separate package)
 
 # Usage
 

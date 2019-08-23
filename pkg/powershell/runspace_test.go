@@ -180,6 +180,26 @@ func ExampleCallbackHolder() {
 	// 13
 }
 
+func ExampleRunspace_customSimpleLogger() {
+	// create a custom logger object
+	customLogger := logger.SimpleFuncPtr{func(str string) {
+		fmt.Print("Custom: " + str);
+	}}
+	// create a runspace (where you run your powershell statements in)
+	runspace := CreateRunspace(customLogger, nil)
+	// auto cleanup your runspace
+	defer runspace.Close()
+
+	statements := `write-verbose "verbose_message";write-debug "debug_message"`
+	results := runspace.ExecScript(statements, true, nil)
+	// auto cleanup all results returned
+	defer results.Close()
+
+	// OUTPUT:
+	// Custom: Verbose: verbose_message
+	// Custom: Debug: debug_message
+}
+
 // func Example_powershellCommandWithNamedParametersComplex() {
 // 	// create a runspace (where you run your powershell statements in)
 // 	runspace := CreateRunspaceSimple()

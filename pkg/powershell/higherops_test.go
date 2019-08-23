@@ -97,7 +97,8 @@ Send-HostCommand -message "Sending 0 objects to host" | out-null
 "1","2" | Send-HostCommand -message "Sending 2 objects to host and returning them"
     In Logging : Debug: calling Write-Host
     In Logging : Debug: callng Write-Debug
-    In Logging : calling write-Information    In Logging : Verbose: calling Write-Verbose
+    In Logging : Information: calling write-Information
+    In Logging : Verbose: calling Write-Verbose
     In callback: Sending 0 objects to host
     In callback: Sending 2 objects to host and returning them
     In callback: index 0 type: System.String with value: 1
