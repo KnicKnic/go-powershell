@@ -43,27 +43,27 @@ func (log *simpleTester) ValidateWrite(arg string) {
 }
 
 func (log *simpleTester) ValidateWarningln(arg string) {
-	if log.previous != fmt.Sprintln("Warning: ", arg) {
+	if log.previous != fmt.Sprintln("Warning:", arg) {
 		log.t.Fail()
 	}
 }
 func (log *simpleTester) ValidateInformationln(arg string) {
-	if log.previous != fmt.Sprintln("Information: ", arg) {
+	if log.previous != fmt.Sprintln("Information:", arg) {
 		log.t.Fail()
 	}
 }
 func (log *simpleTester) ValidateVerboseln(arg string) {
-	if log.previous != fmt.Sprintln("Verbose: ", arg) {
+	if log.previous != fmt.Sprintln("Verbose:", arg) {
 		log.t.Fail()
 	}
 }
 func (log *simpleTester) ValidateDebugln(arg string) {
-	if log.previous != fmt.Sprintln("Debug: ", arg) {
+	if log.previous != fmt.Sprintln("Debug:", arg) {
 		log.t.Fail()
 	}
 }
 func (log *simpleTester) ValidateErrorln(arg string) {
-	if log.previous != fmt.Sprintln("Error: ", arg) {
+	if log.previous != fmt.Sprintln("Error:", arg) {
 		log.t.Fail()
 	}
 }

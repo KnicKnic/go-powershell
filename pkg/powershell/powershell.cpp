@@ -55,13 +55,83 @@ const wchar_t* MallocCopy(const wchar_t* str)
         logWchart((unsigned long long )context, (wchar_t *)s);
         //printf("My Member Logger: %ws\n", s);
     }
+    void Loggerln(void *context, const wchar_t* s)
+    {
+        loglnWchart((unsigned long long )context, (wchar_t *)s);
+        //printf("My Member Logger: %ws\n", s);
+    }
+    void LoggerDebug(void *context, const wchar_t* s)
+    {
+        logDebugWchart((unsigned long long )context, (wchar_t *)s);
+        //printf("My Member Logger: %ws\n", s);
+    }
+    void LoggerDebugln(void *context, const wchar_t* s)
+    {
+        logDebuglnWchart((unsigned long long )context, (wchar_t *)s);
+        //printf("My Member Logger: %ws\n", s);
+    }
+    void LoggerVerbose(void *context, const wchar_t* s)
+    {
+        logVerboseWchart((unsigned long long )context, (wchar_t *)s);
+        //printf("My Member Logger: %ws\n", s);
+    }
+    void LoggerVerboseln(void *context, const wchar_t* s)
+    {
+        logVerboselnWchart((unsigned long long )context, (wchar_t *)s);
+        //printf("My Member Logger: %ws\n", s);
+    }
+    void LoggerInformation(void *context, const wchar_t* s)
+    {
+        logInformationWchart((unsigned long long )context, (wchar_t *)s);
+        //printf("My Member Logger: %ws\n", s);
+    }
+    void LoggerInformationln(void *context, const wchar_t* s)
+    {
+        logInformationlnWchart((unsigned long long )context, (wchar_t *)s);
+        //printf("My Member Logger: %ws\n", s);
+    }
+    void LoggerWarning(void *context, const wchar_t* s)
+    {
+        logWarningWchart((unsigned long long )context, (wchar_t *)s);
+        //printf("My Member Logger: %ws\n", s);
+    }
+    void LoggerWarningln(void *context, const wchar_t* s)
+    {
+        logWarninglnWchart((unsigned long long )context, (wchar_t *)s);
+        //printf("My Member Logger: %ws\n", s);
+    }
+    void LoggerError(void *context, const wchar_t* s)
+    {
+        logErrorWchart((unsigned long long )context, (wchar_t *)s);
+        //printf("My Member Logger: %ws\n", s);
+    }
+    void LoggerErrorln(void *context, const wchar_t* s)
+    {
+        logErrorlnWchart((unsigned long long )context, (wchar_t *)s);
+        //printf("My Member Logger: %ws\n", s);
+    }
+
+NativePowerShell_LogString_Holder LoggerDispatcher = {
+    Logger,
+    LoggerError,
+    LoggerWarning,
+    LoggerInformation,
+    LoggerVerbose,
+    LoggerDebug,
+    Loggerln,
+    LoggerErrorln,
+    LoggerWarningln,
+    LoggerInformationln,
+    LoggerVerboseln,
+    LoggerDebugln
+    };
     void Command(void *context, const wchar_t* s, NativePowerShell_PowerShellObject* input, unsigned long long inputCount, NativePowerShell_JsonReturnValues * returnValues)
     {        
         commandWchart((unsigned long long) context, (wchar_t *)s, input, inputCount, returnValues);
     }
 
 NativePowerShell_RunspaceHandle CreateRunspaceHelper(unsigned long long context, char useLogger, char useCommand ){
-    NativePowerShell_LogString loggerPtr = Logger;
+    PNativePowerShell_LogString_Holder loggerPtr = &LoggerDispatcher;
     NativePowerShell_ReceiveJsonCommand commandPtr = Command;
     if(useLogger == 0){
         loggerPtr = nullptr;
@@ -73,7 +143,7 @@ NativePowerShell_RunspaceHandle CreateRunspaceHelper(unsigned long long context,
 }
 
 NativePowerShell_RunspaceHandle CreateRemoteRunspaceHelper(unsigned long long context, char useLogger, const wchar_t * remoteMachine, const wchar_t * userName, const wchar_t * password  ){
-    NativePowerShell_LogString loggerPtr = Logger;
+    PNativePowerShell_LogString_Holder loggerPtr = &LoggerDispatcher;
     if(useLogger == 0){
         loggerPtr = nullptr;
     }

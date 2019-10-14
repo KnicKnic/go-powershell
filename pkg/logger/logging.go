@@ -87,19 +87,19 @@ func (log simpleToFull) Write(arg string) {
 }
 
 func (log simpleToFull) Warningln(arg string) {
-	log.Write(fmt.Sprintln("Warning: ", arg))
+	log.Write(fmt.Sprintln("Warning:", arg))
 }
 func (log simpleToFull) Informationln(arg string) {
-	log.Write(fmt.Sprintln("Information: ", arg))
+	log.Write(fmt.Sprintln("Information:", arg))
 }
 func (log simpleToFull) Verboseln(arg string) {
-	log.Write(fmt.Sprintln("Verbose: ", arg))
+	log.Write(fmt.Sprintln("Verbose:", arg))
 }
 func (log simpleToFull) Debugln(arg string) {
-	log.Write(fmt.Sprintln("Debug: ", arg))
+	log.Write(fmt.Sprintln("Debug:", arg))
 }
 func (log simpleToFull) Errorln(arg string) {
-	log.Write(fmt.Sprintln("Error: ", arg))
+	log.Write(fmt.Sprintln("Error:", arg))
 }
 func (log simpleToFull) Writeln(arg string) {
 	log.Write(fmt.Sprintln(arg))

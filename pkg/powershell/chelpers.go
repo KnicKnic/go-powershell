@@ -38,12 +38,123 @@ func makeCString(str string) *C.wchar_t {
 }
 
 //export logWchart
-// commandWchart the C function pointer that dispatches to the Golang function for SimpleLogging
+// logWchart the C function pointer that dispatches to the Golang function for SimpleLogging
 func logWchart(context uint64, str *C.wchar_t) {
 	if context != 0 {
 		s := makeString(str)
 		contextInterface := getRunspaceContext(context)
 		contextInterface.log.Write(s)
+	}
+}
+
+//export logWarningWchart
+// logWarningWchart the C function pointer that dispatches to the Golang function for SimpleLogging
+func logWarningWchart(context uint64, str *C.wchar_t) {
+	if context != 0 {
+		s := makeString(str)
+		contextInterface := getRunspaceContext(context)
+		contextInterface.log.Warning(s)
+	}
+}
+
+//export logInformationWchart
+// logInformationWchart the C function pointer that dispatches to the Golang function for SimpleLogging
+func logInformationWchart(context uint64, str *C.wchar_t) {
+	if context != 0 {
+		s := makeString(str)
+		contextInterface := getRunspaceContext(context)
+		contextInterface.log.Information(s)
+	}
+}
+
+//export logVerboseWchart
+// logVerboseWchart the C function pointer that dispatches to the Golang function for SimpleLogging
+func logVerboseWchart(context uint64, str *C.wchar_t) {
+	if context != 0 {
+		s := makeString(str)
+		contextInterface := getRunspaceContext(context)
+		contextInterface.log.Verbose(s)
+	}
+}
+
+//export logDebugWchart
+// logDebugWchart the C function pointer that dispatches to the Golang function for SimpleLogging
+func logDebugWchart(context uint64, str *C.wchar_t) {
+	if context != 0 {
+		s := makeString(str)
+		contextInterface := getRunspaceContext(context)
+		contextInterface.log.Debug(s)
+	}
+}
+
+//export logErrorWchart
+// logErrorWchart the C function pointer that dispatches to the Golang function for SimpleLogging
+func logErrorWchart(context uint64, str *C.wchar_t) {
+	if context != 0 {
+		s := makeString(str)
+		contextInterface := getRunspaceContext(context)
+		contextInterface.log.Error(s)
+	}
+}
+
+
+//export loglnWchart
+// loglnWchart the C function pointer that dispatches to the Golang function for SimpleLogging
+func loglnWchart(context uint64, str *C.wchar_t) {
+	if context != 0 {
+		s := makeString(str)
+		contextInterface := getRunspaceContext(context)
+		contextInterface.log.Writeln(s)
+	}
+}
+
+//export logWarninglnWchart
+// logWarninglnWchart the C function pointer that dispatches to the Golang function for SimpleLogging
+func logWarninglnWchart(context uint64, str *C.wchar_t) {
+	if context != 0 {
+		s := makeString(str)
+		contextInterface := getRunspaceContext(context)
+		contextInterface.log.Warningln(s)
+	}
+}
+
+//export logInformationlnWchart
+// logInformationlnWchart the C function pointer that dispatches to the Golang function for SimpleLogging
+func logInformationlnWchart(context uint64, str *C.wchar_t) {
+	if context != 0 {
+		s := makeString(str)
+		contextInterface := getRunspaceContext(context)
+		contextInterface.log.Informationln(s)
+	}
+}
+
+//export logVerboselnWchart
+// logVerboselnWchart the C function pointer that dispatches to the Golang function for SimpleLogging
+func logVerboselnWchart(context uint64, str *C.wchar_t) {
+	if context != 0 {
+		s := makeString(str)
+		contextInterface := getRunspaceContext(context)
+		contextInterface.log.Verboseln(s)
+	}
+}
+
+//export logDebuglnWchart
+// logDebuglnWchart the C function pointer that dispatches to the Golang function for SimpleLogging
+func logDebuglnWchart(context uint64, str *C.wchar_t) {
+	if context != 0 {
+		s := makeString(str)
+		contextInterface := getRunspaceContext(context)
+		contextInterface.log.Debugln(s)
+	}
+}
+
+//export logErrorlnWchart
+// logErrorlnWchart the C function pointer that dispatches to the Golang function for SimpleLogging
+func logErrorlnWchart(context uint64, str *C.wchar_t) {
+	if context != 0 {
+		s := makeString(str)
+		contextInterface := getRunspaceContext(context)
+		contextInterface.log.Errorln(s)
 	}
 }
 
