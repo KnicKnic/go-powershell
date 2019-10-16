@@ -118,6 +118,100 @@ Command returned 3 objects
 	validate(t, expected, record.lines)
 }
 
+type fullLogger struct{
+
+}
+
+
+func (_ fullLogger) Warning(arg string) {
+
+	record.Print("    In Logging : Warning: ", arg)
+}
+func (_ fullLogger) Information(arg string) {
+	record.Print("    In Logging : Information: ", arg)
+}
+func (_ fullLogger) Verbose(arg string) {
+	record.Print("    In Logging : Verbose: ", arg)
+}
+func (_ fullLogger) Debug(arg string) {
+	record.Print("    In Logging : Debug: ", arg)
+}
+func (_ fullLogger) Error(arg string) {
+	record.Print("    In Logging : Error: ", arg)
+}
+func (_ fullLogger) Write(arg string) {
+	record.Print("    In Logging : Write: ", arg)
+}
+
+func (_ fullLogger) Warningln(arg string) {
+	arg = arg +"\n"
+	record.Print("    In Logging : Line Warning: ", arg)
+}
+func (_ fullLogger) Informationln(arg string) {
+	arg = arg +"\n"
+	record.Print("    In Logging : Line Information: ", arg)
+}
+func (_ fullLogger) Verboseln(arg string) {
+	arg = arg +"\n"
+	record.Print("    In Logging : Line Verbose: ", arg)
+}
+func (_ fullLogger) Debugln(arg string) {
+	arg = arg +"\n"
+	record.Print("    In Logging : Line Debug: ", arg)
+}
+func (_ fullLogger) Errorln(arg string) {
+	arg = arg +"\n"
+	record.Print("    In Logging : Line Error: ", arg)
+}
+func (_ fullLogger) Writeln(arg string) {
+	arg = arg +"\n"
+	record.Print("    In Logging : Line Write: ", arg)
+}
+
+func TestCcreateRunspaceWitLoggerWithFullCallback(t *testing.T) {
+	record.Reset()
+	runspace := CreateRunspace(fullLogger{}, callbackTest{})
+	// runspace := CreateRunspaceSimple()
+	defer runspace.Close()
+	inputStr := `
+write-host "calling Write-Host"
+write-debug "callng Write-Debug"
+write-Information "calling write-Information"
+write-verbose "calling Write-Verbose"
+Send-HostCommand -message "Sending 0 objects to host" | out-null
+"1","2" | Send-HostCommand -message "Sending 2 objects to host and returning them"`
+	PrintAndExecuteCommand(runspace, inputStr, false)
+	// Output:
+	expected := `Executing powershell command:
+write-host "calling Write-Host"
+write-debug "callng Write-Debug"
+write-Information "calling write-Information"
+write-verbose "calling Write-Verbose"
+Send-HostCommand -message "Sending 0 objects to host" | out-null
+"1","2" | Send-HostCommand -message "Sending 2 objects to host and returning them"
+    In Logging : Debug: calling Write-Host
+    In Logging : Debug: callng Write-Debug
+    In Logging : Information: calling write-Information
+    In Logging : Verbose: calling Write-Verbose
+    In callback: Sending 0 objects to host
+    In callback: Sending 2 objects to host and returning them
+    In callback: index 0 type: System.String with value: 1
+    In callback: index 1 type: System.String with value: 2
+Completed Executing powershell command:
+write-host "calling Write-Host"
+write-debug "callng Write-Debug"
+write-Information "calling write-Information"
+write-verbose "calling Write-Verbose"
+Send-HostCommand -message "Sending 0 objects to host" | out-null
+"1","2" | Send-HostCommand -message "Sending 2 objects to host and returning them"
+Command returned 3 objects
+    Object 0 is of type System.String and ToString Sending 2 objects to host and returning them
+    Object 1 is of type System.String and ToString 1
+    Object 2 is of type System.String and ToString 2
+`
+	validate(t, expected, record.lines)
+}
+
 func TestCcreateRunspaceSimple(t *testing.T) {
 	record.Reset()
 	runspace := CreateRunspaceSimple()

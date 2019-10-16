@@ -2,8 +2,9 @@ package powershell
 
 import (
 	"fmt"
-	"github.com/KnicKnic/go-powershell/pkg/logger"
 	"strconv"
+
+	"github.com/KnicKnic/go-powershell/pkg/logger"
 )
 
 func ExampleRunspace_ExecScript() {
@@ -108,13 +109,13 @@ func ExampleRunspace_ExecCommandJSONMarshalUnknown() {
 	defer results.Close()
 
 	// OUTPUT:
-	// Debug: 1 2 false test string [1,2,3] {"fruit":"apple","vegetable":"celery"}
-	// Debug: 1
-	// Debug: 2
-	// Debug: false
-	// Debug: test string
-	// Debug: [1,2,3]
-	// Debug: {"fruit":"apple","vegetable":"celery"}
+	// 1 2 false test string [1,2,3] {"fruit":"apple","vegetable":"celery"}
+	// 1
+	// 2
+	// false
+	// test string
+	// [1,2,3]
+	// {"fruit":"apple","vegetable":"celery"}
 }
 
 type person struct {
@@ -183,7 +184,7 @@ func ExampleCallbackHolder() {
 func ExampleRunspace_customSimpleLogger() {
 	// create a custom logger object
 	customLogger := logger.SimpleFuncPtr{func(str string) {
-		fmt.Print("Custom: " + str);
+		fmt.Print("Custom: " + str)
 	}}
 	// create a runspace (where you run your powershell statements in)
 	runspace := CreateRunspace(customLogger, nil)
