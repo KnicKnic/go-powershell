@@ -56,14 +56,19 @@ func (holder SimpleFuncPtr) Write(arg string) {
 
 // MakeLoggerFull returns a wrapper class that provides Full semantics,
 // utilizing a simple Simple.write() function
-func MakeLoggerFull(logger Simple) Full {
+func MakeLoggerFull(logger interface{}) Full {
 	if logger == nil {
 		return nil
 	}
 	if p, ok := logger.(Full); ok {
 		return p
 	}
-	return simpleToFull{logger}
+
+	if simple, ok :=  logger.(Simple); ok{
+		return simpleToFull{simple}
+	}
+
+	panic("Expected either logger.Simple or logger.Full")
 }
 
 func (log simpleToFull) Warning(arg string) {
