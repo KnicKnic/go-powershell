@@ -95,9 +95,9 @@ write-Information "calling write-Information"
 write-verbose "calling Write-Verbose"
 Send-HostCommand -message "Sending 0 objects to host" | out-null
 "1","2" | Send-HostCommand -message "Sending 2 objects to host and returning them"
-    In Logging : Debug: calling Write-Host
+    In Logging : calling Write-Host
     In Logging : Debug: callng Write-Debug
-    In Logging : Information: calling write-Information
+    In Logging : calling write-Information
     In Logging : Verbose: calling Write-Verbose
     In callback: Sending 0 objects to host
     In callback: Sending 2 objects to host and returning them
@@ -118,10 +118,8 @@ Command returned 3 objects
 	validate(t, expected, record.lines)
 }
 
-type fullLogger struct{
-
+type fullLogger struct {
 }
-
 
 func (_ fullLogger) Warning(arg string) {
 
@@ -144,27 +142,27 @@ func (_ fullLogger) Write(arg string) {
 }
 
 func (_ fullLogger) Warningln(arg string) {
-	arg = arg +"\n"
+	arg = arg + "\n"
 	record.Print("    In Logging : Line Warning: ", arg)
 }
 func (_ fullLogger) Informationln(arg string) {
-	arg = arg +"\n"
+	arg = arg + "\n"
 	record.Print("    In Logging : Line Information: ", arg)
 }
 func (_ fullLogger) Verboseln(arg string) {
-	arg = arg +"\n"
+	arg = arg + "\n"
 	record.Print("    In Logging : Line Verbose: ", arg)
 }
 func (_ fullLogger) Debugln(arg string) {
-	arg = arg +"\n"
+	arg = arg + "\n"
 	record.Print("    In Logging : Line Debug: ", arg)
 }
 func (_ fullLogger) Errorln(arg string) {
-	arg = arg +"\n"
+	arg = arg + "\n"
 	record.Print("    In Logging : Line Error: ", arg)
 }
 func (_ fullLogger) Writeln(arg string) {
-	arg = arg +"\n"
+	arg = arg + "\n"
 	record.Print("    In Logging : Line Write: ", arg)
 }
 
@@ -189,10 +187,10 @@ write-Information "calling write-Information"
 write-verbose "calling Write-Verbose"
 Send-HostCommand -message "Sending 0 objects to host" | out-null
 "1","2" | Send-HostCommand -message "Sending 2 objects to host and returning them"
-    In Logging : Debug: calling Write-Host
-    In Logging : Debug: callng Write-Debug
-    In Logging : Information: calling write-Information
-    In Logging : Verbose: calling Write-Verbose
+    In Logging : Line Write: calling Write-Host
+    In Logging : Line Debug: callng Write-Debug
+    In Logging : Line Write: calling write-Information
+    In Logging : Line Verbose: calling Write-Verbose
     In callback: Sending 0 objects to host
     In callback: Sending 2 objects to host and returning them
     In callback: index 0 type: System.String with value: 1
@@ -252,29 +250,29 @@ func TestCcreateRunspaceUsingCommand(t *testing.T) {
 	results2 := runspace.ExecCommand(`..\\..\\tests\\t2.ps1`, false, nil)
 	defer results2.Close()
 	// Output:
-	expected := `    In Logging : Debug: ab  ba
-    In Logging : Debug: ab  ba
-    In Logging : Debug: ab  ba
+	expected := `    In Logging : ab  ba
+    In Logging : ab  ba
+    In Logging : ab  ba
     In callback: asdfasdf
     In callback: index 0 type: System.Int32 with value: 1
     In callback: index 1 type: System.Int32 with value: 2
     In callback: index 2 type: System.Int32 with value: 3
-    In Logging : Debug: asdfasdf 1 2 3
+    In Logging : asdfasdf 1 2 3
     In callback: two
-    In Logging : Debug: two
+    In Logging : two
     In callback: three
-    In Logging : Debug: three
+    In Logging : three
     In callback: four
     In callback: index 0 Object Is Null
     In callback: index 0 type: nullptr with value: nullptr
     In callback: index 1 Object Is Null
     In callback: index 1 type: nullptr with value: nullptr
-    In Logging : Debug: ab four   ba
+    In Logging : ab four   ba
     In Logging : Error: someerror
-    In Logging : Debug: start t2
-    In Logging : Debug: 5
-    In Logging : Debug: 5
-    In Logging : Debug: asdf
+    In Logging : start t2
+    In Logging : 5
+    In Logging : 5
+    In Logging : asdf
 `
 	validate(t, expected, record.lines)
 }
@@ -289,14 +287,14 @@ func TestCglobalScope(t *testing.T) {
 	results2 := runspace.ExecCommand(`..\\..\\tests\\test_scope.ps1`, false, nil)
 	defer results2.Close()
 	// Output:
-	expected := `    In Logging : Debug: ab  ba
-    In Logging : Debug: ab  ba
-    In Logging : Debug: ab  ba
-    In Logging : Debug: ab  ba
-    In Logging : Debug: ab 1 ba
-    In Logging : Debug: ab 2 ba
-    In Logging : Debug: ab 3 ba
-    In Logging : Debug: ab 4 ba
+	expected := `    In Logging : ab  ba
+    In Logging : ab  ba
+    In Logging : ab  ba
+    In Logging : ab  ba
+    In Logging : ab 1 ba
+    In Logging : ab 2 ba
+    In Logging : ab 3 ba
+    In Logging : ab 4 ba
 `
 	validate(t, expected, record.lines)
 }
@@ -311,14 +309,14 @@ func TestClocalScope(t *testing.T) {
 	results2 := runspace.ExecCommand(`..\\..\\tests\\test_scope.ps1`, true, nil)
 	defer results2.Close()
 
-	expected := `    In Logging : Debug: ab  ba
-    In Logging : Debug: ab  ba
-    In Logging : Debug: ab  ba
-    In Logging : Debug: ab  ba
-    In Logging : Debug: ab  ba
-    In Logging : Debug: ab  ba
-    In Logging : Debug: ab 3 ba
-    In Logging : Debug: ab  ba
+	expected := `    In Logging : ab  ba
+    In Logging : ab  ba
+    In Logging : ab  ba
+    In Logging : ab  ba
+    In Logging : ab  ba
+    In Logging : ab  ba
+    In Logging : ab 3 ba
+    In Logging : ab  ba
 `
 	validate(t, expected, record.lines)
 }
@@ -378,7 +376,7 @@ func TestCcallbackSaveObject(t *testing.T) {
 		object.Close()
 	}
 	// Output: In Logging : Debug: 1
-	expected := `    In Logging : Debug: 1
+	expected := `    In Logging : 1
 `
 	validate(t, expected, record.lines)
 }
@@ -504,7 +502,7 @@ func TestCpowershellJsonMarshal(t *testing.T) {
 
 	paramResults := runspace.ExecCommandJSONMarshalUnknown(`Write-Host`, true, map[string]interface{}{"Object": 17})
 	defer paramResults.Close()
-	expected := `    In Logging : Debug: 17
+	expected := `    In Logging : 17
 `
 	validate(t, expected, record.lines)
 }
