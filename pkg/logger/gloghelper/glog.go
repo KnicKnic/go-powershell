@@ -1,4 +1,4 @@
-package logger
+package gloghelper
 
 import (
 	"github.com/golang/glog"

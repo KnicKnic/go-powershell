@@ -5,9 +5,9 @@ import (
 	"fmt"
 	"strings"
 
-	"github.com/KnicKnic/go-powershell/pkg/logger"
+	"github.com/KnicKnic/go-powershell/pkg/logger/kloghelper"
 	"github.com/KnicKnic/go-powershell/pkg/powershell"
-	"github.com/golang/glog"
+	"k8s.io/klog"
 )
 
 type callbackTest struct{}
@@ -50,11 +50,11 @@ func PrintAndExecuteCommand(runspace powershell.Runspace, command string, useLoc
 
 // Example on how to use powershell wrappers
 func Example() {
-	runspace := powershell.CreateRunspace(logger.Glog{VerboseLevel: 1, DebugLevel: 2}, callbackTest{})
+	runspace := powershell.CreateRunspace(kloghelper.Klog{VerboseLevel: 1, DebugLevel: 2}, callbackTest{})
 	defer runspace.Close()
 
 	if len(commandFlags) == 0 {
-		glog.Exit("Did not specify a \"-command\" to run")
+		klog.Exit("Did not specify a \"-command\" to run")
 	}
 	for i := 0; i < len(commandFlags); i++ {
 		command := strings.ReplaceAll(commandFlags[i], "\\", "\\\\")
@@ -78,9 +78,10 @@ var commandFlags arrayCommandFlags
 var useLocalScope = flag.Bool("useLocalScope", false, "True if should execute scripts in the local scope")
 
 func main() {
+	klog.InitFlags(nil)
 	flag.Var(&commandFlags, "command", "Command to run in powershell")
 	flag.Set("logtostderr", "true")
 	flag.Parse()
 	Example()
-	glog.Flush()
+	klog.Flush()
 }
