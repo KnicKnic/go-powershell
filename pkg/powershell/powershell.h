@@ -1,5 +1,5 @@
 
-#include "./../../native-powershell/native-powershell-bin/host.h"
+#include "./../../bin/host.h"
 #include <stddef.h>
 #ifdef __cplusplus
 extern "C" {

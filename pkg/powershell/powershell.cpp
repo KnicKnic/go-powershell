@@ -1,6 +1,6 @@
 #include <stddef.h>
 #include "powershell.h"
-#include "./../../native-powershell/native-powershell-bin/host.h"
+#include "./../../bin/host.h"
 
 #include <stdio.h>
 #include <stdlib.h>
