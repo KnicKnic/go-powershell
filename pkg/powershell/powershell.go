@@ -6,21 +6,9 @@ import (
 	"golang.org/x/sys/windows"
 )
 
-/*
-
-#cgo CFLAGS: -I.
-#cgo LDFLAGS: -static ${SRCDIR}/../../bin/psh_host.dll
-
-
-#include <stddef.h>
-#include "powershell.h"
-
-*/
-import "C"
-
 // psCommand represents a powershell command, must call Close
 type psCommand struct {
-	handle  C.NativePowerShell_PowerShellHandle
+	handle  nativePowerShell_PowerShellHandle
 	context *runspaceContext
 }
 
@@ -38,21 +26,23 @@ func (runspace Runspace) createCommand() psCommand {
 		currentCommand := currentlyInvoking[len(currentlyInvoking)-1]
 		return currentCommand.createNested()
 	}
-	return psCommand{C.NativePowerShell_CreatePowerShell(runspace.handle), runspace.runspaceContext}
+	handle := nativePowerShell_CreatePowerShell(runspace.handle)
+
+	return psCommand{handle, runspace.runspaceContext}
 }
 
 // createNested a nested powershell command
 func (command psCommand) createNested() psCommand {
-	return psCommand{C.NativePowerShell_CreatePowerShellNested(command.handle), command.context}
+	return psCommand{nativePowerShell_CreatePowerShellNested(command.handle), command.context}
 }
 
 // Close and free a psCommand
 // , call on all objects even those that are Invoked
 func (command psCommand) Close() {
-	C.NativePowerShell_DeletePowershell(command.handle)
+	nativePowerShell_DeletePowershell(command.handle)
 }
 
-func boolToCChar(b bool) C.char {
+func boolToByte(b bool) byte {
 	if b {
 		return 1
 	}
@@ -63,53 +53,46 @@ func boolToCChar(b bool) C.char {
 func (command psCommand) AddCommand(commandlet string, useLocalScope bool) {
 	cs, _ := windows.UTF16PtrFromString(commandlet)
 
-	ptrwchar := unsafe.Pointer(cs)
-	localScope := boolToCChar(useLocalScope)
+	localScope := boolToByte(useLocalScope)
 
-	_ = C.NativePowerShell_AddCommandSpecifyScope(command.handle, (*C.wchar_t)(ptrwchar), localScope)
+	_ = nativePowerShell_AddCommandSpecifyScope(command.handle, cs, localScope)
 }
 
 // AddScript to an existing powershell command
 func (command psCommand) AddScript(script string, useLocalScope bool) {
 	cs, _ := windows.UTF16PtrFromString(script)
 
-	ptrwchar := unsafe.Pointer(cs)
-	localScope := boolToCChar(useLocalScope)
+	localScope := boolToByte(useLocalScope)
 
-	_ = C.NativePowerShell_AddScriptSpecifyScope(command.handle, (*C.wchar_t)(ptrwchar), localScope)
+	_ = nativePowerShell_AddScriptSpecifyScope(command.handle, cs, localScope)
 }
 
 // AddArgumentString add a string argument to an existing powershell command
 func (command psCommand) AddArgumentString(argument string) {
 	cs, _ := windows.UTF16PtrFromString(argument)
 
-	ptrwchar := unsafe.Pointer(cs)
-
-	_ = C.NativePowerShell_AddArgument(command.handle, (*C.wchar_t)(ptrwchar))
+	_ = nativePowerShell_AddArgument(command.handle, cs)
 }
 
 // AddArgument add a Object argument to an existing powershell command
 func (command psCommand) AddArgument(object Object) {
-	_ = C.NativePowerShell_AddPSObjectArgument(command.handle, object.handle)
+	_ = nativePowerShell_AddPSObjectArgument(command.handle, object.handle)
 }
 
 // AddParameterString add a string with a parameter name to an existing powershell command
 func (command psCommand) AddParameterString(paramName string, paramValue string) {
 	cName, _ := windows.UTF16PtrFromString(paramName)
-	ptrName := unsafe.Pointer(cName)
 
 	cValue, _ := windows.UTF16PtrFromString(paramValue)
-	ptrValue := unsafe.Pointer(cValue)
-	_ = C.NativePowerShell_AddParameterString(command.handle, (*C.wchar_t)(ptrName), (*C.wchar_t)(ptrValue))
+	_ = nativePowerShell_AddParameterString(command.handle, cName, cValue)
 }
 
 // AddParameter add a Object with a parameter name to an existing powershell command
 func (command psCommand) AddParameter(paramName string, object Object) {
 
 	cName, _ := windows.UTF16PtrFromString(paramName)
-	ptrName := unsafe.Pointer(cName)
 
-	_ = C.NativePowerShell_AddParameterObject(command.handle, (*C.wchar_t)(ptrName), object.handle)
+	_ = nativePowerShell_AddParameterObject(command.handle, cName, object.handle)
 }
 
 func (command psCommand) completeInvoke() {
@@ -123,29 +106,31 @@ func (command psCommand) completeInvoke() {
 // Must still call Close on this object
 func (command psCommand) Invoke() *InvokeResults {
 
-	var objects *C.NativePowerShell_PowerShellObject
-	var count C.uint
+	var objects uintptr
+	var count uint
 	command.context.invoking = append(command.context.invoking, command)
 	defer command.completeInvoke()
-	exception := C.NativePowerShell_InvokeCommand(command.handle, &objects, &count)
+	exception := nativePowerShell_InvokeCommand(command.handle, &objects, &count)
 	return makeInvokeResults(objects, count, exception)
 }
 
-func makePowerShellObjectIndexed(objects *C.NativePowerShell_PowerShellObject, index uint32) Object {
+func makePowerShellObjectIndexed(objects uintptr, index uint32) Object {
 	// I don't get why I have to use unsafe.Pointer on C memory
+	var handle nativePowerShell_PowerShellObject
+
 	ptr := unsafe.Pointer(objects)
-	offset := (uintptr(index) * unsafe.Sizeof(*objects))
-	var obj C.NativePowerShell_PowerShellObject = *(*C.NativePowerShell_PowerShellObject)(unsafe.Pointer(uintptr(ptr) + offset))
-	return makePowerShellObject(obj)
+	offset := (uintptr(index) * unsafe.Sizeof(handle))
+	handle = *(*nativePowerShell_PowerShellObject)(unsafe.Pointer(uintptr(ptr) + offset))
+	return makePowerShellObject(handle)
 }
 
-func makePowerShellObject(object C.NativePowerShell_PowerShellObject) Object {
+func makePowerShellObject(object nativePowerShell_PowerShellObject) Object {
 	// var obj uint64 = *(*uint64)(unsafe.Pointer(&object))
 	// return Object{obj}
 	return Object{object}
 }
 
-func makeInvokeResults(objects *C.NativePowerShell_PowerShellObject, count C.uint, exception C.NativePowerShell_PowerShellObject) *InvokeResults {
+func makeInvokeResults(objects uintptr, count uint, exception nativePowerShell_PowerShellObject) *InvokeResults {
 	results := InvokeResults{Objects: make([]Object, count),
 		Exception:      makePowerShellObject(exception),
 		objectsNoClose: make(map[int]bool),

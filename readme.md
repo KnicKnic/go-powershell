@@ -1,6 +1,6 @@
 [![Build Status](https://dev.azure.com/oneeyedelf1/powershell.native/_apis/build/status/KnicKnic.go-powershell?branchName=master)](https://dev.azure.com/oneeyedelf1/powershell.native/_build/latest?definitionId=3&branchName=master)
 [![Go Report Card](https://goreportcard.com/badge/github.com/KnicKnic/go-powershell)](https://goreportcard.com/report/github.com/KnicKnic/go-powershell)
-[![gopherbadger](https://img.shields.io/badge/Go%20Coverage-100%25-brightgreen.svg?longCache=true&style=flat)](./scripts/code_coverage.ps1)
+[![gopherbadger](https://img.shields.io/badge/Go%20Coverage-80%25-brightgreen.svg?longCache=true&style=flat)](./scripts/code_coverage.ps1)
 [![GoDoc](https://godoc.org/github.com/KnicKnic/go-powershell/pkg/powershell?status.svg)](https://godoc.org/github.com/KnicKnic/go-powershell/pkg/powershell)
 [![GitHub commits since latest release (branch)](https://img.shields.io/github/commits-since/KnicKnic/go-powershell/latest.svg)](https://github.com/KnicKnic/go-powershell/releases/latest)
 
@@ -13,6 +13,7 @@ Features:
 1. Call from golang to powershell
 1. Call from powershell to golang (via special Send-HostCommand commandlet)
 1. Easy logging - Trap host output in powershell and call custom logging routines in golang
+1. Uses syscall - so do not need to use cGo
 
 # Status
 
@@ -88,18 +89,11 @@ This project has a dependency on [native-powershell](https://github.com/KnicKnic
 
 1. Simply fetch the dependencies, `go get -d .` and then make sure to build, `go build`
 1. Copy the precompiled psh_host.dll into your location so it can be found when running the app
-    1. cmd - `copy %GOPATH%\src\github.com\KnicKnic\go-powershell\native-powershell\native-powershell-bin\psh_host.dll .`
-    1. powershell - `copy "$($env:GOPATH)\src\github.com\KnicKnic\go-powershell\native-powershell\native-powershell-bin\psh_host.dll" .`
+    1. cmd - `copy %GOPATH%\src\github.com\KnicKnic\go-powershell\bin\psh_host.dll .`
+    1. powershell - `copy "$($env:GOPATH)\src\github.com\KnicKnic\go-powershell\bin\psh_host.dll" .`
 1. I ended up checking in the psh_host.dll and host.h (to make things easy)
     1. I could not find a better way to go about this and still have things be easy.
 
-### Getting cgo (so you can compile)
-
-Windows - install dependencies - you need gcc. I Use chocolatey to install (easiest way to install gcc)
-
-1. Install chocolatey
-	1. https://chocolatey.org/docs/installation#installing-chocolatey
-1. `choco install mingw -y`
 
 # Docs
 
