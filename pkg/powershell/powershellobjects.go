@@ -1,18 +1,8 @@
 package powershell
 
-/*
-
-#cgo CFLAGS: -I.
-#cgo LDFLAGS: -static ${SRCDIR}/../../bin/psh_host.dll
-
-
-#include <stddef.h>
-#include "powershell.h"
-
-*/
-import "C"
-import "unsafe"
-import "encoding/json"
+import (
+	"encoding/json"
+)
 
 // Object representing an object return from a powershell invocation
 //
@@ -20,23 +10,13 @@ import "encoding/json"
 //
 // See note on Object.Close for exceptions & more rules about Close
 type Object struct {
-	handle C.NativePowerShell_PowerShellObject
+	handle nativePowerShell_PowerShellObject
 }
 
 // toCHandle gets the backing handle of Object
-func (obj Object) toCHandle() C.NativePowerShell_PowerShellObject {
-	// return *((*C.NativePowerShell_PowerShellObject)(unsafe.Pointer(&obj.handle)))
+func (obj Object) toCHandle() nativePowerShell_PowerShellObject {
 	return obj.handle
 }
-
-// // toCHandle gets the backing handle of Object
-// func makeCHandles(objects []Object) []C.NativePowerShell_PowerShellObject {
-// 	cHandles := make([]C.NativePowerShell_PowerShellObject, len(objects))
-// 	for i,object := range(objects){
-// 		cHandles[i] = object.handle
-// 	}
-// 	return cHandles
-// }
 
 // Close allows the memory for the powershell object to be reclaimed
 //
@@ -46,21 +26,21 @@ func (obj Object) toCHandle() C.NativePowerShell_PowerShellObject {
 //
 // Needs to be called for every object returned from AddRef
 func (obj Object) Close() {
-	C.NativePowerShell_ClosePowerShellObject(obj.toCHandle())
+	nativePowerShell_ClosePowerShellObject(obj.toCHandle())
 }
 
 // AddRef returns a new Object that has to also be called Close on
 //
-// This is useful in Callback processing, as those NativePowerShell_PowerShellObjects are auto closed, and to keep
+// This is useful in Callback processing, as those nativePowerShell_PowerShellObjects are auto closed, and to keep
 // a reference after the function returns use AddRef
 func (obj Object) AddRef() Object {
-	handle := C.NativePowerShell_AddPSObjectHandle(obj.toCHandle())
+	handle := nativePowerShell_AddPSObjectHandle(obj.toCHandle())
 	return makePowerShellObject(handle)
 }
 
 // IsNull returns true if the backing powershell object is null
 func (obj Object) IsNull() bool {
-	return C.NativePowerShell_IsPSObjectNullptr(obj.toCHandle()) == 1
+	return nativePowerShell_IsPSObjectNullptr(obj.toCHandle()) == 1
 }
 
 // Type returns the (System.Object).GetType().ToString() function
@@ -71,9 +51,9 @@ func (obj Object) Type() string {
 		return "nullptr"
 	}
 
-	var str *C.wchar_t = C.NativePowerShell_GetPSObjectType(obj.toCHandle())
-	defer C.FreeWrapper(unsafe.Pointer(str))
-	return makeString(str)
+	str := nativePowerShell_GetPSObjectType(obj.toCHandle())
+	defer freeWrapper(str)
+	return uintptrMakeString(str)
 }
 
 // ToString returns the (System.Object).ToString() function
@@ -84,9 +64,9 @@ func (obj Object) ToString() string {
 		return "nullptr"
 	}
 
-	var str *C.wchar_t = C.NativePowerShell_GetPSObjectToString(obj.toCHandle())
-	defer C.FreeWrapper(unsafe.Pointer(str))
-	return makeString(str)
+	str := nativePowerShell_GetPSObjectToString(obj.toCHandle())
+	defer freeWrapper(str)
+	return uintptrMakeString(str)
 }
 
 // JSONUnmarshal calls the ToString function and unmarshals it into the supplied object

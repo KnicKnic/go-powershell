@@ -1,26 +1,9 @@
 package powershell
 
-/*
-
-#cgo CFLAGS: -I.
-#cgo LDFLAGS: -static ${SRCDIR}/../../bin/psh_host.dll
-
-
-#include <stddef.h>
-#include "powershell.h"
-
-*/
-import "C"
 import (
-	"unsafe"
-
-	"golang.org/x/sys/windows"
 	"github.com/KnicKnic/go-powershell/pkg/logger"
+	"golang.org/x/sys/windows"
 )
-
-func init() {
-	C.InitLibraryHelper()
-}
 
 type runspaceContext struct {
 	log      logger.Full
@@ -28,7 +11,7 @@ type runspaceContext struct {
 	invoking []psCommand // in order list of psCommands we are currently invoking
 
 	// runspaceContext should contain all the datamembers to reconstrut runspace
-	handle        C.NativePowerShell_RunspaceHandle
+	handle        nativePowerShell_RunspaceHandle
 	contextLookup uint64
 }
 
@@ -69,18 +52,17 @@ func CreateRunspace(loggerCallback logger.Simple, callback CallbackHolder) Runsp
 	}
 	context.contextLookup = storeRunspaceContext(context)
 
-	var useLogger C.char = 1
+	var useLogger byte = 1
 	if loggerCallback == nil {
 		useLogger = 0
 	}
-	var useCommand C.char = 1
+	var useCommand byte = 1
 	if callback == nil {
 		useCommand = 0
 	}
-	context.handle = C.CreateRunspaceHelper(C.ulonglong(context.contextLookup), useLogger, useCommand)
+	context.handle = createRunspaceHelper(context.contextLookup, useLogger, useCommand)
 	return context.recreateRunspace()
 }
-
 
 // CreateRemoteRunspace creates a runspace in which to run powershell commands
 //
@@ -97,27 +79,23 @@ func CreateRemoteRunspace(loggerCallback logger.Simple, remoteMachine string, us
 	}
 	context.contextLookup = storeRunspaceContext(context)
 
-	var useLogger C.char = 1
+	var useLogger byte = 1
 	if loggerCallback == nil {
 		useLogger = 0
 	}
 
-
 	cRemoteMachine, _ := windows.UTF16PtrFromString(remoteMachine)
-	ptrRemoteMachine := unsafe.Pointer(cRemoteMachine)
 
 	cUsername, _ := windows.UTF16PtrFromString(username)
-	ptrUsername := unsafe.Pointer(cUsername)
 
 	cPassword, _ := windows.UTF16PtrFromString(password)
-	ptrPassword := unsafe.Pointer(cPassword)
 
-	context.handle = C.CreateRemoteRunspaceHelper(C.ulonglong(context.contextLookup), useLogger, (*C.wchar_t)(ptrRemoteMachine), (*C.wchar_t)(ptrUsername), (*C.wchar_t)(ptrPassword))
+	context.handle = createRemoteRunspaceHelper(context.contextLookup, useLogger, cRemoteMachine, cUsername, cPassword)
 	return context.recreateRunspace()
 }
 
 // Close and free a Runspace
 func (runspace Runspace) Close() {
 	deleteRunspaceContextLookup(runspace.contextLookup)
-	C.NativePowerShell_DeleteRunspace(runspace.handle)
+	nativePowerShell_DeleteRunspace(runspace.handle)
 }

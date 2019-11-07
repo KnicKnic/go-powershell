@@ -34,6 +34,9 @@ extern "C" {
     }NativePowerShell_LogString_Holder, * PNativePowerShell_LogString_Holder;
 
     void NativePowerShell_InitLibrary( NativePowerShell_AllocPointer, NativePowerShell_FreePointer);
+    
+    unsigned char* NativePowerShell_DefaultAlloc(unsigned long long size);
+    void NativePowerShell_DefaultFree(void* address);
 
 	//typedef struct NativePowerShell_RunspaceHandle_ {} *NativePowerShell_RunspaceHandle;
  //   typedef struct NativePowerShell_PowerShellHandle_ {} *NativePowerShell_PowerShellHandle;

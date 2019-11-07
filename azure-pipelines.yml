@@ -39,7 +39,6 @@ steps:
   inputs:
     targetType: 'inline'
     script: 'choco install -y golang --no-progress;
-      choco install -y mingw --no-progress;
       refreshenv ;
       copy native-powershell\host.h .\pkg\powershell\ ;
       copy native-powershell\x64\Release\psh_host.dll . ;

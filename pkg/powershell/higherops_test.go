@@ -508,7 +508,7 @@ func TestCpowershellJsonMarshal(t *testing.T) {
 }
 
 func TestClogWchart_lookupFail(t *testing.T) {
-	cStr := makeCString("test String")
+	cStr := makeCStringUintptr("test String")
 	caughtFailedToLoad := false
 	defer func() {
 		if r := recover(); r != nil {
@@ -517,7 +517,7 @@ func TestClogWchart_lookupFail(t *testing.T) {
 			caughtFailedToLoad = true
 		}
 	}()
-	logWchart(1, cStr)
+	loggerCallbackDebugln(1, cStr)
 	if !caughtFailedToLoad {
 		t.Fail()
 	}
