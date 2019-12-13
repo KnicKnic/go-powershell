@@ -2,7 +2,6 @@ package powershell
 
 import (
 	"syscall"
-	"unsafe"
 )
 
 func loggerCallback(context uint64, str uintptr) uintptr {
@@ -133,15 +132,19 @@ var (
 		LogVerboseLine:     syscall.NewCallbackCDecl(loggerCallbackVerboseln),
 		LogDebugLine:       syscall.NewCallbackCDecl(loggerCallbackDebugln),
 	}
-	loggerCallbackPointer  unsafe.Pointer = unsafe.Pointer(&loggerCallbackHolder)
-	commandCallbackPointer uintptr        = syscall.NewCallbackCDecl(commandCallback)
+
+	// intentionally leak loggerCallbackPointer (once per process)
+	// doing this so the callback object will be around for lifetime of process
+	// If it was golang object just marshalled for duration of call, golang garbage collection could move things and we would crash
+	loggerCallbackPointer  uintptr = mallocCopyLogStringHolder(loggerCallbackHolder)
+	commandCallbackPointer uintptr = syscall.NewCallbackCDecl(commandCallback)
 )
 
 func createRunspaceHelper(context uint64, useLogger byte, useCommand byte) nativePowerShell_RunspaceHandle {
 	var commandPtr uintptr = 0
 	var loggerPtr uintptr = 0
 	if useLogger != 0 {
-		loggerPtr = uintptr(loggerCallbackPointer)
+		loggerPtr = loggerCallbackPointer
 	}
 	if useCommand != 0 {
 		commandPtr = commandCallbackPointer
@@ -152,7 +155,7 @@ func createRunspaceHelper(context uint64, useLogger byte, useCommand byte) nativ
 func createRemoteRunspaceHelper(context uint64, useLogger byte, remoteMachine *uint16, userName *uint16, password *uint16) nativePowerShell_RunspaceHandle {
 	var loggerPtr uintptr = 0
 	if useLogger != 0 {
-		loggerPtr = uintptr(loggerCallbackPointer)
+		loggerPtr = loggerCallbackPointer
 	}
 	return nativePowerShell_CreateRemoteRunspace(makeUintptrFromUint64(context), loggerPtr, remoteMachine, userName, password)
 }

@@ -1,7 +1,5 @@
 package powershell
 
-import "unsafe"
-
 // CallbackResultsWriter allows you to write values to powershell when inside Send-HostCommand
 type CallbackResultsWriter interface {
 	WriteString(string)
@@ -57,20 +55,13 @@ func (writer *callbackResultsWriter) Write(handle Object, needsClose bool) {
 	writer.objects = append(writer.objects, obj)
 }
 
-func mallocCopyGenericPowerShellObject(input *nativePowerShell_GenericPowerShellObject, inputCount uint64) *nativePowerShell_GenericPowerShellObject {
-
-	size := uintptr(inputCount) * unsafe.Sizeof(*input)
-
-	return (*nativePowerShell_GenericPowerShellObject)(unsafe.Pointer(mallocCopy(uintptr(unsafe.Pointer(input)), size)))
-}
-
 // filloutResults takes accumulated objects from Write calls and prepares them to cross the C boundary
 func (writer *callbackResultsWriter) filloutResults(res uintptr) {
-	results := (*nativePowerShell_JsonReturnValues)(unsafe.Pointer(res))
-	results.objects = nil
-	results.count = 0
+	var results nativePowerShell_JsonReturnValues
+
 	if writer.objects != nil && len(writer.objects) > 0 {
 		results.count = uint32(len(writer.objects))
 		results.objects = mallocCopyGenericPowerShellObject(&writer.objects[0], uint64(len(writer.objects)))
 	}
+	_ = memcpyJsonReturnValues(res, results)
 }

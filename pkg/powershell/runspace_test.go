@@ -183,7 +183,7 @@ func ExampleCallbackHolder() {
 
 func ExampleRunspace_customSimpleLogger() {
 	// create a custom logger object
-	customLogger := logger.SimpleFuncPtr{func(str string) {
+	customLogger := logger.SimpleFuncPtr{FuncPtr: func(str string) {
 		fmt.Print("Custom: " + str)
 	}}
 	// create a runspace (where you run your powershell statements in)
