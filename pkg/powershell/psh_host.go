@@ -46,7 +46,7 @@ type (
 	}
 
 	nativePowerShell_JsonReturnValues struct {
-		objects *nativePowerShell_GenericPowerShellObject
+		objects uintptr // *nativePowerShell_GenericPowerShellObject
 		count   uint32
 	}
 	nativePowerShell_ReceiveJsonCommand func(context uintptr, command nativePowerShell_StringPtr, inputrs *nativePowerShell_PowerShellObject, inputCount uint64, returnValues *nativePowerShell_JsonReturnValues) uintptr

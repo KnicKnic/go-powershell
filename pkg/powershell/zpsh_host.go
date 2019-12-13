@@ -189,9 +189,12 @@ func nativePowerShell_AddPSObjectHandle(handle nativePowerShell_PowerShellObject
 	return
 }
 
-func nativePowerShell_DefaultAlloc(size uint64) (status uintptr) {
-	r0, _, _ := syscall.Syscall(procnativePowerShell_DefaultAlloc.Addr(), 1, uintptr(size), 0, 0)
+func nativePowerShell_DefaultAlloc(size uint64) (status uintptr, err error) {
+	r0, _, err := syscall.Syscall(procnativePowerShell_DefaultAlloc.Addr(), 1, uintptr(size), 0, 0)
 	status = uintptr(r0)
+	if status != uintptr(0) {
+		err = nil
+	}
 	return
 }
 
@@ -201,7 +204,47 @@ func nativePowerShell_DefaultFree(address uintptr) {
 }
 
 func memcpy(dest uintptr, src uintptr, size uint64) (ptr uintptr) {
-	r0, _, _ := syscall.Syscall(procmemcpy.Addr(), 3, uintptr(dest), uintptr(src), uintptr(size))
+	r0, _, _ := syscall.Syscall(procmemcpy.Addr(), 3, dest, src, uintptr(size))
 	ptr = uintptr(r0)
 	return
+}
+
+func memcpyLogStringHolder(dest uintptr, src nativePowerShell_LogString_Holder) (ptr uintptr) {
+
+	r0, _, _ := syscall.Syscall(procmemcpy.Addr(), 3, dest, uintptr(unsafe.Pointer(&src)), uintptr(unsafe.Sizeof(src)))
+	ptr = uintptr(r0)
+	return
+}
+func memcpyJsonReturnValues(dest uintptr, src nativePowerShell_JsonReturnValues) (ptr uintptr) {
+
+	r0, _, _ := syscall.Syscall(procmemcpy.Addr(), 3, dest, uintptr(unsafe.Pointer(&src)), uintptr(unsafe.Sizeof(src)))
+	ptr = uintptr(r0)
+	return
+}
+
+func memcpyGenericPowerShellObject(dest uintptr, src *nativePowerShell_GenericPowerShellObject, size uint64) (ptr uintptr) {
+
+	r0, _, _ := syscall.Syscall(procmemcpy.Addr(), 3, dest, uintptr(unsafe.Pointer(src)), uintptr(size))
+	ptr = uintptr(r0)
+	return
+}
+
+func memcpyStr(dest uintptr, str string) (ptr uintptr) {
+	cs, _ := windows.UTF16PtrFromString(str)
+	size := 2 * uint64((len(str) + 1))
+
+	r0, _, _ := syscall.Syscall(procmemcpy.Addr(), 3, dest, uintptr(unsafe.Pointer(cs)), uintptr(size))
+	ptr = uintptr(r0)
+	return
+}
+
+func cstrToStr(cstr uintptr) string {
+
+	count := wsclen(cstr) + 1
+	arr := make([]uint16, count)
+
+	_, _, _ = syscall.Syscall(procmemcpy.Addr(), 3, uintptr(unsafe.Pointer(&arr[0])), cstr, uintptr(count*2))
+
+	s := windows.UTF16ToString(arr)
+	return s
 }
