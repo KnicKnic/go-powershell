@@ -136,7 +136,7 @@ var (
 	// intentionally leak loggerCallbackPointer (once per process)
 	// doing this so the callback object will be around for lifetime of process
 	// If it was golang object just marshalled for duration of call, golang garbage collection could move things and we would crash
-	loggerCallbackPointer  uintptr = mallocCopyLogStringHolder(loggerCallbackHolder)
+	loggerCallbackPointer  uintptr = localMallocCopyLogStringHolder(loggerCallbackHolder)
 	commandCallbackPointer uintptr = syscall.NewCallbackCDecl(commandCallback)
 )
 

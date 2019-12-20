@@ -39,7 +39,10 @@ func errnoErr(e syscall.Errno) error {
 var (
 	modpsh_host = windows.NewLazyDLL("psh_host.dll")
 	modntdll    = windows.NewLazySystemDLL("ntdll.dll")
+	modkernel32 = windows.NewLazySystemDLL("kernel32.dll")
 
+	procLocalAlloc                              = modkernel32.NewProc("LocalAlloc")
+	procLocalFree                               = modkernel32.NewProc("LocalFree")
 	procnativePowerShell_CreatePowerShell       = modpsh_host.NewProc("NativePowerShell_CreatePowerShell")
 	procnativePowerShell_CreatePowerShellNested = modpsh_host.NewProc("NativePowerShell_CreatePowerShellNested")
 	procnativePowerShell_DeletePowershell       = modpsh_host.NewProc("NativePowerShell_DeletePowershell")
@@ -197,6 +200,14 @@ func nativePowerShell_DefaultAlloc(size uint64) (status uintptr, err error) {
 	}
 	return
 }
+func localAlloc(size uint64) (status uintptr, err error) {
+	r0, _, err := syscall.Syscall(procLocalAlloc.Addr(), 1, uintptr(size), 0, 0)
+	status = uintptr(r0)
+	if status != uintptr(0) {
+		err = nil
+	}
+	return
+}
 
 func nativePowerShell_DefaultFree(address uintptr) {
 	syscall.Syscall(procnativePowerShell_DefaultFree.Addr(), 1, uintptr(address), 0, 0)
@@ -220,6 +231,16 @@ func memcpyJsonReturnValues(dest uintptr, src nativePowerShell_JsonReturnValues)
 	r0, _, _ := syscall.Syscall(procmemcpy.Addr(), 3, dest, uintptr(unsafe.Pointer(&src)), uintptr(unsafe.Sizeof(src)))
 	ptr = uintptr(r0)
 	return
+}
+func castToPowershellObject(src uintptr) nativePowerShell_PowerShellObject {
+	var output nativePowerShell_PowerShellObject
+	_, _, _ = syscall.Syscall(procmemcpy.Addr(), 3, uintptr(unsafe.Pointer(&output)), src, uintptr(unsafe.Sizeof(output)))
+	return output
+}
+func castToUint16(src uintptr) uint16 {
+	var output uint16
+	_, _, _ = syscall.Syscall(procmemcpy.Addr(), 3, uintptr(unsafe.Pointer(&output)), src, uintptr(unsafe.Sizeof(output)))
+	return output
 }
 
 func memcpyGenericPowerShellObject(dest uintptr, src *nativePowerShell_GenericPowerShellObject, size uint64) (ptr uintptr) {

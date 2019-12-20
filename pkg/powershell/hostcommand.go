@@ -61,7 +61,7 @@ func (writer *callbackResultsWriter) filloutResults(res uintptr) {
 
 	if writer.objects != nil && len(writer.objects) > 0 {
 		results.count = uint32(len(writer.objects))
-		results.objects = mallocCopyGenericPowerShellObject(&writer.objects[0], uint64(len(writer.objects)))
+		results.objects = mallocCopyArrayGenericPowerShellObject(writer.objects)
 	}
 	_ = memcpyJsonReturnValues(res, results)
 }
