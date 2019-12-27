@@ -41,7 +41,7 @@ func mallocCopyArrayGenericPowerShellObject(input []nativePowerShell_GenericPowe
 
 	inputCount := uint64(len(input))
 
-	var size uint64
+	var size uint64 = 0
 	if inputCount != 0 {
 		size = inputCount * uint64(unsafe.Sizeof(input[0]))
 	}
@@ -51,7 +51,9 @@ func mallocCopyArrayGenericPowerShellObject(input []nativePowerShell_GenericPowe
 		panic("Couldn't allocate memory")
 	}
 
-	_ = memcpyGenericPowerShellObject(data, &input[0], size)
+	if inputCount != 0 {
+		_ = memcpyGenericPowerShellObject(data, &input[0], size)
+	}
 
 	return data
 }

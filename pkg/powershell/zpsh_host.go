@@ -201,7 +201,7 @@ func nativePowerShell_DefaultAlloc(size uint64) (status uintptr, err error) {
 	return
 }
 func localAlloc(size uint64) (status uintptr, err error) {
-	r0, _, err := syscall.Syscall(procLocalAlloc.Addr(), 1, uintptr(size), 0, 0)
+	r0, _, err := syscall.Syscall(procLocalAlloc.Addr(), 2, uintptr(0), uintptr(size), 0)
 	status = uintptr(r0)
 	if status != uintptr(0) {
 		err = nil
