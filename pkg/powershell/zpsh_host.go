@@ -6,6 +6,8 @@ import (
 	"syscall"
 	"unsafe"
 
+	"github.com/KnicKnic/go-powershell/pkg/embedded"
+	"github.com/KnicKnic/temp-dll"
 	"golang.org/x/sys/windows"
 )
 
@@ -37,7 +39,12 @@ func errnoErr(e syscall.Errno) error {
 }
 
 var (
-	modpsh_host = windows.NewLazyDLL("psh_host.dll")
+	// fileName    = tempdll.CopyFile("./asdf1.dll", embedded.OpenPshHostDll())
+	// closer      = tempdll.OpenWithDelete(fileName)
+	// modpsh_host = windows.NewLazyDLL(fileName)
+	modpsh_host = tempdll.NewLazyDLL(embedded.OpenPshHostDll(), "psh_host.dll")
+	// modpsh_host1 = windows.NewLazyDLL("psh_host.dll")
+	// modpsh_host2 = windows.NewLazyDLL("C:\\Users\\nmaliwa\\AppData\\Local\\Temp\\f12a8372-f9f9-4339-97b8-e094027dfac8psh_host.dll")
 	modntdll    = windows.NewLazySystemDLL("ntdll.dll")
 
 	procnativePowerShell_CreatePowerShell       = modpsh_host.NewProc("NativePowerShell_CreatePowerShell")

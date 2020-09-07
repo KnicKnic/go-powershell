@@ -14,6 +14,7 @@ Features:
 1. Call from powershell to golang (via special Send-HostCommand commandlet)
 1. Easy logging - Trap host output in powershell and call custom logging routines in golang
 1. Uses syscall - so do not need to use cGo
+1. Single file executable - unpacks its dependencies
 
 # Status
 
@@ -87,10 +88,8 @@ This project has a dependency on [native-powershell](https://github.com/KnicKnic
 
 ### Using native-powershell
 
-1. Simply fetch the dependencies, `go get -d .` and then make sure to build, `go build`
-1. Copy the precompiled psh_host.dll into your location so it can be found when running the app
-    1. cmd - `copy %GOPATH%\src\github.com\KnicKnic\go-powershell\bin\psh_host.dll .`
-    1. powershell - `copy "$($env:GOPATH)\src\github.com\KnicKnic\go-powershell\bin\psh_host.dll" .`
+1. go to pkg/embedded/generator and run go generate .
+	1. This will update the `/bin/psh_host.dll` to be in `/pkg/embedded/binaries.go`
 1. I ended up checking in the psh_host.dll and host.h (to make things easy)
     1. I could not find a better way to go about this and still have things be easy.
 

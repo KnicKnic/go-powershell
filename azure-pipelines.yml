@@ -43,17 +43,6 @@ steps:
 #     script: 'choco install -y golang --no-progress;
 #       refreshenv ;
 #       copy native-powershell\host.h .\pkg\powershell\ ;
-#       copy native-powershell\x64\Release\psh_host.dll . ;
-#       copy native-powershell\x64\Release\psh_host.dll .\pkg\powershell\ ;
-#       copy native-powershell\x64\Release\psh_host.dll .\tests\benchmarks\ ;'
-- task: PowerShell@2
-  displayName: Copy psh_host
-  inputs:
-    targetType: 'inline'
-    script: '
-      copy bin\psh_host.dll . ;
-      copy bin\psh_host.dll .\pkg\powershell\ ;
-      copy bin\psh_host.dll .\tests\benchmarks\ ;'
 
 - task: PowerShell@2
   displayName: "Setup Go environment"
