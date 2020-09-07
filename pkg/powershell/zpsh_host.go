@@ -46,10 +46,7 @@ var (
 	// modpsh_host1 = windows.NewLazyDLL("psh_host.dll")
 	// modpsh_host2 = windows.NewLazyDLL("C:\\Users\\nmaliwa\\AppData\\Local\\Temp\\f12a8372-f9f9-4339-97b8-e094027dfac8psh_host.dll")
 	modntdll    = windows.NewLazySystemDLL("ntdll.dll")
-	modkernel32 = windows.NewLazySystemDLL("kernel32.dll")
 
-	procLocalAlloc                              = modkernel32.NewProc("LocalAlloc")
-	procLocalFree                               = modkernel32.NewProc("LocalFree")
 	procnativePowerShell_CreatePowerShell       = modpsh_host.NewProc("NativePowerShell_CreatePowerShell")
 	procnativePowerShell_CreatePowerShellNested = modpsh_host.NewProc("NativePowerShell_CreatePowerShellNested")
 	procnativePowerShell_DeletePowershell       = modpsh_host.NewProc("NativePowerShell_DeletePowershell")
@@ -207,23 +204,9 @@ func nativePowerShell_DefaultAlloc(size uint64) (status uintptr, err error) {
 	}
 	return
 }
-func localAlloc(size uint64) (status uintptr, err error) {
-	r0, _, err := syscall.Syscall(procLocalAlloc.Addr(), 2, uintptr(0), uintptr(size), 0)
-	status = uintptr(r0)
-	if status != uintptr(0) {
-		err = nil
-	}
-	return
-}
 
 func nativePowerShell_DefaultFree(address uintptr) {
 	syscall.Syscall(procnativePowerShell_DefaultFree.Addr(), 1, uintptr(address), 0, 0)
-	return
-}
-
-func memcpy(dest uintptr, src uintptr, size uint64) (ptr uintptr) {
-	r0, _, _ := syscall.Syscall(procmemcpy.Addr(), 3, dest, src, uintptr(size))
-	ptr = uintptr(r0)
 	return
 }
 

@@ -2,6 +2,7 @@ package powershell
 
 import (
 	"unsafe"
+	"github.com/KnicKnic/go-windows/pkg/kernel32"
 )
 
 func makeUint64FromPtr(v uintptr) uint64 {
@@ -16,7 +17,7 @@ func allocWrapper(size uint64) (uintptr, error) {
 }
 
 func localAllocWrapper(size uint64) (uintptr, error) {
-	return localAlloc(size)
+	return kernel32.LocalAlloc(size)
 }
 
 func freeWrapper(v uintptr) {

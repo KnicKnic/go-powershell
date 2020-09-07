@@ -3,6 +3,7 @@ module github.com/KnicKnic/go-powershell
 go 1.12
 
 require (
+	github.com/KnicKnic/go-windows v0.0.2
 	github.com/KnicKnic/temp-dll v0.0.0-20200907062319-b1f2fa734212
 	github.com/golang/glog v0.0.0-20160126235308-23def4e6c14b
 	github.com/shurcooL/httpfs v0.0.0-20190707220628-8d4bc4ba7749
