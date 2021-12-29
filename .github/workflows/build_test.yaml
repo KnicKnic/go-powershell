@@ -12,22 +12,27 @@ jobs:
     steps:
     - uses: actions/checkout@v2.3.4
 
-    - name: install beta version of go 18.1
-      run: | 
-        curl.exe -L -O https://dl.google.com/go/go1.18beta1.windows-amd64.msi
-        $file = dir go1.18beta1.windows-amd64.msi
-        $logFile = '{0}.log' -f $file.fullname
-        $MSIArguments = @(
-            "/i"
-            ('"{0}"' -f $file.fullname)
-            "/qn"
-            "/norestart"
-            "/L*v"
-            $logFile
-        )
-        Start-Process "msiexec.exe" -ArgumentList $MSIArguments -Wait -NoNewWindow 
-        go version
-        # cat go1.18beta1.windows-amd64.msi.log
+
+    - uses: actions/setup-go@v2
+      with:
+        go-version: '1.18-beta1' # The Go version to download (if necessary) and use.
+
+    # - name: install beta version of go 18.1
+    #   run: | 
+    #     curl.exe -L -O https://dl.google.com/go/go1.18beta1.windows-amd64.msi
+    #     $file = dir go1.18beta1.windows-amd64.msi
+    #     $logFile = '{0}.log' -f $file.fullname
+    #     $MSIArguments = @(
+    #         "/i"
+    #         ('"{0}"' -f $file.fullname)
+    #         "/qn"
+    #         "/norestart"
+    #         "/L*v"
+    #         $logFile
+    #     )
+    #     Start-Process "msiexec.exe" -ArgumentList $MSIArguments -Wait -NoNewWindow 
+    #     go version
+    #     # cat go1.18beta1.windows-amd64.msi.log
 
     - name: Enable running examples & tests
       run: | 
