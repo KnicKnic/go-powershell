@@ -26,7 +26,8 @@ jobs:
             $logFile
         )
         Start-Process "msiexec.exe" -ArgumentList $MSIArguments -Wait -NoNewWindow 
-        cat go1.18beta1.windows-amd64.msi.log
+        go version
+        # cat go1.18beta1.windows-amd64.msi.log
 
     - name: Enable running examples & tests
       run: | 
