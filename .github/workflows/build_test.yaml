@@ -1,0 +1,42 @@
+name: build_test
+
+on:
+  push:
+    branches: [ main, master ]
+  pull_request:
+    branches: [ main, master ]
+
+jobs:
+  build:
+    runs-on: windows-latest
+    steps:
+    - uses: actions/checkout@v2.3.4
+
+
+    - uses: actions/setup-go@v2
+      with:
+        stable: 'false'
+        go-version: '1.18.0-beta1' # The Go version to download (if necessary) and use.
+
+    - name: Enable running examples & tests
+      run: | 
+        copy bin\psh_host.dll . ;
+        copy bin\psh_host.dll .\pkg\powershell\ ;
+        copy bin\psh_host.dll .\tests\benchmarks\ ;
+
+    - run: go build .\...
+    - name: run unit tests
+      run: |
+        go install gotest.tools/gotestsum@latest
+        # go get -mod=readonly gotest.tools/gotestsum@latest
+
+        gotestsum --junitfile junit.xml
+
+    # publish unit tests
+    # - name: I should do something here....
+
+    - name: Build examples
+      run: go build -a -o examples_cmd.exe  github.com/KnicKnic/go-powershell/examples/cmd
+    
+    - name: Run examples
+      run: .\examples_cmd.exe -command .\\tests\t1.ps1 -command .\\tests\\t2.ps1
