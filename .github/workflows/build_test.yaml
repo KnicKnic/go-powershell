@@ -1,0 +1,142 @@
+name: build_test
+
+on:
+  push:
+    branches: [ main, master ]
+  pull_request:
+    branches: [ main, master ]
+
+jobs:
+  build:
+    runs-on: windows-latest
+    steps:
+    - uses: actions/checkout@v2.3.4
+
+    - name: install beta version of go 18.1
+      run: | 
+        curl.exe -L -O https://dl.google.com/go/go1.18beta1.windows-amd64.msi
+        $file = dir go1.18beta1.windows-amd64.msi
+        $logFile = '{0}.log' -f $file.fullname
+        $MSIArguments = @(
+            "/i"
+            ('"{0}"' -f $file.fullname)
+            "/qn"
+            "/norestart"
+            "/L*v"
+            $logFile
+        )
+        Start-Process "msiexec.exe" -ArgumentList $MSIArguments -Wait -NoNewWindow 
+        cat go1.18beta1.windows-amd64.msi.log
+
+    - name: Enable running examples & tests
+      run: | 
+        copy bin\psh_host.dll . ;
+        copy bin\psh_host.dll .\pkg\powershell\ ;
+        copy bin\psh_host.dll .\tests\benchmarks\ ;
+
+    - run: go build .\...
+    - name: run unit tests
+      run: |
+        go install gotest.tools/gotestsum@latest
+        # go get -mod=readonly gotest.tools/gotestsum@latest
+
+        gotestsum --junitfile junit.xml
+
+    # publish unit tests
+    # - name: I should do something here....
+
+    - name: Build examples
+      run: go build -a -o examples_cmd.exe  github.com/KnicKnic/go-powershell/examples/cmd
+    
+    - name: Run examples
+      run: .\examples_cmd.exe -command .\\tests\t1.ps1 -command .\\tests\\t2.ps1
+      
+# # build dll
+# - task: NuGetToolInstaller@0
+
+# - task: NuGetCommand@2
+#   inputs:
+#     restoreSolution: '$(solution)'
+
+# - task: VSBuild@1
+#   inputs:
+#     solution: '$(solution)'
+#     platform: '$(buildPlatform)'
+#     configuration: '$(buildConfiguration)'
+
+# - task: VSTest@2
+#   inputs:
+#     platform: '$(buildPlatform)'
+#     configuration: '$(buildConfiguration)'
+# - task: PowerShell@2
+#   inputs:
+#     targetType: 'inline'
+#     script: 'choco install -y golang --no-progress;
+#       refreshenv ;
+#       copy native-powershell\host.h .\pkg\powershell\ ;
+#       copy native-powershell\x64\Release\psh_host.dll . ;
+#       copy native-powershell\x64\Release\psh_host.dll .\pkg\powershell\ ;
+#       copy native-powershell\x64\Release\psh_host.dll .\tests\benchmarks\ ;'
+
+
+# - task: PowerShell@2
+#   displayName: Copy psh_host
+#   inputs:
+#     targetType: 'inline'
+#     script: '
+#       copy bin\psh_host.dll . ;
+#       copy bin\psh_host.dll .\pkg\powershell\ ;
+#       copy bin\psh_host.dll .\tests\benchmarks\ ;'
+
+# - task: PowerShell@2
+#   displayName: "Setup Go environment"
+#   inputs:
+#     targetType: 'inline'
+#     script: '
+#       Write-Host "##vso[task.prependpath]$(GOBIN)";
+#       mkdir c:\go_tmp;
+#       '
+
+# # Go
+# # Get, build, or test a Go application, or run a custom Go command
+# - task: Go@0
+#   displayName: 'go build .\...'
+#   inputs:
+#     command: 'build' # Options: get, build, test, custom
+#     #customCommand: # Required when command == Custom
+#     arguments: '.\...' # Optional
+
+# # run tests
+# - task: Go@0
+#   displayName: 'Install gotestsum'
+#   inputs:
+#     command: 'get' # Options: get, build, test, custom
+#     #customCommand: # Required when command == Custom
+#     arguments: 'gotest.tools/gotestsum' # Optional
+
+# - task:  CmdLine@2
+#   displayName: "Run Tests"
+#   inputs:
+#     script: 'gotestsum --junitfile junit.xml'
+
+# - task: PublishTestResults@2
+#   inputs:
+#     testResultsFormat: 'JUnit' # Options: JUnit, NUnit, VSTest, xUnit, cTest
+#     testResultsFiles: 'junit.xml'
+#     #searchFolder: '$(System.DefaultWorkingDirectory)' # Optional
+#     #mergeTestResults: false # Optional
+#     failTaskOnFailedTests: true # Optional
+#     #testRunTitle: # Optional
+#     #buildPlatform: # Optional
+#     #buildConfiguration: # Optional
+#     publishRunAttachments: true # Optional
+
+# - task: CmdLine@2
+#   displayName: Build examples_cmd.exe
+#   inputs:
+#     script: 'go build -a -o examples_cmd.exe  github.com/KnicKnic/go-powershell/examples/cmd'
+# - task: PowerShell@2
+#   displayName: Test examples_cmd.exe
+#   inputs:
+#     targetType: 'inline'
+#     script: '.\examples_cmd.exe -command .\\tests\t1.ps1 -command .\\tests\\t2.ps1'
